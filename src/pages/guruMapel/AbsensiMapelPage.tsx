@@ -75,8 +75,8 @@ export function AbsensiMapelPage() {
               <>
                 <div className="space-y-2">
                   {santriQuery.data?.map((s) => (
-                    <div key={s.id} className="flex items-center justify-between border-b border-slate-100 py-2 last:border-0">
-                      <span className="text-sm text-slate-700">{s.nama}</span>
+                    <div key={s.id} className="flex items-center justify-between border-b border-border py-2 last:border-0">
+                      <span className="text-sm text-foreground">{s.nama}</span>
                       <div className="flex gap-1">
                         {STATUS_OPTIONS.map((opt) => (
                           <button
@@ -85,8 +85,8 @@ export function AbsensiMapelPage() {
                             onClick={() => setStatusMap((prev) => ({ ...prev, [s.id]: opt.value }))}
                             className={`rounded-md px-2.5 py-1 text-xs font-medium ${
                               (statusMap[s.id] ?? 'hadir') === opt.value
-                                ? 'bg-teal-700 text-white'
-                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                ? 'bg-primary text-white'
+                                : 'bg-muted text-muted-foreground hover:bg-muted'
                             }`}
                           >
                             {opt.label}

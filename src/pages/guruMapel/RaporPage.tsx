@@ -66,15 +66,15 @@ export function RaporPage() {
             ) : (
               <div className="space-y-2">
                 {raporQuery.data?.progres.map((p) => (
-                  <div key={p.id} className="rounded-lg bg-slate-50 px-3 py-2 text-sm">
-                    <p className="font-medium text-slate-700">
+                  <div key={p.id} className="rounded-lg bg-muted/40 px-3 py-2 text-sm">
+                    <p className="font-medium text-foreground">
                       {p.tanggal} · {p.tipe}
                     </p>
-                    <p className="text-slate-600">{p.capaian}</p>
-                    {p.catatan_guru && <p className="mt-0.5 text-xs text-slate-500">{p.catatan_guru}</p>}
+                    <p className="text-muted-foreground">{p.capaian}</p>
+                    {p.catatan_guru && <p className="mt-0.5 text-xs text-muted-foreground">{p.catatan_guru}</p>}
                   </div>
                 ))}
-                {raporQuery.data?.progres.length === 0 && <p className="text-sm text-slate-400">Belum ada progres tercatat.</p>}
+                {raporQuery.data?.progres.length === 0 && <p className="text-sm text-muted-foreground">Belum ada progres tercatat.</p>}
               </div>
             )}
           </CardBody>

@@ -36,11 +36,11 @@ export function LoginPage() {
   if (user) return <Navigate to="/portal" replace />
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+    <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
+      <div className="w-full max-w-sm rounded-2xl border border-border bg-white p-8 shadow-sm">
         <div className="mb-6 text-center">
-          <h1 className="text-lg font-semibold text-slate-900">{pengaturan?.nama_sekolah ?? 'Sistem Informasi Madrasah'}</h1>
-          <p className="mt-1 text-sm text-slate-500">{pengaturan?.tagline ?? 'Masuk untuk melanjutkan'}</p>
+          <h1 className="text-lg font-semibold text-foreground">{pengaturan?.nama_sekolah ?? 'Sistem Informasi Madrasah'}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{pengaturan?.tagline ?? 'Masuk untuk melanjutkan'}</p>
         </div>
 
         <form

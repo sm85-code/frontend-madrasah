@@ -89,13 +89,13 @@ export function MapelPage() {
                 <ul className="mb-3 space-y-1 text-sm">
                   {mapel.materi.map((m) => (
                     <li key={m.id} className="flex items-center justify-between">
-                      <span className="text-slate-700">{m.judul}</span>
+                      <span className="text-foreground">{m.judul}</span>
                       <Button size="sm" variant="ghost" onClick={() => deleteMateriMutation.mutate(m.id)}>
                         Hapus
                       </Button>
                     </li>
                   ))}
-                  {mapel.materi.length === 0 && <li className="text-slate-400">Belum ada materi.</li>}
+                  {mapel.materi.length === 0 && <li className="text-muted-foreground">Belum ada materi.</li>}
                 </ul>
                 <form
                   className="flex gap-2"

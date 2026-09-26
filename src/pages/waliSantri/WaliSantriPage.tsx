@@ -87,7 +87,7 @@ export function WaliSantriPage() {
               {progresQuery.isLoading ? (
                 <Spinner />
               ) : chartData.length === 0 ? (
-                <p className="text-sm text-slate-400">Belum ada progres tercatat.</p>
+                <p className="text-sm text-muted-foreground">Belum ada progres tercatat.</p>
               ) : (
                 <div className="h-56 w-full">
                   <ResponsiveContainer>
@@ -103,9 +103,9 @@ export function WaliSantriPage() {
               )}
               <div className="mt-3 space-y-1 text-sm">
                 {progresQuery.data?.map((p) => (
-                  <div key={p.id} className="flex justify-between border-b border-slate-100 py-1 last:border-0">
-                    <span className="text-slate-500">{p.tanggal}</span>
-                    <span className="text-slate-700">{p.capaian}</span>
+                  <div key={p.id} className="flex justify-between border-b border-border py-1 last:border-0">
+                    <span className="text-muted-foreground">{p.tanggal}</span>
+                    <span className="text-foreground">{p.capaian}</span>
                   </div>
                 ))}
               </div>
@@ -131,14 +131,14 @@ export function WaliSantriPage() {
               ) : (
                 <div className="mb-4 max-h-64 space-y-3 overflow-y-auto">
                   {pesanQuery.data?.map((p) => (
-                    <div key={p.id} className="rounded-lg bg-slate-50 px-3 py-2">
-                      <p className="text-xs font-medium text-slate-500">
+                    <div key={p.id} className="rounded-lg bg-muted/40 px-3 py-2">
+                      <p className="text-xs font-medium text-muted-foreground">
                         {p.dari_nama} · {new Date(p.dibuat_pada).toLocaleString('id-ID')}
                       </p>
-                      <p className="text-sm text-slate-700">{p.isi}</p>
+                      <p className="text-sm text-foreground">{p.isi}</p>
                     </div>
                   ))}
-                  {pesanQuery.data?.length === 0 && <p className="text-sm text-slate-400">Belum ada pesan.</p>}
+                  {pesanQuery.data?.length === 0 && <p className="text-sm text-muted-foreground">Belum ada pesan.</p>}
                 </div>
               )}
               <form

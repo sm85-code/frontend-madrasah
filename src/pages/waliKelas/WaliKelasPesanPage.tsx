@@ -76,14 +76,14 @@ export function WaliKelasPesanPage() {
             ) : (
               <div className="mb-4 max-h-80 space-y-3 overflow-y-auto">
                 {pesanQuery.data?.map((p) => (
-                  <div key={p.id} className="rounded-lg bg-slate-50 px-3 py-2">
-                    <p className="text-xs font-medium text-slate-500">
+                  <div key={p.id} className="rounded-lg bg-muted/40 px-3 py-2">
+                    <p className="text-xs font-medium text-muted-foreground">
                       {p.dari_nama} · {new Date(p.dibuat_pada).toLocaleString('id-ID')}
                     </p>
-                    <p className="text-sm text-slate-700">{p.isi}</p>
+                    <p className="text-sm text-foreground">{p.isi}</p>
                   </div>
                 ))}
-                {pesanQuery.data?.length === 0 && <p className="text-sm text-slate-400">Belum ada pesan.</p>}
+                {pesanQuery.data?.length === 0 && <p className="text-sm text-muted-foreground">Belum ada pesan.</p>}
               </div>
             )}
             <form

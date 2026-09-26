@@ -27,14 +27,14 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.error) {
       return (
-        <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-slate-50 px-4 text-center">
-          <h1 className="text-lg font-semibold text-slate-800">Terjadi kesalahan tak terduga</h1>
-          <p className="max-w-sm text-sm text-slate-500">
+        <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-muted/40 px-4 text-center">
+          <h1 className="text-lg font-semibold text-foreground">Terjadi kesalahan tak terduga</h1>
+          <p className="max-w-sm text-sm text-muted-foreground">
             Silakan muat ulang halaman. Kalau ini terus terjadi, hubungi admin madrasah.
           </p>
           <button
             onClick={() => window.location.assign('/')}
-            className="rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800"
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
           >
             Kembali ke beranda
           </button>

@@ -59,7 +59,7 @@ export function SppPage() {
 
       <Card>
         <CardBody>
-          <h3 className="mb-3 text-sm font-semibold text-slate-700">Menunggu Verifikasi</h3>
+          <h3 className="mb-3 text-sm font-semibold text-foreground">Menunggu Verifikasi</h3>
           {menungguQuery.isLoading ? (
             <Spinner />
           ) : (

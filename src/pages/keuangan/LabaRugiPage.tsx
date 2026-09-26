@@ -40,11 +40,11 @@ export function LabaRugiPage() {
                 <div className="space-y-2 text-sm">
                   {data.pendapatan.map((a) => (
                     <div key={a.kode} className="flex justify-between">
-                      <span className="text-slate-600">{a.nama}</span>
-                      <span className="font-medium text-slate-900">{formatRupiah(a.jumlah)}</span>
+                      <span className="text-muted-foreground">{a.nama}</span>
+                      <span className="font-medium text-foreground">{formatRupiah(a.jumlah)}</span>
                     </div>
                   ))}
-                  {data.pendapatan.length === 0 && <p className="text-slate-400">Belum ada.</p>}
+                  {data.pendapatan.length === 0 && <p className="text-muted-foreground">Belum ada.</p>}
                 </div>
               </CardBody>
             </Card>
@@ -56,11 +56,11 @@ export function LabaRugiPage() {
                 <div className="space-y-2 text-sm">
                   {data.beban.map((a) => (
                     <div key={a.kode} className="flex justify-between">
-                      <span className="text-slate-600">{a.nama}</span>
-                      <span className="font-medium text-slate-900">{formatRupiah(a.jumlah)}</span>
+                      <span className="text-muted-foreground">{a.nama}</span>
+                      <span className="font-medium text-foreground">{formatRupiah(a.jumlah)}</span>
                     </div>
                   ))}
-                  {data.beban.length === 0 && <p className="text-slate-400">Belum ada.</p>}
+                  {data.beban.length === 0 && <p className="text-muted-foreground">Belum ada.</p>}
                 </div>
               </CardBody>
             </Card>

@@ -131,7 +131,7 @@ export function AdminTahunAjaranPage() {
                 Tambah Tahun Ajaran
               </Button>
             </form>
-            <div className="space-y-1 text-sm text-slate-600">
+            <div className="space-y-1 text-sm text-muted-foreground">
               {tahunAjaranQuery.data?.map((t) => (
                 <div key={t.id}>{t.kode}</div>
               ))}

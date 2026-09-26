@@ -68,13 +68,13 @@ export function AdminKenaikanKelasPage() {
             {santriQuery.isLoading ? (
               <Spinner />
             ) : santriDiRombel.length === 0 ? (
-              <p className="text-sm text-slate-500">Tidak ada santri aktif di rombel ini.</p>
+              <p className="text-sm text-muted-foreground">Tidak ada santri aktif di rombel ini.</p>
             ) : (
               <>
                 <div className="space-y-2">
                   {santriDiRombel.map((s) => (
-                    <div key={s.id} className="flex items-center justify-between gap-3 border-b border-slate-100 py-2 last:border-0">
-                      <span className="text-sm text-slate-700">{s.nama}</span>
+                    <div key={s.id} className="flex items-center justify-between gap-3 border-b border-border py-2 last:border-0">
+                      <span className="text-sm text-foreground">{s.nama}</span>
                       <Select
                         className="w-56"
                         value={pilihan[s.id] ?? ''}

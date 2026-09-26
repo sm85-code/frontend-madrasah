@@ -59,10 +59,10 @@ export function AdminPengumumanPage() {
             <Card key={p.id}>
               <CardBody>
                 <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="font-semibold text-slate-800">{p.judul}</h3>
-                  <span className="shrink-0 text-xs text-slate-400">{p.tanggal}</span>
+                  <h3 className="font-semibold text-foreground">{p.judul}</h3>
+                  <span className="shrink-0 text-xs text-muted-foreground">{p.tanggal}</span>
                 </div>
-                <p className="mt-1 whitespace-pre-line text-sm text-slate-600">{p.isi}</p>
+                <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground">{p.isi}</p>
               </CardBody>
             </Card>
           ))}

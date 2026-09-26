@@ -20,25 +20,29 @@ export function DataTable<T>({ columns, rows, rowKey, emptyMessage = 'Belum ada 
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          {columns.map((col) => (
-            <TableHead key={col.header}>{col.header}</TableHead>
-          ))}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {rows.map((row) => (
-          <TableRow key={rowKey(row)}>
+    <div className="overflow-hidden rounded-lg border border-border">
+      <Table>
+        <TableHeader className="bg-muted/50">
+          <TableRow>
             {columns.map((col) => (
-              <TableCell key={col.header} className={col.className}>
-                {col.cell(row)}
-              </TableCell>
+              <TableHead key={col.header} className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {col.header}
+              </TableHead>
             ))}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {rows.map((row) => (
+            <TableRow key={rowKey(row)}>
+              {columns.map((col) => (
+                <TableCell key={col.header} className={col.className}>
+                  {col.cell(row)}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   )
 }
