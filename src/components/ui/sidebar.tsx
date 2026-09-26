@@ -27,11 +27,12 @@ import { PanelLeftIcon } from "lucide-react"
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
-// Narrower than the desktop sidebar (16rem): on a phone, 16rem/256px still
-// eats ~80% of a 320-375px viewport for a menu whose longest label
-// ("Guru & Wali Santri") fits fine in less. clamp() keeps it from
-// overflowing on the very narrowest devices too.
-const SIDEBAR_WIDTH_MOBILE = "clamp(12.5rem, 78vw, 14rem)"
+// Sized to the actual menu content, not the desktop sidebar: the longest
+// label ("Guru & Wali Santri") plus icon and padding needs well under
+// 13rem, so anything wider just leaves dead white space in the drawer
+// on a phone. clamp() still keeps it from overflowing on very narrow
+// screens (min) or looking cramped on tablets (mid value via vw).
+const SIDEBAR_WIDTH_MOBILE = "clamp(11rem, 62vw, 12.5rem)"
 const SIDEBAR_WIDTH_ICON = "3rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
