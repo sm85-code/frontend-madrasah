@@ -1,10 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { login } from '../api/auth'
 import { getPengaturan } from '../api/public'
 import { ApiError } from '../lib/apiClient'
+import { Spotlight } from '../components/aceternity/Spotlight'
 import { Button } from '../components/ui/Button'
 import { ErrorNotice } from '../components/ui/Feedback'
 import { FieldError, Input, Label } from '../components/ui/Input'
@@ -36,8 +38,14 @@ export function LoginPage() {
   if (user) return <Navigate to="/portal" replace />
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-50 px-4">
+      <Spotlight />
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: 'easeOut' }}
+        className="relative w-full max-w-sm rounded-2xl border border-slate-200 bg-white/90 p-8 shadow-lg shadow-slate-900/5 backdrop-blur-sm"
+      >
         <div className="mb-6 text-center">
           <h1 className="text-lg font-semibold text-slate-900">{pengaturan?.nama_sekolah ?? 'Sistem Informasi Madrasah'}</h1>
           <p className="mt-1 text-sm text-slate-500">{pengaturan?.tagline ?? 'Masuk untuk melanjutkan'}</p>
@@ -68,7 +76,7 @@ export function LoginPage() {
             Masuk
           </Button>
         </form>
-      </div>
+      </motion.div>
     </div>
   )
 }
