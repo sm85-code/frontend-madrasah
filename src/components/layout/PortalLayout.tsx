@@ -1,46 +1,48 @@
 import { useMutation } from '@tanstack/react-query'
+import { GraduationCap, LogOut, Menu } from 'lucide-react'
 import { useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { logout as apiLogout } from '../../api/auth'
-import { NAV_SECTIONS } from '../../config/nav'
+import { NAV_SECTIONS, type NavSection } from '../../config/nav'
 import { ROLE_LABEL } from '../../config/roles'
 import { cn } from '../../lib/cn'
 import { useAuthStore } from '../../store/authStore'
 
-function SidebarNav({
-  sections,
-  onNavigate,
-}: {
-  sections: { title: string; items: { path: string; label: string }[] }[]
-  onNavigate?: () => void
-}) {
+function SidebarNav({ sections, onNavigate }: { sections: NavSection[]; onNavigate?: () => void }) {
   return (
     <>
-      <div className="border-b border-slate-100 px-5 py-4">
-        <p className="text-sm font-semibold text-teal-700">Sistem Informasi Madrasah</p>
+      <div className="flex items-center gap-2 border-b border-slate-100 px-5 py-4">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-teal-700 text-white">
+          <GraduationCap className="h-4.5 w-4.5" strokeWidth={2.25} />
+        </span>
+        <p className="text-sm font-semibold leading-tight text-slate-800">Sistem Informasi Madrasah</p>
       </div>
       <nav className="flex-1 overflow-y-auto px-3 py-4">
         {sections.map((section) => (
           <div key={section.title} className="mb-5">
-            <p className="mb-1.5 px-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+            <p className="mb-1.5 px-2.5 text-xs font-semibold uppercase tracking-wide text-slate-400">
               {section.title}
             </p>
             <div className="space-y-0.5">
-              {section.items.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  onClick={onNavigate}
-                  className={({ isActive }) =>
-                    cn(
-                      'block rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                      isActive ? 'bg-teal-50 text-teal-800' : 'text-slate-600 hover:bg-slate-100',
-                    )
-                  }
-                >
-                  {item.label}
-                </NavLink>
-              ))}
+              {section.items.map((item) => {
+                const Icon = item.icon
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={onNavigate}
+                    className={({ isActive }) =>
+                      cn(
+                        'flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors',
+                        isActive ? 'bg-teal-50 text-teal-800' : 'text-slate-600 hover:bg-slate-100',
+                      )
+                    }
+                  >
+                    <Icon className="h-4 w-4 shrink-0" strokeWidth={2} />
+                    <span>{item.label}</span>
+                  </NavLink>
+                )
+              })}
             </div>
           </div>
         ))}
@@ -104,9 +106,7 @@ export function PortalLayout() {
               aria-label="Buka menu"
               className="-ml-1 flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 md:hidden"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              <Menu className="h-5 w-5" strokeWidth={2} />
             </button>
             <div>
               <p className="text-sm font-semibold text-slate-800">{user.nama}</p>
@@ -115,8 +115,9 @@ export function PortalLayout() {
           </div>
           <button
             onClick={() => logoutMutation.mutate()}
-            className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
+            className="flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
           >
+            <LogOut className="h-4 w-4" strokeWidth={2} />
             {logoutMutation.isPending ? 'Keluar…' : 'Keluar'}
           </button>
         </header>

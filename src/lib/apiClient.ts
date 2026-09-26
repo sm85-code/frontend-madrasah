@@ -27,7 +27,23 @@ export class ApiError extends Error {
 }
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Guard against a misconfigured VITE_API_BASE_URL: baseURL can resolve
+    // to a relative path that lands on this app's OWN dev/static server
+    // instead of the backend, whose SPA catchall then returns index.html
+    // with a 200 -- axios hands that HTML string back as "data", which
+    // passes every page's `!data` truthiness check and crashes the first
+    // component that assumes JSON shape (e.g. `data.list.map`). Fail loud
+    // and consistently here instead of piecemeal in every page.
+    const contentType = String(response.headers?.['content-type'] ?? '')
+    if (!contentType.includes('application/json')) {
+      throw new ApiError(
+        response.status,
+        'Respons server bukan JSON -- kemungkinan VITE_API_BASE_URL salah/tidak diset.',
+      )
+    }
+    return response
+  },
   (error) => {
     const status = error.response?.status ?? 0
     const detail =
