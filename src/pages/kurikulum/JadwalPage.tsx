@@ -5,6 +5,7 @@ import { listRombel } from '../../api/admin'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
+import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
@@ -43,12 +44,9 @@ export function JadwalPage() {
     { header: 'Jam', cell: (j) => `${j.jam_mulai}-${j.jam_selesai}` },
     { header: 'Mapel', cell: (j) => j.mapel ?? '-' },
     {
-      header: 'Aksi',
-      cell: (j) => (
-        <Button size="sm" variant="danger" onClick={() => deleteMutation.mutate(j.id)}>
-          Hapus
-        </Button>
-      ),
+      header: '',
+      className: 'w-10 text-right',
+      cell: (j) => <DeleteRowButton onClick={() => deleteMutation.mutate(j.id)} />,
     },
   ]
 

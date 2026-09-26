@@ -4,6 +4,7 @@ import { createGuru, createWaliSantri, deleteGuru, deleteWaliSantri, listGuru, l
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
+import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
@@ -62,12 +63,9 @@ export function AdminGuruPage() {
     { header: 'Username', cell: (u) => u.no_hp },
     { header: 'Role', cell: (u) => u.role },
     {
-      header: 'Aksi',
-      cell: (u) => (
-        <Button size="sm" variant="danger" onClick={() => deleteGuruMutation.mutate(u.id)}>
-          Hapus
-        </Button>
-      ),
+      header: '',
+      className: 'w-10 text-right',
+      cell: (u) => <DeleteRowButton onClick={() => deleteGuruMutation.mutate(u.id)} />,
     },
   ]
 
@@ -75,12 +73,9 @@ export function AdminGuruPage() {
     { header: 'Nama', cell: (u) => u.nama },
     { header: 'Username', cell: (u) => u.no_hp },
     {
-      header: 'Aksi',
-      cell: (u) => (
-        <Button size="sm" variant="danger" onClick={() => deleteWaliMutation.mutate(u.id)}>
-          Hapus
-        </Button>
-      ),
+      header: '',
+      className: 'w-10 text-right',
+      cell: (u) => <DeleteRowButton onClick={() => deleteWaliMutation.mutate(u.id)} />,
     },
   ]
 

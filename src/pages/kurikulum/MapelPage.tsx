@@ -4,6 +4,7 @@ import { createMapel, createMateri, deleteMapel, deleteMateri, listMapel } from 
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
+import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { Spinner } from '../../components/ui/Feedback'
 import { Input, Label } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
@@ -81,21 +82,17 @@ export function MapelPage() {
                 <CardTitle>
                   {mapel.nama} <Badge className="ml-1">{mapel.kode}</Badge>
                 </CardTitle>
-                <Button size="sm" variant="danger" onClick={() => deleteMapelMutation.mutate(mapel.id)}>
-                  Hapus
-                </Button>
+                <DeleteRowButton onClick={() => deleteMapelMutation.mutate(mapel.id)} label={`Hapus ${mapel.nama}`} />
               </CardHeader>
               <CardBody>
-                <ul className="mb-3 space-y-1 text-sm">
+                <ul className="mb-3 divide-y divide-border text-sm">
                   {mapel.materi.map((m) => (
-                    <li key={m.id} className="flex items-center justify-between">
+                    <li key={m.id} className="flex items-center justify-between gap-2 py-1.5">
                       <span className="text-foreground">{m.judul}</span>
-                      <Button size="sm" variant="ghost" onClick={() => deleteMateriMutation.mutate(m.id)}>
-                        Hapus
-                      </Button>
+                      <DeleteRowButton onClick={() => deleteMateriMutation.mutate(m.id)} label={`Hapus ${m.judul}`} />
                     </li>
                   ))}
-                  {mapel.materi.length === 0 && <li className="text-muted-foreground">Belum ada materi.</li>}
+                  {mapel.materi.length === 0 && <li className="py-1.5 text-muted-foreground">Belum ada materi.</li>}
                 </ul>
                 <form
                   className="flex gap-2"

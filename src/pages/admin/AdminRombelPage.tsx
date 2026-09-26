@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { createRombel, createTingkat, deleteRombel, deleteTingkat, listRombel, listTingkat } from '../../api/admin'
-import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
+import { Button } from '../../components/ui/AppButton'
 import { DataTable, type Column } from '../../components/ui/DataTable'
+import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
@@ -48,12 +49,9 @@ export function AdminRombelPage() {
     { header: 'Nama', cell: (t) => t.nama },
     { header: 'Urutan', cell: (t) => t.urutan },
     {
-      header: 'Aksi',
-      cell: (t) => (
-        <Button size="sm" variant="danger" onClick={() => deleteTingkatMutation.mutate(t.id)}>
-          Hapus
-        </Button>
-      ),
+      header: '',
+      className: 'w-10 text-right',
+      cell: (t) => <DeleteRowButton onClick={() => deleteTingkatMutation.mutate(t.id)} />,
     },
   ]
 
@@ -61,12 +59,9 @@ export function AdminRombelPage() {
     { header: 'Nama', cell: (r) => r.nama },
     { header: 'Wali Kelas', cell: (r) => r.wali_kelas ?? '-' },
     {
-      header: 'Aksi',
-      cell: (r) => (
-        <Button size="sm" variant="danger" onClick={() => deleteRombelMutation.mutate(r.id)}>
-          Hapus
-        </Button>
-      ),
+      header: '',
+      className: 'w-10 text-right',
+      cell: (r) => <DeleteRowButton onClick={() => deleteRombelMutation.mutate(r.id)} />,
     },
   ]
 
@@ -81,7 +76,7 @@ export function AdminRombelPage() {
           </CardHeader>
           <CardBody>
             <form
-              className="mb-4 flex items-end gap-2"
+              className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end"
               onSubmit={(e) => {
                 e.preventDefault()
                 createTingkatMutation.mutate()
@@ -91,7 +86,7 @@ export function AdminRombelPage() {
                 <Label htmlFor="nama-tingkat">Nama tingkat</Label>
                 <Input id="nama-tingkat" value={namaTingkat} onChange={(e) => setNamaTingkat(e.target.value)} required />
               </div>
-              <Button type="submit" loading={createTingkatMutation.isPending}>
+              <Button type="submit" loading={createTingkatMutation.isPending} className="w-full sm:w-auto">
                 Tambah
               </Button>
             </form>
@@ -109,17 +104,17 @@ export function AdminRombelPage() {
           </CardHeader>
           <CardBody>
             <form
-              className="mb-4 flex items-end gap-2"
+              className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto] sm:items-end"
               onSubmit={(e) => {
                 e.preventDefault()
                 createRombelMutation.mutate()
               }}
             >
-              <div className="flex-1">
+              <div>
                 <Label htmlFor="nama-rombel">Nama rombel</Label>
                 <Input id="nama-rombel" value={namaRombel} onChange={(e) => setNamaRombel(e.target.value)} required />
               </div>
-              <div className="w-40">
+              <div className="sm:w-40">
                 <Label htmlFor="tingkat-rombel">Tingkat</Label>
                 <Select id="tingkat-rombel" value={tingkatId} onChange={(e) => setTingkatId(e.target.value)}>
                   <option value="">-</option>
@@ -130,7 +125,7 @@ export function AdminRombelPage() {
                   ))}
                 </Select>
               </div>
-              <Button type="submit" loading={createRombelMutation.isPending}>
+              <Button type="submit" loading={createRombelMutation.isPending} className="w-full sm:col-span-2 sm:w-auto sm:justify-self-start">
                 Tambah
               </Button>
             </form>

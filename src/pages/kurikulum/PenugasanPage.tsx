@@ -5,6 +5,7 @@ import { createGuruMapel, deleteGuruMapel, listGuruMapel, listMapel } from '../.
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
+import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { Spinner } from '../../components/ui/Feedback'
 import { Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
@@ -36,12 +37,9 @@ export function PenugasanPage() {
     { header: 'Mapel', cell: (p) => p.mapel ?? '-' },
     { header: 'Rombel', cell: (p) => p.rombel ?? '-' },
     {
-      header: 'Aksi',
-      cell: (p) => (
-        <Button size="sm" variant="danger" onClick={() => deleteMutation.mutate(p.id)}>
-          Hapus
-        </Button>
-      ),
+      header: '',
+      className: 'w-10 text-right',
+      cell: (p) => <DeleteRowButton onClick={() => deleteMutation.mutate(p.id)} />,
     },
   ]
 
