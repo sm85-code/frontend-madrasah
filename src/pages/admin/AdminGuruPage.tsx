@@ -59,7 +59,7 @@ export function AdminGuruPage() {
 
   const guruColumns: Column<User>[] = [
     { header: 'Nama', cell: (u) => u.nama },
-    { header: 'No. HP', cell: (u) => u.no_hp },
+    { header: 'Username', cell: (u) => u.no_hp },
     { header: 'Role', cell: (u) => u.role },
     {
       header: 'Aksi',
@@ -73,7 +73,7 @@ export function AdminGuruPage() {
 
   const waliColumns: Column<User>[] = [
     { header: 'Nama', cell: (u) => u.nama },
-    { header: 'No. HP', cell: (u) => u.no_hp },
+    { header: 'Username', cell: (u) => u.no_hp },
     {
       header: 'Aksi',
       cell: (u) => (
@@ -106,8 +106,8 @@ export function AdminGuruPage() {
                 <Input id="nama-guru" value={namaGuru} onChange={(e) => setNamaGuru(e.target.value)} required />
               </div>
               <div className="min-w-[130px]">
-                <Label htmlFor="hp-guru">No. HP</Label>
-                <Input id="hp-guru" value={noHpGuru} onChange={(e) => setNoHpGuru(e.target.value)} required />
+                <Label htmlFor="hp-guru">Username</Label>
+                <Input id="hp-guru" placeholder="username" value={noHpGuru} onChange={(e) => setNoHpGuru(e.target.value)} required />
               </div>
               <div className="min-w-[150px]">
                 <Label htmlFor="role-guru">Role</Label>
@@ -144,8 +144,8 @@ export function AdminGuruPage() {
                 <Input id="nama-wali" value={namaWali} onChange={(e) => setNamaWali(e.target.value)} required />
               </div>
               <div className="min-w-[130px]">
-                <Label htmlFor="hp-wali">No. HP</Label>
-                <Input id="hp-wali" value={noHpWali} onChange={(e) => setNoHpWali(e.target.value)} required />
+                <Label htmlFor="hp-wali">Username</Label>
+                <Input id="hp-wali" placeholder="username" value={noHpWali} onChange={(e) => setNoHpWali(e.target.value)} required />
               </div>
               <Button type="submit" loading={createWaliMutation.isPending}>
                 Tambah

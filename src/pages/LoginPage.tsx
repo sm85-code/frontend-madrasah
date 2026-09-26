@@ -48,8 +48,8 @@ export function LoginPage() {
           onSubmit={handleSubmit((values) => mutation.mutate(values))}
         >
           <div>
-            <Label htmlFor="no_hp">Nomor HP</Label>
-            <Input id="no_hp" placeholder="0812xxxxxxxx" autoComplete="username" {...register('no_hp')} />
+            <Label htmlFor="no_hp">Username</Label>
+            <Input id="no_hp" placeholder="admin" autoComplete="username" {...register('no_hp')} />
             <FieldError message={errors.no_hp?.message} />
           </div>
           <div>
