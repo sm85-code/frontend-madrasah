@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery } from '@tanstack/react-query'
+import { GraduationCap } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { login } from '../api/auth'
@@ -36,38 +37,54 @@ export function LoginPage() {
   if (user) return <Navigate to="/portal" replace />
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-border bg-white p-8 shadow-sm">
-        <div className="mb-6 text-center">
-          <h1 className="text-lg font-semibold text-foreground">{pengaturan?.nama_sekolah ?? 'Sistem Informasi Madrasah'}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{pengaturan?.tagline ?? 'Masuk untuk melanjutkan'}</p>
+    <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4 py-8">
+      <div className="grid w-full max-w-3xl overflow-hidden rounded-3xl border border-border bg-card shadow-lg md:grid-cols-2">
+        <div className="hidden flex-col justify-between bg-gradient-to-br from-primary to-primary/70 p-8 text-primary-foreground md:flex">
+          <span className="flex size-11 items-center justify-center rounded-2xl bg-white/15">
+            <GraduationCap className="size-6" strokeWidth={2.25} />
+          </span>
+          <div>
+            <h1 className="text-xl font-semibold leading-tight">{pengaturan?.nama_sekolah ?? 'Sistem Informasi Madrasah'}</h1>
+            <p className="mt-2 text-sm text-primary-foreground/80">{pengaturan?.tagline ?? 'Masuk untuk melanjutkan'}</p>
+          </div>
+          <p className="text-xs text-primary-foreground/60">Satu portal untuk seluruh kebutuhan akademik dan administrasi madrasah.</p>
         </div>
 
-        <form
-          className="space-y-4"
-          onSubmit={handleSubmit((values) => mutation.mutate(values))}
-        >
-          <div>
-            <Label htmlFor="no_hp">Username</Label>
-            <Input id="no_hp" placeholder="admin" autoComplete="username" {...register('no_hp')} />
-            <FieldError message={errors.no_hp?.message} />
-          </div>
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" autoComplete="current-password" {...register('password')} />
-            <FieldError message={errors.password?.message} />
+        <div className="p-8">
+          <div className="mb-6 text-center md:text-left">
+            <span className="mb-3 flex size-11 items-center justify-center rounded-2xl bg-accent text-primary md:hidden">
+              <GraduationCap className="size-6" strokeWidth={2.25} />
+            </span>
+            <h2 className="text-lg font-semibold text-foreground">Selamat datang kembali</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Masukkan kredensial Anda untuk masuk ke portal.</p>
           </div>
 
-          {mutation.isError && (
-            <ErrorNotice
-              message={mutation.error instanceof ApiError ? mutation.error.message : 'Gagal masuk, coba lagi.'}
-            />
-          )}
+          <form
+            className="space-y-4"
+            onSubmit={handleSubmit((values) => mutation.mutate(values))}
+          >
+            <div>
+              <Label htmlFor="no_hp">Username</Label>
+              <Input id="no_hp" placeholder="admin" autoComplete="username" {...register('no_hp')} />
+              <FieldError message={errors.no_hp?.message} />
+            </div>
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input id="password" type="password" autoComplete="current-password" {...register('password')} />
+              <FieldError message={errors.password?.message} />
+            </div>
 
-          <Button type="submit" className="w-full" loading={mutation.isPending}>
-            Masuk
-          </Button>
-        </form>
+            {mutation.isError && (
+              <ErrorNotice
+                message={mutation.error instanceof ApiError ? mutation.error.message : 'Gagal masuk, coba lagi.'}
+              />
+            )}
+
+            <Button type="submit" className="w-full" loading={mutation.isPending}>
+              Masuk
+            </Button>
+          </form>
+        </div>
       </div>
     </div>
   )

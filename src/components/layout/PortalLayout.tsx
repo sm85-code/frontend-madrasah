@@ -47,7 +47,7 @@ export function PortalLayout() {
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2 px-2 py-1">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-soft">
               <GraduationCap className="h-4.5 w-4.5" strokeWidth={2.25} />
             </span>
             <p className="text-sm font-semibold leading-tight text-sidebar-foreground">
@@ -102,14 +102,14 @@ export function PortalLayout() {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <header className="flex items-center gap-3 border-b border-border bg-card px-4 py-3 sm:px-5">
+        <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-border bg-card/95 px-4 py-3 backdrop-blur sm:px-5">
           <SidebarTrigger />
-          <div>
-            <p className="text-sm font-semibold text-foreground">{user.nama}</p>
-            <p className="text-xs text-muted-foreground">{ROLE_LABEL[user.role]}</p>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-foreground">{user.nama}</p>
+            <p className="truncate text-xs text-muted-foreground">{ROLE_LABEL[user.role]}</p>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-4 sm:p-5">
+        <main className="flex-1 overflow-y-auto bg-muted/30 p-4 sm:p-5">
           <Outlet />
         </main>
       </SidebarInset>
