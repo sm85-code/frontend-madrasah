@@ -1,5 +1,4 @@
 import { useMutation } from '@tanstack/react-query'
-import { AnimatePresence, motion } from 'framer-motion'
 import { GraduationCap, LogOut, Menu } from 'lucide-react'
 import { useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
@@ -90,29 +89,14 @@ export function PortalLayout() {
       </aside>
 
       {/* Mobile drawer + backdrop */}
-      <AnimatePresence>
-        {mobileNavOpen && (
-          <div className="fixed inset-0 z-40 md:hidden">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="absolute inset-0 bg-black/30"
-              onClick={() => setMobileNavOpen(false)}
-            />
-            <motion.aside
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'tween', duration: 0.25, ease: 'easeOut' }}
-              className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col bg-white shadow-xl"
-            >
-              <SidebarNav sections={sections} onNavigate={() => setMobileNavOpen(false)} />
-            </motion.aside>
-          </div>
-        )}
-      </AnimatePresence>
+      {mobileNavOpen && (
+        <div className="fixed inset-0 z-40 md:hidden">
+          <div className="absolute inset-0 bg-black/30" onClick={() => setMobileNavOpen(false)} />
+          <aside className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col bg-white shadow-xl">
+            <SidebarNav sections={sections} onNavigate={() => setMobileNavOpen(false)} />
+          </aside>
+        </div>
+      )}
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 sm:px-5">

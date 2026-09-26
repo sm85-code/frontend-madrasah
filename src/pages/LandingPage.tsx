@@ -1,10 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { getPengaturan, getPengumuman } from '../api/public'
-import { Spotlight } from '../components/aceternity/Spotlight'
-import { CardSpotlight } from '../components/aceternity/CardSpotlight'
-import { CardBody } from '../components/ui/Card'
+import { Card, CardBody } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { Spinner } from '../components/ui/Feedback'
 
@@ -24,9 +21,8 @@ export function LandingPage() {
   const pengumuman = Array.isArray(pengumumanRaw) ? pengumumanRaw : []
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-slate-50">
-      <Spotlight className="h-[40rem]" />
-      <header className="relative border-b border-slate-200 bg-white/80 backdrop-blur-sm">
+    <div className="min-h-screen bg-slate-50">
+      <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-5 py-4">
           <div>
             <p className="font-semibold text-teal-800">{loadingPengaturan ? 'Memuat…' : pengaturan?.nama_sekolah}</p>
@@ -38,34 +34,25 @@ export function LandingPage() {
         </div>
       </header>
 
-      <main className="relative mx-auto max-w-4xl px-5 py-8">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <h1 className="text-2xl font-semibold text-slate-900">Pengumuman</h1>
-          <p className="mt-1 text-sm text-slate-500">Informasi terbaru dari madrasah.</p>
-        </motion.div>
+      <main className="mx-auto max-w-4xl px-5 py-8">
+        <h1 className="text-2xl font-semibold text-slate-900">Pengumuman</h1>
+        <p className="mt-1 text-sm text-slate-500">Informasi terbaru dari madrasah.</p>
 
         <div className="mt-5 space-y-3">
           {loadingPengumuman && <Spinner />}
           {!loadingPengumuman && pengumuman.length === 0 && (
             <p className="text-sm text-slate-500">Belum ada pengumuman.</p>
           )}
-          {pengumuman.map((item, i) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: Math.min(i * 0.05, 0.3) }}
-            >
-              <CardSpotlight>
-                <CardBody>
-                  <div className="flex items-baseline justify-between gap-3">
-                    <h2 className="font-semibold text-slate-800">{item.judul}</h2>
-                    <span className="shrink-0 text-xs text-slate-400">{item.tanggal}</span>
-                  </div>
-                  <p className="mt-1 whitespace-pre-line text-sm text-slate-600">{item.isi}</p>
-                </CardBody>
-              </CardSpotlight>
-            </motion.div>
+          {pengumuman.map((item) => (
+            <Card key={item.id}>
+              <CardBody>
+                <div className="flex items-baseline justify-between gap-3">
+                  <h2 className="font-semibold text-slate-800">{item.judul}</h2>
+                  <span className="shrink-0 text-xs text-slate-400">{item.tanggal}</span>
+                </div>
+                <p className="mt-1 whitespace-pre-line text-sm text-slate-600">{item.isi}</p>
+              </CardBody>
+            </Card>
           ))}
         </div>
 
