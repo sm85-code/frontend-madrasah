@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { kenaikanKelasMassal, listRombel, listSantriAdmin } from '../../api/admin'
-import { Button } from '../../components/ui/Button'
-import { Card, CardBody } from '../../components/ui/Card'
+import { Button } from '../../components/ui/AppButton'
+import { Card, CardBody } from '../../components/ui/AppCard'
 import { SuccessNotice, Spinner } from '../../components/ui/Feedback'
-import { Label, Select } from '../../components/ui/Input'
+import { Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 
 const LULUS_VALUE = '__LULUS__'

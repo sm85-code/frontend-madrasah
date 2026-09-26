@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { getLabaRugi } from '../../api/keuangan'
-import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/Card'
+import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
 import { Spinner } from '../../components/ui/Feedback'
-import { Input } from '../../components/ui/Input'
+import { Input } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { StatCard } from '../../components/ui/StatCard'
 

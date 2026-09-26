@@ -2,10 +2,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { createPengumuman } from '../../api/admin'
 import { getPengumuman } from '../../api/public'
-import { Button } from '../../components/ui/Button'
-import { Card, CardBody } from '../../components/ui/Card'
+import { Button } from '../../components/ui/AppButton'
+import { Card, CardBody } from '../../components/ui/AppCard'
 import { Spinner } from '../../components/ui/Feedback'
-import { Input, Label, Textarea } from '../../components/ui/Input'
+import { Input, Label, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 
 export function AdminPengumumanPage() {

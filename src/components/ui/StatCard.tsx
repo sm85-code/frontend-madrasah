@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Card } from './Card'
+import { Card, CardContent } from './card'
 
 interface StatCardProps {
   label: string
@@ -9,18 +9,20 @@ interface StatCardProps {
 }
 
 const toneClass: Record<Required<StatCardProps>['tone'], string> = {
-  default: 'text-slate-900',
-  success: 'text-emerald-600',
-  warning: 'text-amber-600',
-  danger: 'text-red-600',
+  default: 'text-foreground',
+  success: 'text-success',
+  warning: 'text-warning',
+  danger: 'text-destructive',
 }
 
 export function StatCard({ label, value, hint, tone = 'default' }: StatCardProps) {
   return (
-    <Card className="px-5 py-4">
-      <p className="text-sm font-medium text-slate-500">{label}</p>
-      <p className={`mt-1 text-2xl font-semibold ${toneClass[tone]}`}>{value}</p>
-      {hint && <p className="mt-1 text-xs text-slate-400">{hint}</p>}
+    <Card>
+      <CardContent>
+        <p className="text-sm font-medium text-muted-foreground">{label}</p>
+        <p className={`mt-1 text-2xl font-semibold ${toneClass[tone]}`}>{value}</p>
+        {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
+      </CardContent>
     </Card>
   )
 }

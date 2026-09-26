@@ -8,12 +8,12 @@ import {
   listTahunAjaran,
   tutupSemester,
 } from '../../api/akademik'
-import { Badge } from '../../components/ui/Badge'
-import { Button } from '../../components/ui/Button'
-import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/Card'
+import { Badge } from '../../components/ui/AppBadge'
+import { Button } from '../../components/ui/AppButton'
+import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
 import { Spinner } from '../../components/ui/Feedback'
-import { Input, Label, Select } from '../../components/ui/Input'
+import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Semester } from '../../types'
 

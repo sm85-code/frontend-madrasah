@@ -2,10 +2,10 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { listRombelScoped, listSantriScoped } from '../../api/shared'
 import { submitProgres } from '../../api/waliKelas'
-import { Button } from '../../components/ui/Button'
-import { Card, CardBody } from '../../components/ui/Card'
+import { Button } from '../../components/ui/AppButton'
+import { Card, CardBody } from '../../components/ui/AppCard'
 import { SuccessNotice } from '../../components/ui/Feedback'
-import { Input, Label, Select, Textarea } from '../../components/ui/Input'
+import { Input, Label, Select, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 
 export function WaliKelasProgresPage() {

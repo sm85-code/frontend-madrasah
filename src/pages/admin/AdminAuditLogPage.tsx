@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getAuditLog } from '../../api/admin'
-import { Card, CardBody } from '../../components/ui/Card'
+import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
 import { Spinner } from '../../components/ui/Feedback'
 import { PageHeader } from '../../components/ui/PageHeader'

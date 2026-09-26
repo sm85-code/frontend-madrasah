@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table'
 
 export interface Column<T> {
   header: string
@@ -15,33 +16,29 @@ interface DataTableProps<T> {
 
 export function DataTable<T>({ columns, rows, rowKey, emptyMessage = 'Belum ada data.' }: DataTableProps<T>) {
   if (rows.length === 0) {
-    return <p className="py-8 text-center text-sm text-slate-500">{emptyMessage}</p>
+    return <p className="py-8 text-center text-sm text-muted-foreground">{emptyMessage}</p>
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-left text-sm">
-        <thead>
-          <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
-            {columns.map((col) => (
-              <th key={col.header} className="whitespace-nowrap px-3 py-2 font-medium">
-                {col.header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-100">
-          {rows.map((row) => (
-            <tr key={rowKey(row)} className="hover:bg-slate-50">
-              {columns.map((col) => (
-                <td key={col.header} className={`whitespace-nowrap px-3 py-2.5 text-slate-700 ${col.className ?? ''}`}>
-                  {col.cell(row)}
-                </td>
-              ))}
-            </tr>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          {columns.map((col) => (
+            <TableHead key={col.header}>{col.header}</TableHead>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {rows.map((row) => (
+          <TableRow key={rowKey(row)}>
+            {columns.map((col) => (
+              <TableCell key={col.header} className={col.className}>
+                {col.cell(row)}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   )
 }

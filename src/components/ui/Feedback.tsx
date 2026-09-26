@@ -1,21 +1,29 @@
+import { CheckCircle2, XCircle } from 'lucide-react'
+import { Alert, AlertDescription } from './alert'
+import { Spinner as ShadSpinner } from './spinner'
+
 export function Spinner({ className = '' }: { className?: string }) {
   return (
     <div className={`flex items-center justify-center py-8 ${className}`}>
-      <span className="h-6 w-6 animate-spin rounded-full border-2 border-teal-600 border-t-transparent" />
+      <ShadSpinner className="size-6 text-primary" />
     </div>
   )
 }
 
 export function ErrorNotice({ message }: { message: string }) {
   return (
-    <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{message}</div>
+    <Alert variant="destructive">
+      <XCircle />
+      <AlertDescription>{message}</AlertDescription>
+    </Alert>
   )
 }
 
 export function SuccessNotice({ message }: { message: string }) {
   return (
-    <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-      {message}
-    </div>
+    <Alert className="border-success/30 bg-success/5 [&_svg]:text-success">
+      <CheckCircle2 />
+      <AlertDescription className="text-success">{message}</AlertDescription>
+    </Alert>
   )
 }

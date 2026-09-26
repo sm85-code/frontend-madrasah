@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { getPengaturan, getPengumuman } from '../api/public'
-import { Card, CardBody } from '../components/ui/Card'
-import { Button } from '../components/ui/Button'
+import { Card, CardBody } from '../components/ui/AppCard'
+import { Button } from '../components/ui/AppButton'
 import { Spinner } from '../components/ui/Feedback'
 
 export function LandingPage() {

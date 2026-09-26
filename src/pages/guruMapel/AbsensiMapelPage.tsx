@@ -1,10 +1,10 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { getPenugasanSaya, getSantriRombel, submitAbsensiMapel } from '../../api/guruMapel'
-import { Button } from '../../components/ui/Button'
-import { Card, CardBody } from '../../components/ui/Card'
+import { Button } from '../../components/ui/AppButton'
+import { Card, CardBody } from '../../components/ui/AppCard'
 import { Spinner, SuccessNotice } from '../../components/ui/Feedback'
-import { Label, Select } from '../../components/ui/Input'
+import { Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 
 const STATUS_OPTIONS = [

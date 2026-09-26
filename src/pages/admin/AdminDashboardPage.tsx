@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getRekap } from '../../api/admin'
-import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/Card'
+import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
 import { Spinner } from '../../components/ui/Feedback'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { StatCard } from '../../components/ui/StatCard'

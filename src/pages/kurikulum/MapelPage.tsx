@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { createMapel, createMateri, deleteMapel, deleteMateri, listMapel } from '../../api/kurikulum'
-import { Badge } from '../../components/ui/Badge'
-import { Button } from '../../components/ui/Button'
-import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/Card'
+import { Badge } from '../../components/ui/AppBadge'
+import { Button } from '../../components/ui/AppButton'
+import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
 import { Spinner } from '../../components/ui/Feedback'
-import { Input, Label } from '../../components/ui/Input'
+import { Input, Label } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 
 export function MapelPage() {
