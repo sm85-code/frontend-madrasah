@@ -27,11 +27,11 @@ import { PanelLeftIcon } from "lucide-react"
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
-// shadcn's default (18rem) is wider than the desktop sidebar (16rem) for
-// the exact same nav content -- on a narrow phone that reads as an
-// oversized drawer that doesn't track how short the menu labels actually
-// are ("Santri", "Jadwal", "Dashboard"). Match the desktop width instead.
-const SIDEBAR_WIDTH_MOBILE = "16rem"
+// Narrower than the desktop sidebar (16rem): on a phone, 16rem/256px still
+// eats ~80% of a 320-375px viewport for a menu whose longest label
+// ("Guru & Wali Santri") fits fine in less. clamp() keeps it from
+// overflowing on the very narrowest devices too.
+const SIDEBAR_WIDTH_MOBILE = "clamp(12.5rem, 78vw, 14rem)"
 const SIDEBAR_WIDTH_ICON = "3rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
@@ -498,6 +498,7 @@ function SidebarMenuButton({
   size = "default",
   tooltip,
   className,
+  onClick,
   ...props
 }: React.ComponentProps<"button"> & {
   asChild?: boolean
@@ -505,7 +506,7 @@ function SidebarMenuButton({
   tooltip?: string | React.ComponentProps<typeof TooltipContent>
 } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const Comp = asChild ? Slot.Root : "button"
-  const { isMobile, state } = useSidebar()
+  const { isMobile, state, setOpenMobile } = useSidebar()
 
   const button = (
     <Comp
@@ -514,6 +515,14 @@ function SidebarMenuButton({
       data-size={size}
       data-active={isActive}
       className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
+      onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+        onClick?.(event)
+        // Selecting a nav item in the mobile drawer should act like
+        // navigating anywhere else in a mobile app: the drawer closes so
+        // the destination page is immediately visible, instead of
+        // leaving the user to dismiss it themselves every time.
+        if (isMobile) setOpenMobile(false)
+      }}
       {...props}
     />
   )
