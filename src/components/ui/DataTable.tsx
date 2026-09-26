@@ -1,3 +1,4 @@
+import { Inbox } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table'
 
@@ -16,7 +17,12 @@ interface DataTableProps<T> {
 
 export function DataTable<T>({ columns, rows, rowKey, emptyMessage = 'Belum ada data.' }: DataTableProps<T>) {
   if (rows.length === 0) {
-    return <p className="py-8 text-center text-sm text-muted-foreground">{emptyMessage}</p>
+    return (
+      <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-border py-10 text-center">
+        <Inbox className="size-6 text-muted-foreground" strokeWidth={1.75} />
+        <p className="text-sm text-muted-foreground">{emptyMessage}</p>
+      </div>
+    )
   }
 
   return (

@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { ArrowDownCircle, ArrowUpCircle, Wallet } from 'lucide-react'
 import { useState } from 'react'
 import { createBukuKasEntry, getLaporanKeuangan } from '../../api/keuangan'
 import { Badge } from '../../components/ui/AppBadge'
@@ -58,9 +59,9 @@ export function BukuKasPage() {
 
       {laporanQuery.data && (
         <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <StatCard label="Total Masuk" value={formatRupiah(laporanQuery.data.total_masuk)} tone="success" />
-          <StatCard label="Total Keluar" value={formatRupiah(laporanQuery.data.total_keluar)} tone="danger" />
-          <StatCard label="Saldo" value={formatRupiah(laporanQuery.data.saldo)} />
+          <StatCard label="Total Masuk" value={formatRupiah(laporanQuery.data.total_masuk)} tone="success" icon={ArrowUpCircle} />
+          <StatCard label="Total Keluar" value={formatRupiah(laporanQuery.data.total_keluar)} tone="danger" icon={ArrowDownCircle} />
+          <StatCard label="Saldo" value={formatRupiah(laporanQuery.data.saldo)} icon={Wallet} />
         </div>
       )}
 

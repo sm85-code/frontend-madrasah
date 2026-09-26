@@ -92,11 +92,11 @@ export function WaliSantriPage() {
                 <div className="h-56 w-full">
                   <ResponsiveContainer>
                     <LineChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                       <XAxis dataKey="tanggal" tick={{ fontSize: 11 }} />
                       <YAxis hide />
                       <Tooltip />
-                      <Line type="monotone" dataKey="index" stroke="#0f766e" strokeWidth={2} dot name="Progres ke-" />
+                      <Line type="monotone" dataKey="index" stroke="var(--primary)" strokeWidth={2.5} dot name="Progres ke-" />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { TrendingDown, TrendingUp, Wallet } from 'lucide-react'
 import { useState } from 'react'
 import { getLabaRugi } from '../../api/keuangan'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
@@ -26,9 +27,9 @@ export function LabaRugiPage() {
       ) : (
         <>
           <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <StatCard label="Total Pendapatan" value={formatRupiah(data.total_pendapatan)} tone="success" />
-            <StatCard label="Total Beban" value={formatRupiah(data.total_beban)} tone="danger" />
-            <StatCard label="Laba Bersih" value={formatRupiah(data.laba_bersih)} />
+            <StatCard label="Total Pendapatan" value={formatRupiah(data.total_pendapatan)} tone="success" icon={TrendingUp} />
+            <StatCard label="Total Beban" value={formatRupiah(data.total_beban)} tone="danger" icon={TrendingDown} />
+            <StatCard label="Laba Bersih" value={formatRupiah(data.laba_bersih)} icon={Wallet} />
           </div>
 
           <div className="grid gap-5 lg:grid-cols-2">
