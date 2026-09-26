@@ -1,0 +1,58 @@
+import { useQuery } from '@tanstack/react-query'
+import { Link } from 'react-router-dom'
+import { getPengaturan, getPengumuman } from '../api/public'
+import { Card, CardBody } from '../components/ui/Card'
+import { Button } from '../components/ui/Button'
+import { Spinner } from '../components/ui/Feedback'
+
+export function LandingPage() {
+  const { data: pengaturan, isLoading: loadingPengaturan } = useQuery({
+    queryKey: ['pengaturan'],
+    queryFn: getPengaturan,
+  })
+  const { data: pengumuman, isLoading: loadingPengumuman } = useQuery({
+    queryKey: ['pengumuman-publik'],
+    queryFn: getPengumuman,
+  })
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      <header className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-4xl items-center justify-between px-5 py-4">
+          <div>
+            <p className="font-semibold text-teal-800">{loadingPengaturan ? 'Memuat…' : pengaturan?.nama_sekolah}</p>
+            <p className="text-xs text-slate-500">{pengaturan?.tagline}</p>
+          </div>
+          <Link to="/login">
+            <Button size="sm">Masuk</Button>
+          </Link>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-4xl px-5 py-8">
+        <h1 className="text-2xl font-semibold text-slate-900">Pengumuman</h1>
+        <p className="mt-1 text-sm text-slate-500">Informasi terbaru dari madrasah.</p>
+
+        <div className="mt-5 space-y-3">
+          {loadingPengumuman && <Spinner />}
+          {!loadingPengumuman && pengumuman?.length === 0 && (
+            <p className="text-sm text-slate-500">Belum ada pengumuman.</p>
+          )}
+          {pengumuman?.map((item) => (
+            <Card key={item.id}>
+              <CardBody>
+                <div className="flex items-baseline justify-between gap-3">
+                  <h2 className="font-semibold text-slate-800">{item.judul}</h2>
+                  <span className="shrink-0 text-xs text-slate-400">{item.tanggal}</span>
+                </div>
+                <p className="mt-1 whitespace-pre-line text-sm text-slate-600">{item.isi}</p>
+              </CardBody>
+            </Card>
+          ))}
+        </div>
+
+        {pengaturan?.alamat && <p className="mt-10 text-center text-xs text-slate-400">{pengaturan.alamat}</p>}
+      </main>
+    </div>
+  )
+}

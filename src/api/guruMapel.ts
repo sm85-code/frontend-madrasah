@@ -1,0 +1,47 @@
+import { apiClient } from '../lib/apiClient'
+import type { Penugasan, ProgresEntry, Santri } from '../types'
+
+export async function getPenugasanSaya(): Promise<Penugasan[]> {
+  const { data } = await apiClient.get<Penugasan[]>('/guru-mapel/penugasan-saya')
+  return data
+}
+
+export async function getSantriRombel(rombelId: string): Promise<Santri[]> {
+  const { data } = await apiClient.get<Santri[]>('/guru-mapel/santri', { params: { rombel_id: rombelId } })
+  return data
+}
+
+export async function submitAbsensiMapel(payload: {
+  tanggal: string
+  rombel_id: string
+  mapel_id: string
+  items: { santri_id: string; status: 'hadir' | 'sakit' | 'izin' | 'alpa' }[]
+}) {
+  const { data } = await apiClient.post<{ inserted: number }>('/guru-mapel/absensi', payload)
+  return data
+}
+
+export async function getRekapAbsensiMapel(rombelId: string, mapelId: string) {
+  const { data } = await apiClient.get('/guru-mapel/rekap-absensi', {
+    params: { rombel_id: rombelId, mapel_id: mapelId },
+  })
+  return data
+}
+
+export async function submitProgresGuruMapel(payload: {
+  tanggal: string
+  santri_id: string
+  tipe: string
+  capaian: string
+  catatan_guru?: string
+  mapel_id?: string
+  materi_id?: string
+}) {
+  const { data } = await apiClient.post('/guru-mapel/progres', payload)
+  return data
+}
+
+export async function getRaporSantri(santriId: string): Promise<{ santri_id: string; santri_nama: string; progres: ProgresEntry[] }> {
+  const { data } = await apiClient.get(`/guru-mapel/rapor/${santriId}`)
+  return data
+}
