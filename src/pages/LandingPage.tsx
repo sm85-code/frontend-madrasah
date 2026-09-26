@@ -10,10 +10,15 @@ export function LandingPage() {
     queryKey: ['pengaturan'],
     queryFn: getPengaturan,
   })
-  const { data: pengumuman, isLoading: loadingPengumuman } = useQuery({
+  const { data: pengumumanRaw, isLoading: loadingPengumuman } = useQuery({
     queryKey: ['pengumuman-publik'],
     queryFn: getPengumuman,
   })
+  // Defensive: only ever render this as a list. If VITE_API_BASE_URL is
+  // misconfigured, a relative request can resolve against this same dev
+  // server/host instead of the backend and come back non-JSON -- fail
+  // quiet (empty list) instead of crashing the whole public landing page.
+  const pengumuman = Array.isArray(pengumumanRaw) ? pengumumanRaw : []
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -35,10 +40,10 @@ export function LandingPage() {
 
         <div className="mt-5 space-y-3">
           {loadingPengumuman && <Spinner />}
-          {!loadingPengumuman && pengumuman?.length === 0 && (
+          {!loadingPengumuman && pengumuman.length === 0 && (
             <p className="text-sm text-slate-500">Belum ada pengumuman.</p>
           )}
-          {pengumuman?.map((item) => (
+          {pengumuman.map((item) => (
             <Card key={item.id}>
               <CardBody>
                 <div className="flex items-baseline justify-between gap-3">
