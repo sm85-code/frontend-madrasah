@@ -15,6 +15,7 @@ import { useState, type ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { getKegiatan, getPengaturan, getPengumuman, submitPendaftaran } from '../api/public'
 import { ApiError } from '../lib/apiClient'
+import { AppearancePopover } from '../components/AppearancePopover'
 import { Card, CardBody } from '../components/ui/AppCard'
 import { Button } from '../components/ui/AppButton'
 import { ErrorNotice, Spinner, SuccessNotice } from '../components/ui/Feedback'
@@ -193,9 +194,12 @@ export function LandingPage() {
               <p className="truncate text-xs text-muted-foreground">{pengaturan?.tagline}</p>
             </div>
           </div>
-          <Link to="/login" className="shrink-0">
-            <Button size="sm">Masuk</Button>
-          </Link>
+          <div className="flex shrink-0 items-center gap-1">
+            <AppearancePopover />
+            <Link to="/login">
+              <Button size="sm">Masuk</Button>
+            </Link>
+          </div>
         </div>
       </header>
 

@@ -57,7 +57,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  background-image: radial-gradient(at top left, oklch(0.955 0.045 156.743 / 40%), transparent 55%);
+  background-image: radial-gradient(at top left, color-mix(in oklch, var(--accent) 40%, transparent), transparent 55%);
   background-attachment: fixed;
 }
 
@@ -163,6 +163,73 @@ h3 {
 
 .dark body {
   background-image: none;
+}
+
+/* Preset "Tema" dari popover Tampilan -- cuma menimpa warna primary/accent/
+   ring/sidebar-accent, bukan seluruh palet (background/border/card tetap
+   sama seperti default). "teal" tidak butuh blok sendiri karena itu warna
+   default yang sudah ada di :root/.dark di atas. */
+:root[data-theme='blue'] {
+  --primary: oklch(0.55 0.18 260);
+  --ring: oklch(0.65 0.15 260);
+  --accent: oklch(0.955 0.03 260);
+  --accent-foreground: oklch(0.55 0.18 260);
+  --sidebar-primary: oklch(0.55 0.18 260);
+  --sidebar-accent: oklch(0.955 0.03 260);
+  --sidebar-accent-foreground: oklch(0.55 0.18 260);
+  --sidebar-ring: oklch(0.65 0.15 260);
+}
+.dark[data-theme='blue'] {
+  --primary: oklch(0.65 0.16 260);
+  --ring: oklch(0.65 0.16 260);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.8 0.12 260);
+  --sidebar-primary: oklch(0.65 0.16 260);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.8 0.12 260);
+  --sidebar-ring: oklch(0.65 0.16 260);
+}
+
+:root[data-theme='violet'] {
+  --primary: oklch(0.53 0.2 295);
+  --ring: oklch(0.63 0.18 295);
+  --accent: oklch(0.955 0.035 295);
+  --accent-foreground: oklch(0.53 0.2 295);
+  --sidebar-primary: oklch(0.53 0.2 295);
+  --sidebar-accent: oklch(0.955 0.035 295);
+  --sidebar-accent-foreground: oklch(0.53 0.2 295);
+  --sidebar-ring: oklch(0.63 0.18 295);
+}
+.dark[data-theme='violet'] {
+  --primary: oklch(0.68 0.17 295);
+  --ring: oklch(0.68 0.17 295);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.82 0.12 295);
+  --sidebar-primary: oklch(0.68 0.17 295);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.82 0.12 295);
+  --sidebar-ring: oklch(0.68 0.17 295);
+}
+
+:root[data-theme='amber'] {
+  --primary: oklch(0.55 0.15 70);
+  --ring: oklch(0.68 0.15 70);
+  --accent: oklch(0.955 0.04 70);
+  --accent-foreground: oklch(0.45 0.15 70);
+  --sidebar-primary: oklch(0.55 0.15 70);
+  --sidebar-accent: oklch(0.955 0.04 70);
+  --sidebar-accent-foreground: oklch(0.45 0.15 70);
+  --sidebar-ring: oklch(0.68 0.15 70);
+}
+.dark[data-theme='amber'] {
+  --primary: oklch(0.72 0.15 70);
+  --ring: oklch(0.72 0.15 70);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.82 0.14 70);
+  --sidebar-primary: oklch(0.72 0.15 70);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.82 0.14 70);
+  --sidebar-ring: oklch(0.72 0.15 70);
 }
 
 @layer base {
