@@ -8,8 +8,7 @@ import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCa
 import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Textarea } from '../../components/ui/AppInput'
-import { INFO_AKADEMIK_ROLES } from '../../config/roles'
-import { useCanWrite } from '../../hooks/useCanWrite'
+import { PageHeader } from '../../components/ui/PageHeader'
 
 export function AdminPengaturanPage() {
   const queryClient = useQueryClient()

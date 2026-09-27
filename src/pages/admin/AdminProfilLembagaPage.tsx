@@ -10,6 +10,7 @@ import { Input, Label, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { PROFIL_LEMBAGA_WRITE_ROLES } from '../../config/roles'
 import { useCanWrite } from '../../hooks/useCanWrite'
+import type { Pengaturan } from '../../types'
 
 /** Mounted only once `pengaturan` has loaded (see the `isLoading` gate
  * below), so its form state can be initialized straight from the fetched

@@ -9,6 +9,7 @@ import { DataTable, type Column } from '../../components/ui/DataTable'
 import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedback'
 import { Input, Label } from '../../components/ui/AppInput'
+import { PageHeader } from '../../components/ui/PageHeader'
 import { KEUANGAN_WRITE_ROLES } from '../../config/roles'
 import { useCanWrite } from '../../hooks/useCanWrite'
 import type { Tagihan } from '../../types'
@@ -86,11 +87,11 @@ export function SppPage() {
         title="SPP / Syahriyah"
         description="Generate tagihan bulanan dan verifikasi pembayaran yang diajukan wali kelas."
         actions={
-          {writable && (
-          <Button loading={generateMutation.isPending} onClick={() => generateMutation.mutate()}>
-            Generate SPP Bulan Ini
-          </Button>
-          )}
+          writable ? (
+            <Button loading={generateMutation.isPending} onClick={() => generateMutation.mutate()}>
+              Generate SPP Bulan Ini
+            </Button>
+          ) : undefined
         }
       />
 

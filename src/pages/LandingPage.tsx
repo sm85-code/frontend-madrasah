@@ -133,7 +133,7 @@ function PendaftaranForm() {
           </div>
           <div>
             <Label htmlFor="madrasah_unit_id">Unit / lembaga</Label>
-            <Select id="madrasah_unit_id" value={form.madrasah_unit_id} onChange={set('madrasah_unit_id')} required>
+            <Select id="madrasah_unit_id" value={form.madrasah_unit_id} onChange={(e) => setForm((prev) => ({ ...prev, madrasah_unit_id: e.target.value }))} required>
               <option value="">Pilih unit</option>
               {unitQuery.data?.map((u) => (
                 <option key={u.id} value={u.id}>

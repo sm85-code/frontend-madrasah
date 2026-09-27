@@ -8,6 +8,7 @@ import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCa
 import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label } from '../../components/ui/AppInput'
+import { PageHeader } from '../../components/ui/PageHeader'
 import { KURIKULUM_WRITE_ROLES } from '../../config/roles'
 import { useCanWrite } from '../../hooks/useCanWrite'
 
