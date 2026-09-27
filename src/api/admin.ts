@@ -63,6 +63,11 @@ export async function createGuru(payload: {
   return data
 }
 
+export async function patchGuru(id: string, payload: { nama?: string; no_hp?: string; role?: string; password?: string }) {
+  const { data } = await apiClient.patch<User>(`/admin/guru/${id}`, payload)
+  return data
+}
+
 export async function deleteGuru(id: string) {
   await apiClient.delete(`/admin/guru/${id}`)
 }
@@ -74,6 +79,11 @@ export async function listWaliSantri(): Promise<User[]> {
 
 export async function createWaliSantri(payload: { nama: string; no_hp: string; password?: string }) {
   const { data } = await apiClient.post<User>('/admin/wali-santri', payload)
+  return data
+}
+
+export async function patchWaliSantri(id: string, payload: { nama?: string; no_hp?: string; password?: string }) {
+  const { data } = await apiClient.patch<User>(`/admin/wali-santri/${id}`, payload)
   return data
 }
 
