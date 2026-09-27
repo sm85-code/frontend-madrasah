@@ -9,6 +9,8 @@ import { AdminAuditLogPage } from './pages/admin/AdminAuditLogPage'
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
 import { AdminGuruPage } from './pages/admin/AdminGuruPage'
 import { AdminKenaikanKelasPage } from './pages/admin/AdminKenaikanKelasPage'
+import { AdminPendaftaranPage } from './pages/admin/AdminPendaftaranPage'
+import { AdminPengaturanPage } from './pages/admin/AdminPengaturanPage'
 import { AdminPengumumanPage } from './pages/admin/AdminPengumumanPage'
 import { AdminRombelPage } from './pages/admin/AdminRombelPage'
 import { AdminSantriPage } from './pages/admin/AdminSantriPage'
@@ -54,6 +56,8 @@ function App() {
                 <Route path="kenaikan-kelas" element={<AdminKenaikanKelasPage />} />
                 <Route path="tahun-ajaran" element={<AdminTahunAjaranPage />} />
                 <Route path="pengumuman" element={<AdminPengumumanPage />} />
+                <Route path="pendaftaran" element={<AdminPendaftaranPage />} />
+                <Route path="pengaturan" element={<AdminPengaturanPage />} />
                 <Route path="audit-log" element={<AdminAuditLogPage />} />
                 <Route path="keuangan/buku-kas" element={<BukuKasPage />} />
                 <Route path="keuangan/laba-rugi" element={<LabaRugiPage />} />

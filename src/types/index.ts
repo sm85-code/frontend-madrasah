@@ -24,6 +24,29 @@ export interface Pengaturan {
   tagline: string
   logo_url: string | null
   alamat: string
+  info_psb: string
+  kontak_psb: string
+}
+
+export interface Kegiatan {
+  id: string
+  judul: string
+  deskripsi: string
+  urutan: number
+}
+
+export interface Pendaftaran {
+  id: string
+  nama_calon: string
+  tempat_lahir: string | null
+  tanggal_lahir: string | null
+  nama_orang_tua: string
+  no_hp: string
+  alamat: string
+  asal_sekolah: string | null
+  catatan: string
+  status: 'baru' | 'dihubungi' | 'diterima' | 'ditolak'
+  dibuat_pada: string
 }
 
 export interface Pengumuman {
