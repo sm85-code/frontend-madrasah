@@ -289,4 +289,5 @@ export interface RekapUnit {
   total_guru: number
   tagihan_lunas: number
   tagihan_belum: number
+  per_rombel?: { rombel: string; jumlah_santri: number }[]
 }
