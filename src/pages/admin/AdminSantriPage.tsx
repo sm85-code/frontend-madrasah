@@ -1,10 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { createSantri, listRombel, listSantriAdmin, setSantriStatus } from '../../api/admin'
+import { createSantri, deleteSantri, listRombel, listSantriAdmin, setSantriStatus } from '../../api/admin'
+import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
+import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
@@ -43,6 +45,11 @@ export function AdminSantriPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'santri'] }),
   })
 
+  const deleteMutation = useMutation({
+    mutationFn: deleteSantri,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'santri'] }),
+  })
+
   const rombelName = (id: string | null) => rombelQuery.data?.find((r) => r.id === id)?.nama ?? '-'
 
   const columns: Column<Santri>[] = [
@@ -71,6 +78,11 @@ export function AdminSantriPage() {
               Keluarkan
             </Button>
           )}
+          <DeleteRowButton
+            onClick={() => deleteMutation.mutate(s.id)}
+            pending={deleteMutation.isPending}
+            itemName={`santri ${s.nama}`}
+          />
         </div>
       ),
     },
@@ -127,6 +139,13 @@ export function AdminSantriPage() {
 
       <Card>
         <CardBody>
+          {deleteMutation.isError && (
+            <div className="mb-3">
+              <ErrorNotice
+                message={deleteMutation.error instanceof ApiError ? deleteMutation.error.message : 'Gagal menghapus santri.'}
+              />
+            </div>
+          )}
           {santriQuery.isLoading ? (
             <Spinner />
           ) : (
