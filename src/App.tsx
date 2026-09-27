@@ -3,11 +3,21 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { PortalLayout } from './components/layout/PortalLayout'
 import { RoleGuard } from './components/RoleGuard'
-import { ADMIN_ROLES, BENDAHARA_ROLES, GURU_MAPEL_ROLES, KURIKULUM_ROLES, WALI_KELAS_ROLES, WALI_SANTRI_ROLES, YAYASAN_ROLES } from './config/roles'
+import {
+  ADMIN_ROLES,
+  APP_ADMIN_ROLES,
+  BENDAHARA_ROLES,
+  GURU_MAPEL_ROLES,
+  KURIKULUM_ROLES,
+  WALI_KELAS_ROLES,
+  WALI_SANTRI_ROLES,
+  YAYASAN_ROLES,
+} from './config/roles'
 import { queryClient } from './lib/queryClient'
 import { AdminAuditLogPage } from './pages/admin/AdminAuditLogPage'
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
 import { AdminGuruPage } from './pages/admin/AdminGuruPage'
+import { AdminKelolaAkunPage } from './pages/admin/AdminKelolaAkunPage'
 import { AdminKenaikanKelasPage } from './pages/admin/AdminKenaikanKelasPage'
 import { AdminPendaftaranPage } from './pages/admin/AdminPendaftaranPage'
 import { AdminPengaturanPage } from './pages/admin/AdminPengaturanPage'
@@ -55,7 +65,6 @@ function App() {
                 <Route path="dashboard" element={<AdminDashboardPage />} />
                 <Route path="santri" element={<AdminSantriPage />} />
                 <Route path="rombel" element={<AdminRombelPage />} />
-                <Route path="guru" element={<AdminGuruPage />} />
                 <Route path="kenaikan-kelas" element={<AdminKenaikanKelasPage />} />
                 <Route path="tahun-ajaran" element={<AdminTahunAjaranPage />} />
                 <Route path="pengumuman" element={<AdminPengumumanPage />} />
@@ -66,6 +75,11 @@ function App() {
                 <Route path="keuangan/buku-kas" element={<BukuKasPage />} />
                 <Route path="keuangan/laba-rugi" element={<LabaRugiPage />} />
                 <Route path="keuangan/honor" element={<HonorPage />} />
+              </Route>
+
+              <Route element={<RoleGuard roles={APP_ADMIN_ROLES} />}>
+                <Route path="guru" element={<AdminGuruPage />} />
+                <Route path="kelola-akun" element={<AdminKelolaAkunPage />} />
               </Route>
 
               <Route element={<RoleGuard roles={YAYASAN_ROLES} />}>

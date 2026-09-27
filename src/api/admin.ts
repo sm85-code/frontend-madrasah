@@ -50,6 +50,25 @@ export async function deleteRombel(id: string) {
   await apiClient.delete(`/admin/rombel/${id}`)
 }
 
+export async function listAkun(): Promise<User[]> {
+  const { data } = await apiClient.get<User[]>('/admin/akun')
+  return data
+}
+
+export async function createAkun(payload: { nama: string; no_hp: string; password?: string; role: string }) {
+  const { data } = await apiClient.post<User>('/admin/akun', payload)
+  return data
+}
+
+export async function patchAkun(id: string, payload: { nama?: string; no_hp?: string; role?: string; password?: string }) {
+  const { data } = await apiClient.patch<User>(`/admin/akun/${id}`, payload)
+  return data
+}
+
+export async function deleteAkun(id: string) {
+  await apiClient.delete(`/admin/akun/${id}`)
+}
+
 export async function listGuru(): Promise<User[]> {
   const { data } = await apiClient.get<User[]>('/admin/guru')
   return data
