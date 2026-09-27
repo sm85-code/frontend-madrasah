@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { createKegiatan, deleteKegiatan } from '../../api/admin'
-import { getKegiatan } from '../../api/public'
+import { createKegiatan, deleteKegiatan, listKegiatanAdmin } from '../../api/admin'
 import { ApiError } from '../../lib/apiClient'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
@@ -9,10 +8,14 @@ import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { canWrite, INFO_AKADEMIK_ROLES } from '../../config/roles'
+import { useAuthStore } from '../../store/authStore'
 
 export function AdminPengaturanPage() {
   const queryClient = useQueryClient()
-  const kegiatanQuery = useQuery({ queryKey: ['kegiatan-publik'], queryFn: getKegiatan })
+  const role = useAuthStore((s) => s.user?.role)
+  const writable = canWrite(role, INFO_AKADEMIK_ROLES)
+  const kegiatanQuery = useQuery({ queryKey: ['admin', 'kegiatan'], queryFn: listKegiatanAdmin })
 
   const [judulKegiatan, setJudulKegiatan] = useState('')
   const [deskripsiKegiatan, setDeskripsiKegiatan] = useState('')
@@ -22,7 +25,7 @@ export function AdminPengaturanPage() {
     onSuccess: () => {
       setJudulKegiatan('')
       setDeskripsiKegiatan('')
-      queryClient.invalidateQueries({ queryKey: ['kegiatan-publik'] })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'kegiatan'] })
     },
   })
 
@@ -33,13 +36,14 @@ export function AdminPengaturanPage() {
 
   return (
     <div>
-      <PageHeader title="Kegiatan & Program" description="Kegiatan yang tampil di halaman publik." />
+      <PageHeader title="Kegiatan & Program" description="Daftar sesuai unit Anda. Halaman publik tetap menampilkan semua unit." />
 
       <Card className="max-w-xl">
         <CardHeader>
           <CardTitle>Kegiatan & Program</CardTitle>
         </CardHeader>
         <CardBody>
+          {writable && (
           <form
             className="mb-4 space-y-3"
             onSubmit={(e) => {
@@ -64,6 +68,7 @@ export function AdminPengaturanPage() {
               Tambah Kegiatan
             </Button>
           </form>
+          )}
 
           {kegiatanQuery.isLoading ? (
             <Spinner />
@@ -77,7 +82,9 @@ export function AdminPengaturanPage() {
                     <p className="font-medium text-foreground">{k.judul}</p>
                     {k.deskripsi && <p className="mt-0.5 text-muted-foreground">{k.deskripsi}</p>}
                   </div>
+                  {writable && (
                   <DeleteRowButton onClick={() => deleteKegiatanMutation.mutate(k.id)} label={`Hapus ${k.judul}`} itemName={k.judul} />
+                  )}
                 </li>
               ))}
             </ul>

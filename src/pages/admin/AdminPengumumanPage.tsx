@@ -1,17 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { createPengumuman } from '../../api/admin'
-import { getPengumuman } from '../../api/public'
+import { createPengumuman, listPengumumanAdmin } from '../../api/admin'
 import { ApiError } from '../../lib/apiClient'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { canWrite, INFO_AKADEMIK_ROLES } from '../../config/roles'
+import { useAuthStore } from '../../store/authStore'
 
 export function AdminPengumumanPage() {
   const queryClient = useQueryClient()
-  const pengumumanQuery = useQuery({ queryKey: ['pengumuman-publik'], queryFn: getPengumuman })
+  const role = useAuthStore((s) => s.user?.role)
+  const writable = canWrite(role, INFO_AKADEMIK_ROLES)
+  const pengumumanQuery = useQuery({ queryKey: ['admin', 'pengumuman'], queryFn: listPengumumanAdmin })
   const [judul, setJudul] = useState('')
   const [isi, setIsi] = useState('')
 
@@ -20,14 +23,15 @@ export function AdminPengumumanPage() {
     onSuccess: () => {
       setJudul('')
       setIsi('')
-      queryClient.invalidateQueries({ queryKey: ['pengumuman-publik'] })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'pengumuman'] })
     },
   })
 
   return (
     <div>
-      <PageHeader title="Pengumuman" description="Tampil di halaman publik & untuk semua wali santri." />
+      <PageHeader title="Pengumuman" description="Daftar sesuai unit Anda. Halaman publik tetap menampilkan semua unit." />
 
+      {writable && (
       <Card className="mb-5">
         <CardBody>
           <form
@@ -54,6 +58,7 @@ export function AdminPengumumanPage() {
           </form>
         </CardBody>
       </Card>
+      )}
 
       {pengumumanQuery.isLoading ? (
         <Spinner />

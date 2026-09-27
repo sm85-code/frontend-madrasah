@@ -8,7 +8,7 @@ import {
   UNIT_ACCOUNT_READ_ROLES,
   KEUANGAN_READ_ROLES,
   KURIKULUM_READ_ROLES,
-  INFO_AKADEMIK_ROLES,
+  INFO_AKADEMIK_READ_ROLES,
   DASHBOARD_ROLES,
   SANTRI_READ_ROLES,
   ROMBEL_READ_ROLES,
@@ -83,7 +83,7 @@ function App() {
               <Route element={<RoleGuard roles={KENAIKAN_READ_ROLES} />}>
                 <Route path="kenaikan-kelas" element={<AdminKenaikanKelasPage />} />
               </Route>
-              <Route element={<RoleGuard roles={INFO_AKADEMIK_ROLES} />}>
+              <Route element={<RoleGuard roles={INFO_AKADEMIK_READ_ROLES} />}>
                 <Route path="tahun-ajaran" element={<AdminTahunAjaranPage />} />
                 <Route path="pengumuman" element={<AdminPengumumanPage />} />
                 <Route path="pengaturan" element={<AdminPengaturanPage />} />

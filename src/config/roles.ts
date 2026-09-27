@@ -15,6 +15,7 @@ export const KURIKULUM_READ_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga
 export const KURIKULUM_WRITE_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin', 'kurikulum']
 export const KEUANGAN_READ_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin', 'bendahara', 'yayasan_admin']
 export const KEUANGAN_WRITE_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin', 'bendahara']
+export const INFO_AKADEMIK_READ_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin', 'kurikulum', 'yayasan_admin']
 export const INFO_AKADEMIK_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin', 'kurikulum']
 export const PROFIL_LEMBAGA_READ_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin', 'yayasan_admin']
 export const PROFIL_LEMBAGA_WRITE_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin']

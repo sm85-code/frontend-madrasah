@@ -16,6 +16,8 @@ import { DataTable, type Column } from '../../components/ui/DataTable'
 import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { canWrite, INFO_AKADEMIK_ROLES } from '../../config/roles'
+import { useAuthStore } from '../../store/authStore'
 import type { Semester } from '../../types'
 
 const STATUS_TONE: Record<Semester['status'], 'success' | 'neutral' | 'warning'> = {
@@ -26,6 +28,8 @@ const STATUS_TONE: Record<Semester['status'], 'success' | 'neutral' | 'warning'>
 
 export function AdminTahunAjaranPage() {
   const queryClient = useQueryClient()
+  const role = useAuthStore((s) => s.user?.role)
+  const writable = canWrite(role, INFO_AKADEMIK_ROLES)
   const tahunAjaranQuery = useQuery({ queryKey: ['akademik', 'tahun-ajaran'], queryFn: listTahunAjaran })
   const semesterQuery = useQuery({ queryKey: ['akademik', 'semester'], queryFn: listSemester })
 
@@ -80,7 +84,8 @@ export function AdminTahunAjaranPage() {
     { header: 'Status', cell: (s) => <Badge tone={STATUS_TONE[s.status]}>{s.status}</Badge> },
     {
       header: 'Aksi',
-      cell: (s) => (
+      cell: (s) =>
+        writable ? (
         <div className="flex gap-1">
           {s.status !== 'aktif' && (
             <Button size="sm" onClick={() => aktifkanMutation.mutate(s.id)}>
@@ -93,7 +98,9 @@ export function AdminTahunAjaranPage() {
             </Button>
           )}
         </div>
-      ),
+        ) : (
+          <span className="text-sm text-muted-foreground">Lihat saja</span>
+        ),
     },
   ]
 
@@ -107,6 +114,7 @@ export function AdminTahunAjaranPage() {
             <CardTitle>Tahun Ajaran</CardTitle>
           </CardHeader>
           <CardBody>
+            {writable && (
             <form
               className="mb-4 space-y-3"
               onSubmit={(e) => {
@@ -137,6 +145,7 @@ export function AdminTahunAjaranPage() {
                 Tambah Tahun Ajaran
               </Button>
             </form>
+            )}
             <div className="space-y-1 text-sm text-muted-foreground">
               {tahunAjaranQuery.data?.map((t) => (
                 <div key={t.id}>{t.kode}</div>
@@ -150,6 +159,7 @@ export function AdminTahunAjaranPage() {
             <CardTitle>Semester Baru</CardTitle>
           </CardHeader>
           <CardBody>
+            {writable ? (
             <form
               className="space-y-3"
               onSubmit={(e) => {
@@ -198,6 +208,9 @@ export function AdminTahunAjaranPage() {
                 Tambah Semester
               </Button>
             </form>
+            ) : (
+              <p className="text-sm text-muted-foreground">Lihat saja. Tahun ajaran per unit.</p>
+            )}
           </CardBody>
         </Card>
       </div>
