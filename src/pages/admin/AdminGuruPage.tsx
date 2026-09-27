@@ -436,7 +436,7 @@ export function AdminGuruPage() {
               {hasAnyRole(me, ['kepala_sekolah', 'lembaga_admin']) && me && (
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="secondary"
                   loading={createTugasMutation.isPending}
                   onClick={() =>
                     createTugas({
