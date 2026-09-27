@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import {
   CalendarCheck,
   ClipboardCheck,
@@ -6,20 +6,16 @@ import {
   Megaphone,
   MessageCircle,
   Phone,
-  Send,
   Sparkles,
   TrendingUp,
   Wallet,
 } from 'lucide-react'
-import { useState, type ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { getKegiatan, getPengaturan, getPengumuman, listUnitPublik, submitPendaftaran } from '../api/public'
-import { ApiError } from '../lib/apiClient'
+import { getKegiatan, getPengaturan, getPengumuman, listUnitPublik } from '../api/public'
 import { AppearancePopover } from '../components/AppearancePopover'
 import { Card, CardBody } from '../components/ui/AppCard'
 import { Button } from '../components/ui/AppButton'
-import { ErrorNotice, Spinner, SuccessNotice } from '../components/ui/Feedback'
-import { Input, Label, Select, Textarea } from '../components/ui/AppInput'
+import { Spinner } from '../components/ui/Feedback'
 
 const LAYANAN = [
   {
@@ -48,129 +44,6 @@ function waLink(kontak: string) {
   const digits = kontak.replace(/[^0-9]/g, '')
   const normalized = digits.startsWith('0') ? `62${digits.slice(1)}` : digits
   return `https://wa.me/${normalized}`
-}
-
-function PendaftaranForm() {
-  const unitQuery = useQuery({ queryKey: ['unit-publik'], queryFn: listUnitPublik })
-  const [form, setForm] = useState({
-    nama_calon: '',
-    tempat_lahir: '',
-    tanggal_lahir: '',
-    nama_orang_tua: '',
-    no_hp: '',
-    alamat: '',
-    asal_sekolah: '',
-    catatan: '',
-    madrasah_unit_id: '',
-  })
-
-  const mutation = useMutation({
-    mutationFn: () => submitPendaftaran(form),
-    onSuccess: () => {
-      setForm({
-        nama_calon: '',
-        tempat_lahir: '',
-        tanggal_lahir: '',
-        nama_orang_tua: '',
-        no_hp: '',
-        alamat: '',
-        asal_sekolah: '',
-        catatan: '',
-        madrasah_unit_id: '',
-      })
-    },
-  })
-
-  const set = (field: keyof typeof form) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setForm((prev) => ({ ...prev, [field]: e.target.value }))
-
-  if (mutation.isSuccess) {
-    return (
-      <Card className="shadow-soft">
-        <CardBody className="flex flex-col items-center gap-2 py-10 text-center">
-          <SuccessNotice message="Pendaftaran berhasil dikirim. Kami akan menghubungi Anda segera." />
-          <Button variant="secondary" onClick={() => mutation.reset()} className="mt-2">
-            Daftarkan Calon Lain
-          </Button>
-        </CardBody>
-      </Card>
-    )
-  }
-
-  return (
-    <Card className="shadow-soft">
-      <CardBody>
-        <form
-          className="grid gap-3 sm:grid-cols-2"
-          onSubmit={(e) => {
-            e.preventDefault()
-            mutation.mutate()
-          }}
-        >
-          <div>
-            <Label htmlFor="nama_calon">Nama calon santri</Label>
-            <Input id="nama_calon" value={form.nama_calon} onChange={set('nama_calon')} required />
-          </div>
-          <div>
-            <Label htmlFor="nama_orang_tua">Nama orang tua/wali</Label>
-            <Input id="nama_orang_tua" value={form.nama_orang_tua} onChange={set('nama_orang_tua')} required />
-          </div>
-          <div>
-            <Label htmlFor="tempat_lahir">Tempat lahir</Label>
-            <Input id="tempat_lahir" value={form.tempat_lahir} onChange={set('tempat_lahir')} />
-          </div>
-          <div>
-            <Label htmlFor="tanggal_lahir">Tanggal lahir</Label>
-            <Input id="tanggal_lahir" type="date" value={form.tanggal_lahir} onChange={set('tanggal_lahir')} />
-          </div>
-          <div>
-            <Label htmlFor="no_hp">No. HP/WhatsApp aktif</Label>
-            <Input id="no_hp" placeholder="0812xxxxxxxx" value={form.no_hp} onChange={set('no_hp')} required />
-          </div>
-          <div>
-            <Label htmlFor="asal_sekolah">Asal sekolah (jika ada)</Label>
-            <Input id="asal_sekolah" value={form.asal_sekolah} onChange={set('asal_sekolah')} />
-          </div>
-          <div>
-            <Label htmlFor="madrasah_unit_id">Unit / lembaga</Label>
-            <Select id="madrasah_unit_id" value={form.madrasah_unit_id} onChange={(e) => setForm((prev) => ({ ...prev, madrasah_unit_id: e.target.value }))} required>
-              <option value="">Pilih unit</option>
-              {unitQuery.data?.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.nama}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div className="sm:col-span-2">
-            <Label htmlFor="alamat">Alamat</Label>
-            <Textarea id="alamat" rows={2} value={form.alamat} onChange={set('alamat')} />
-          </div>
-          <div className="sm:col-span-2">
-            <Label htmlFor="catatan">Catatan (opsional)</Label>
-            <Textarea id="catatan" rows={2} value={form.catatan} onChange={set('catatan')} />
-          </div>
-
-          {mutation.isError && (
-            <div className="sm:col-span-2">
-              <ErrorNotice
-                message={
-                  mutation.error instanceof ApiError
-                    ? mutation.error.message
-                    : 'Gagal mengirim pendaftaran, coba lagi.'
-                }
-              />
-            </div>
-          )}
-
-          <Button type="submit" loading={mutation.isPending} className="sm:col-span-2 sm:w-fit">
-            <Send className="size-4" strokeWidth={2} />
-            Kirim Pendaftaran
-          </Button>
-        </form>
-      </CardBody>
-    </Card>
-  )
 }
 
 export function LandingPage() {
@@ -213,7 +86,10 @@ export function LandingPage() {
               <p className="truncate text-xs text-muted-foreground">{pengaturan?.tagline}</p>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-1">
+          <div className="flex shrink-0 items-center gap-2">
+            <Link to="/pendaftaran" className="text-sm font-medium text-foreground hover:underline">
+              Pendaftaran
+            </Link>
             <AppearancePopover />
             <Link to="/login">
               <Button size="sm">Masuk</Button>
@@ -242,9 +118,9 @@ export function LandingPage() {
               {pengaturan?.tagline ?? 'Satu portal untuk absensi, progres akademik, SPP, dan komunikasi wali santri.'}
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <a href="#daftar">
+              <Link to="/pendaftaran">
                 <Button>Daftar Jadi Santri Baru</Button>
-              </a>
+              </Link>
               <Link to="/login">
                 <Button variant="secondary">Masuk ke Portal</Button>
               </Link>
@@ -334,22 +210,16 @@ export function LandingPage() {
                       Hubungi Panitia PSB: {kontakPsb}
                     </a>
                   )}
+                  <div className="mt-4">
+                    <Link to="/pendaftaran">
+                      <Button size="sm">Buka Formulir Pendaftaran</Button>
+                    </Link>
+                  </div>
                 </CardBody>
               </Card>
             </div>
           </section>
         )}
-
-        {/* Formulir Pendaftaran */}
-        <section id="daftar" className="border-t border-border bg-muted/30">
-          <div className="mx-auto max-w-3xl px-5 py-14 sm:py-16">
-            <div className="mb-8 text-center">
-              <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Formulir Pendaftaran Calon Santri</h2>
-              <p className="mt-2 text-sm text-muted-foreground">Isi data di bawah, panitia PSB akan menghubungi Anda.</p>
-            </div>
-            <PendaftaranForm />
-          </div>
-        </section>
 
         {/* Pengumuman */}
         <section id="pengumuman" className="border-t border-border">

@@ -48,6 +48,7 @@ import { JadwalPage } from './pages/kurikulum/JadwalPage'
 import { MapelPage } from './pages/kurikulum/MapelPage'
 import { PenugasanPage } from './pages/kurikulum/PenugasanPage'
 import { LandingPage } from './pages/LandingPage'
+import { PublicPendaftaranPage } from './pages/PublicPendaftaranPage'
 import { LoginPage } from './pages/LoginPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { PortalIndexPage } from './pages/PortalIndexPage'
@@ -67,6 +68,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/pendaftaran" element={<PublicPendaftaranPage />} />
             <Route path="/login" element={<LoginPage />} />
 
             <Route path="/portal" element={<PortalLayout />}>
