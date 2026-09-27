@@ -129,11 +129,15 @@ export async function listSantriAdmin(status = 'semua'): Promise<Santri[]> {
 
 export async function createSantri(payload: {
   nama: string
+  nama_wali?: string
   rombel_id?: string | null
   orang_tua_id?: string | null
   madrasah_unit_id?: string
 }) {
-  const { data } = await apiClient.post<Santri>('/admin/santri', payload)
+  const { data } = await apiClient.post<Santri & { wali_username?: string; wali_password_sementara?: string }>(
+    '/admin/santri',
+    payload,
+  )
   return data
 }
 
