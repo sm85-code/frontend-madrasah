@@ -83,7 +83,6 @@ export const NAV_SECTIONS: NavSection[] = [
     title: 'Keuangan',
     items: [
       { label: 'Buku Kas', path: '/portal/keuangan/buku-kas', roles: KEUANGAN_READ_ROLES, icon: Banknote },
-      { label: 'Laba Rugi', path: '/portal/keuangan/laba-rugi', roles: KEUANGAN_READ_ROLES, icon: LineChart },
       { label: 'Honor Mengajar', path: '/portal/keuangan/honor', roles: KEUANGAN_READ_ROLES, icon: Receipt },
     ],
   },

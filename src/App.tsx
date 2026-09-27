@@ -43,7 +43,6 @@ import { PenugasanSayaPage } from './pages/guruMapel/PenugasanSayaPage'
 import { RaporPage } from './pages/guruMapel/RaporPage'
 import { BukuKasPage } from './pages/keuangan/BukuKasPage'
 import { HonorPage } from './pages/keuangan/HonorPage'
-import { LabaRugiPage } from './pages/keuangan/LabaRugiPage'
 import { JadwalPage } from './pages/kurikulum/JadwalPage'
 import { MapelPage } from './pages/kurikulum/MapelPage'
 import { PenugasanPage } from './pages/kurikulum/PenugasanPage'
@@ -97,7 +96,6 @@ function App() {
               </Route>
               <Route element={<RoleGuard roles={KEUANGAN_READ_ROLES} />}>
                 <Route path="keuangan/buku-kas" element={<BukuKasPage />} />
-                <Route path="keuangan/laba-rugi" element={<LabaRugiPage />} />
                 <Route path="keuangan/honor" element={<HonorPage />} />
               </Route>
 

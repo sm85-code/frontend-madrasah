@@ -1,12 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowDownCircle, ArrowUpCircle, Wallet } from 'lucide-react'
 import { useState } from 'react'
-import { createBukuKasEntry, getLaporanKeuangan } from '../../api/keuangan'
+import { createBukuKasEntry, deleteBukuKasEntry, getLaporanKeuangan } from '../../api/keuangan'
 import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
+import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Select, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
@@ -43,19 +44,36 @@ export function BukuKasPage() {
     },
   })
 
+  const deleteMutation = useMutation({
+    mutationFn: deleteBukuKasEntry,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['keuangan', 'laporan'] }),
+  })
+
   const columns: Column<BukuKasEntry>[] = [
     { header: 'Tanggal', cell: (e) => e.tanggal },
     { header: 'Tipe', cell: (e) => <Badge tone={e.tipe === 'masuk' ? 'success' : 'danger'}>{e.tipe}</Badge> },
     { header: 'Kategori', cell: (e) => e.kategori },
     { header: 'Jumlah', cell: (e) => formatRupiah(e.jumlah) },
     { header: 'Keterangan', cell: (e) => e.keterangan },
+    {
+      header: '',
+      className: 'w-10 text-right',
+      cell: (e) =>
+        writable ? (
+          <DeleteRowButton
+            onClick={() => deleteMutation.mutate(e.id)}
+            pending={deleteMutation.isPending}
+            itemName={`catatan ${e.kategori} ${e.tanggal}`}
+          />
+        ) : null,
+    },
   ]
 
   return (
     <div>
       <PageHeader
         title="Buku Kas"
-        description="Setiap baris otomatis menghasilkan jurnal berpasangan (lihat Laba Rugi)."
+        description="Catat pemasukan dan pengeluaran unit ini. Admin Yayasan hanya melihat."
         actions={
           <Input type="month" value={bulan} onChange={(e) => setBulan(e.target.value)} className="w-auto" />
         }
