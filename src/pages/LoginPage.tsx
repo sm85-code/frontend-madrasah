@@ -13,6 +13,7 @@ import { FieldError, Input, Label } from '../components/ui/AppInput'
 import { firstAccessiblePath } from '../config/nav'
 import { loginSchema, type LoginFormValues } from '../schemas/auth'
 import { useAuthStore } from '../store/authStore'
+import { useUnitStore } from '../store/unitStore'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -31,6 +32,9 @@ export function LoginPage() {
     mutationFn: (values: LoginFormValues) => login(values.no_hp, values.password),
     onSuccess: (loggedInUser) => {
       setUser(loggedInUser)
+      if (loggedInUser.role !== 'admin' && loggedInUser.role !== 'yayasan_admin') {
+        useUnitStore.getState().setSelectedUnitId(loggedInUser.madrasah_unit_id ?? loggedInUser.tugas?.[0]?.madrasah_unit_id ?? null)
+      }
       navigate(firstAccessiblePath(loggedInUser.role, loggedInUser.roles), { replace: true })
     },
   })

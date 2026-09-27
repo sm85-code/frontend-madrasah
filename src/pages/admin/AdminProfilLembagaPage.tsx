@@ -9,6 +9,7 @@ import { Input, Label, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { PROFIL_LEMBAGA_WRITE_ROLES } from '../../config/roles'
 import { useCanWrite } from '../../hooks/useCanWrite'
+import { useAuthStore } from '../../store/authStore'
 import { useUnitStore } from '../../store/unitStore'
 import type { MadrasahUnit } from '../../types'
 
@@ -52,14 +53,20 @@ function UnitProfilForm({ unit, writable }: { unit: MadrasahUnit; writable: bool
 
 export function AdminProfilLembagaPage() {
   const writable = useCanWrite(PROFIL_LEMBAGA_WRITE_ROLES)
+  const role = useAuthStore((s) => s.user?.role)
   const selectedUnitId = useUnitStore((s) => s.selectedUnitId)
+  const lintasUnit = role === 'admin' || role === 'yayasan_admin'
   const unitQuery = useQuery({ queryKey: ['yayasan', 'unit'], queryFn: listUnit })
-  const units = (unitQuery.data ?? []).filter((u) => !selectedUnitId || u.id === selectedUnitId)
+  const units = (unitQuery.data ?? []).filter(
+    (u) => !lintasUnit || !selectedUnitId || selectedUnitId === '__yayasan__' || u.id === selectedUnitId,
+  )
 
   return (
     <div>
       <PageHeader title="Profil Lembaga" description="Identitas tiap unit. Terpisah dari Profil Yayasan, Pengumuman, Kegiatan, dan PSB." />
-      {unitQuery.isLoading ? (
+      {unitQuery.isError ? (
+        <ErrorNotice message={unitQuery.error instanceof ApiError ? unitQuery.error.message : 'Gagal memuat profil lembaga.'} />
+      ) : unitQuery.isLoading ? (
         <Spinner />
       ) : (
         <div className="space-y-5">
