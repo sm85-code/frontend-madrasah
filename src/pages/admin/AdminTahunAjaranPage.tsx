@@ -8,11 +8,12 @@ import {
   listTahunAjaran,
   tutupSemester,
 } from '../../api/akademik'
+import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Semester } from '../../types'
@@ -127,6 +128,11 @@ export function AdminTahunAjaranPage() {
                   <Input id="selesai-ta" type="date" value={selesaiTahun} onChange={(e) => setSelesaiTahun(e.target.value)} required />
                 </div>
               </div>
+              {createTahunMutation.isError && (
+                <ErrorNotice
+                  message={createTahunMutation.error instanceof ApiError ? createTahunMutation.error.message : 'Gagal menambah tahun ajaran.'}
+                />
+              )}
               <Button type="submit" loading={createTahunMutation.isPending}>
                 Tambah Tahun Ajaran
               </Button>
@@ -183,6 +189,11 @@ export function AdminTahunAjaranPage() {
                   <Input id="selesai-sem" type="date" value={selesaiSemester} onChange={(e) => setSelesaiSemester(e.target.value)} required />
                 </div>
               </div>
+              {createSemesterMutation.isError && (
+                <ErrorNotice
+                  message={createSemesterMutation.error instanceof ApiError ? createSemesterMutation.error.message : 'Gagal menambah semester.'}
+                />
+              )}
               <Button type="submit" loading={createSemesterMutation.isPending}>
                 Tambah Semester
               </Button>

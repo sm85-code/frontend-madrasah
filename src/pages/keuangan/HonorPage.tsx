@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { generateHonor, listHonor, payHonor } from '../../api/keuangan'
+import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Honor } from '../../types'
@@ -63,6 +64,17 @@ export function HonorPage() {
           </>
         }
       />
+      {(generateMutation.isError || payMutation.isError) && (
+        <div className="mb-4">
+          <ErrorNotice
+            message={
+              (generateMutation.error ?? payMutation.error) instanceof ApiError
+                ? ((generateMutation.error ?? payMutation.error) as ApiError).message
+                : 'Gagal memproses honor.'
+            }
+          />
+        </div>
+      )}
       <Card>
         <CardBody>{honorQuery.isLoading ? <Spinner /> : <DataTable columns={columns} rows={honorQuery.data ?? []} rowKey={(h) => h.id} />}</CardBody>
       </Card>

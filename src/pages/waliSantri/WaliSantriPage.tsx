@@ -3,11 +3,12 @@ import { useState } from 'react'
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { listSantriScoped } from '../../api/shared'
 import { getProgresAnak, getTagihanAnak, kirimPesanAnak, listPesanAnak } from '../../api/waliSantri'
+import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Label, Select, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Tagihan } from '../../types'
@@ -153,6 +154,11 @@ export function WaliSantriPage() {
                   Kirim
                 </Button>
               </form>
+              {kirimMutation.isError && (
+                <div className="mt-2">
+                  <ErrorNotice message={kirimMutation.error instanceof ApiError ? kirimMutation.error.message : 'Gagal mengirim pesan.'} />
+                </div>
+              )}
             </CardBody>
           </Card>
         </div>

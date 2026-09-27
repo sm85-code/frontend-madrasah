@@ -2,11 +2,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { createJadwal, deleteJadwal, listJadwal, listMapel } from '../../api/kurikulum'
 import { listRombel } from '../../api/admin'
+import { ApiError } from '../../lib/apiClient'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
 import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Jadwal } from '../../types'
@@ -108,6 +109,11 @@ export function JadwalPage() {
               <Button type="submit" loading={createMutation.isPending} className="self-end">
                 Tambah
               </Button>
+              {createMutation.isError && (
+                <div className="sm:col-span-2 lg:col-span-5">
+                  <ErrorNotice message={createMutation.error instanceof ApiError ? createMutation.error.message : 'Gagal menambah jadwal.'} />
+                </div>
+              )}
             </form>
           )}
 

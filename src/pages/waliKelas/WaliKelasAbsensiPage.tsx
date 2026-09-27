@@ -2,9 +2,10 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { listRombelScoped, listSantriScoped } from '../../api/shared'
 import { submitAbsensi } from '../../api/waliKelas'
+import { ApiError } from '../../lib/apiClient'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
-import { Spinner, SuccessNotice } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedback'
 import { Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 
@@ -73,6 +74,11 @@ export function WaliKelasAbsensiPage() {
       {mutation.isSuccess && (
         <div className="mb-4">
           <SuccessNotice message={`Absensi tersimpan untuk ${mutation.data.inserted} santri.`} />
+        </div>
+      )}
+      {mutation.isError && (
+        <div className="mb-4">
+          <ErrorNotice message={mutation.error instanceof ApiError ? mutation.error.message : 'Gagal menyimpan absensi.'} />
         </div>
       )}
 

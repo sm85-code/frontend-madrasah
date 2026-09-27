@@ -2,9 +2,10 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { listRombelScoped, listSantriScoped } from '../../api/shared'
 import { submitProgres } from '../../api/waliKelas'
+import { ApiError } from '../../lib/apiClient'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
-import { SuccessNotice } from '../../components/ui/Feedback'
+import { ErrorNotice, SuccessNotice } from '../../components/ui/Feedback'
 import { Input, Label, Select, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 
@@ -88,6 +89,9 @@ export function WaliKelasProgresPage() {
             </div>
 
             {mutation.isSuccess && <SuccessNotice message="Progres tersimpan." />}
+            {mutation.isError && (
+              <ErrorNotice message={mutation.error instanceof ApiError ? mutation.error.message : 'Gagal menyimpan progres.'} />
+            )}
 
             <Button type="submit" loading={mutation.isPending}>
               Simpan Progres

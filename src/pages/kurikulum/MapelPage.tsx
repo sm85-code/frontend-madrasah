@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { createMapel, createMateri, deleteMapel, deleteMateri, listMapel } from '../../api/kurikulum'
+import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
 import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 
@@ -68,6 +69,13 @@ export function MapelPage() {
             <Button type="submit" loading={createMapelMutation.isPending}>
               Tambah Mapel
             </Button>
+            {createMapelMutation.isError && (
+              <div className="w-full">
+                <ErrorNotice
+                  message={createMapelMutation.error instanceof ApiError ? createMapelMutation.error.message : 'Gagal menambah mapel.'}
+                />
+              </div>
+            )}
           </form>
         </CardBody>
       </Card>
@@ -110,6 +118,13 @@ export function MapelPage() {
                     Tambah
                   </Button>
                 </form>
+                {createMateriMutation.isError && createMateriMutation.variables === mapel.id && (
+                  <div className="mt-2">
+                    <ErrorNotice
+                      message={createMateriMutation.error instanceof ApiError ? createMateriMutation.error.message : 'Gagal menambah materi.'}
+                    />
+                  </div>
+                )}
               </CardBody>
             </Card>
           ))}

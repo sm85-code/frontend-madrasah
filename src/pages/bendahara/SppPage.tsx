@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { generateSpp, listSppMenunggu, paySpp } from '../../api/bendahara'
+import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
-import { Spinner, SuccessNotice } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedback'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Tagihan } from '../../types'
 
@@ -54,6 +55,17 @@ export function SppPage() {
       {generateMutation.isSuccess && (
         <div className="mb-4">
           <SuccessNotice message={`Berhasil generate ${generateMutation.data.length} tagihan.`} />
+        </div>
+      )}
+      {(generateMutation.isError || payMutation.isError) && (
+        <div className="mb-4">
+          <ErrorNotice
+            message={
+              (generateMutation.error ?? payMutation.error) instanceof ApiError
+                ? ((generateMutation.error ?? payMutation.error) as ApiError).message
+                : 'Gagal memproses SPP.'
+            }
+          />
         </div>
       )}
 

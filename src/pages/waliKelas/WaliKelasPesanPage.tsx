@@ -2,9 +2,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { listRombelScoped, listSantriScoped } from '../../api/shared'
 import { kirimPesanWaliKelas, listPesanWaliKelas } from '../../api/waliKelas'
+import { ApiError } from '../../lib/apiClient'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Label, Select, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 
@@ -98,6 +99,11 @@ export function WaliKelasPesanPage() {
                 Kirim
               </Button>
             </form>
+            {kirimMutation.isError && (
+              <div className="mt-2">
+                <ErrorNotice message={kirimMutation.error instanceof ApiError ? kirimMutation.error.message : 'Gagal mengirim pesan.'} />
+              </div>
+            )}
           </CardBody>
         </Card>
       )}
