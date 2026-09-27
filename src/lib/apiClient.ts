@@ -13,6 +13,18 @@ const baseURL = `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/madrasah`
 export const apiClient = axios.create({
   baseURL,
   withCredentials: true,
+  // Tanpa ini, browser sesekali melakukan conditional GET (If-None-Match)
+  // ke endpoint ini dan dapat 304 Not Modified -- axios menganggap apa pun
+  // di luar 200-299 sebagai error (lihat interceptor di bawah), jadi
+  // response yang sebenarnya valid ("data belum berubah, pakai versi
+  // sebelumnya") malah muncul sebagai error aneh "Request failed with
+  // status code 304" di UI (dashboard, dsb). Endpoint-endpoint ini memang
+  // harus selalu fresh (dashboard, tagihan, dll), jadi matikan caching di
+  // sisi request sama sekali daripada menambal di banyak tempat.
+  headers: {
+    'Cache-Control': 'no-cache, no-store',
+    Pragma: 'no-cache',
+  },
 })
 
 /** Thrown for any non-2xx response, with the backend's `detail` message
@@ -46,6 +58,12 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     const status = error.response?.status ?? 0
+    if (status === 304) {
+      // Lihat komentar di headers Cache-Control di atas -- seharusnya tidak
+      // pernah terjadi lagi, tapi kalau ada proxy/CDN di depan yang tetap
+      // memaksakan cache, jangan tampilkan "status code 304" mentah ke user.
+      return Promise.reject(new ApiError(status, 'Gagal memuat data terbaru, coba muat ulang halaman.'))
+    }
     const detail =
       error.response?.data?.detail ?? error.message ?? 'Terjadi kesalahan tidak terduga'
     if (status === 401) {
