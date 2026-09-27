@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { listPendaftaran, patchPendaftaran } from '../../api/admin'
+import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Pendaftaran } from '../../types'
 
@@ -67,7 +68,11 @@ export function AdminPendaftaranPage() {
       <PageHeader title="Pendaftaran PSB" description="Pengajuan calon santri dari formulir publik di landing page." />
       <Card>
         <CardBody>
-          {pendaftaranQuery.isLoading ? (
+          {pendaftaranQuery.isError ? (
+            <ErrorNotice
+              message={pendaftaranQuery.error instanceof ApiError ? pendaftaranQuery.error.message : 'Gagal memuat pendaftaran.'}
+            />
+          ) : pendaftaranQuery.isLoading ? (
             <Spinner />
           ) : (
             <DataTable columns={columns} rows={pendaftaranQuery.data ?? []} rowKey={(p) => p.id} emptyMessage="Belum ada pendaftaran." />

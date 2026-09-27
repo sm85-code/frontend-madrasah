@@ -1,13 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { getAuditLog } from '../../api/admin'
+import { ApiError } from '../../lib/apiClient'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { AuditLogEntry } from '../../types'
 
 export function AdminAuditLogPage() {
-  const { data, isLoading } = useQuery({ queryKey: ['admin', 'audit-log'], queryFn: () => getAuditLog(200) })
+  const { data, isLoading, isError, error } = useQuery({ queryKey: ['admin', 'audit-log'], queryFn: () => getAuditLog(200) })
 
   const columns: Column<AuditLogEntry>[] = [
     { header: 'Waktu', cell: (r) => new Date(r.waktu).toLocaleString('id-ID') },
@@ -22,7 +23,15 @@ export function AdminAuditLogPage() {
     <div>
       <PageHeader title="Audit Log" description="Jejak aksi sensitif: login, reset, keuangan, hapus akun/data." />
       <Card>
-        <CardBody>{isLoading ? <Spinner /> : <DataTable columns={columns} rows={data ?? []} rowKey={(r) => r.id} />}</CardBody>
+        <CardBody>
+          {isError ? (
+            <ErrorNotice message={error instanceof ApiError ? error.message : 'Gagal memuat audit log.'} />
+          ) : isLoading ? (
+            <Spinner />
+          ) : (
+            <DataTable columns={columns} rows={data ?? []} rowKey={(r) => r.id} />
+          )}
+        </CardBody>
       </Card>
     </div>
   )

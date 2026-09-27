@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { getPenugasanSaya, getRaporSantri, getSantriRombel } from '../../api/guruMapel'
+import { ApiError } from '../../lib/apiClient'
 import { Card, CardBody } from '../../components/ui/AppCard'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 
@@ -31,6 +32,13 @@ export function RaporPage() {
 
       <Card className="mb-5">
         <CardBody>
+          {penugasanQuery.isError && (
+            <div className="mb-4">
+              <ErrorNotice
+                message={penugasanQuery.error instanceof ApiError ? penugasanQuery.error.message : 'Gagal memuat penugasan.'}
+              />
+            </div>
+          )}
           <div className="flex flex-wrap gap-4">
             <div className="w-56">
               <Label htmlFor="penugasan-rapor">Mapel & Rombel</Label>
@@ -61,7 +69,9 @@ export function RaporPage() {
       {santriId && (
         <Card>
           <CardBody>
-            {raporQuery.isLoading ? (
+            {raporQuery.isError ? (
+              <ErrorNotice message={raporQuery.error instanceof ApiError ? raporQuery.error.message : 'Gagal memuat rapor.'} />
+            ) : raporQuery.isLoading ? (
               <Spinner />
             ) : (
               <div className="space-y-2">

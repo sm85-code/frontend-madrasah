@@ -1,18 +1,21 @@
 import { useQuery } from '@tanstack/react-query'
 import { CheckCircle2, CircleDollarSign, GraduationCap, School, Users } from 'lucide-react'
 import { getRekap } from '../../api/admin'
+import { ApiError } from '../../lib/apiClient'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { StatCard } from '../../components/ui/StatCard'
 
 export function AdminDashboardPage() {
-  const { data, isLoading } = useQuery({ queryKey: ['admin', 'rekap'], queryFn: getRekap })
+  const { data, isLoading, isError, error } = useQuery({ queryKey: ['admin', 'rekap'], queryFn: getRekap })
 
   return (
     <div>
       <PageHeader title="Dashboard" description="Ringkasan operasional madrasah." />
-      {isLoading || !data ? (
+      {isError ? (
+        <ErrorNotice message={error instanceof ApiError ? error.message : 'Gagal memuat data dashboard.'} />
+      ) : isLoading || !data ? (
         <Spinner />
       ) : (
         <>

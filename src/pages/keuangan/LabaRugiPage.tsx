@@ -2,8 +2,9 @@ import { useQuery } from '@tanstack/react-query'
 import { TrendingDown, TrendingUp, Wallet } from 'lucide-react'
 import { useState } from 'react'
 import { getLabaRugi } from '../../api/keuangan'
+import { ApiError } from '../../lib/apiClient'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { StatCard } from '../../components/ui/StatCard'
@@ -12,7 +13,10 @@ const formatRupiah = (value: string) => `Rp ${Number(value).toLocaleString('id-I
 
 export function LabaRugiPage() {
   const [bulan, setBulan] = useState('')
-  const { data, isLoading } = useQuery({ queryKey: ['keuangan', 'laba-rugi', bulan], queryFn: () => getLabaRugi(bulan || undefined) })
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['keuangan', 'laba-rugi', bulan],
+    queryFn: () => getLabaRugi(bulan || undefined),
+  })
 
   return (
     <div>
@@ -22,7 +26,9 @@ export function LabaRugiPage() {
         actions={<Input type="month" value={bulan} onChange={(e) => setBulan(e.target.value)} className="w-auto" />}
       />
 
-      {isLoading || !data ? (
+      {isError ? (
+        <ErrorNotice message={error instanceof ApiError ? error.message : 'Gagal memuat laba rugi.'} />
+      ) : isLoading || !data ? (
         <Spinner />
       ) : (
         <>
