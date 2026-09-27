@@ -6,7 +6,7 @@ import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
-import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedback'
 import { Input } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Honor } from '../../types'
@@ -54,7 +54,7 @@ export function HonorPage() {
     <div>
       <PageHeader
         title="Honor Mengajar"
-        description="Dihitung dari sesi absensi yang benar-benar dicatat guru per bulan."
+        description='Dihitung dari "Absensi Mapel" yang dicatat guru (bukan absensi harian wali kelas) -- guru yang belum pernah mengisi absensi mapel di bulan ini tidak akan muncul.'
         actions={
           <>
             <Input type="month" value={bulan} onChange={(e) => setBulan(e.target.value)} className="w-auto" />
@@ -64,6 +64,15 @@ export function HonorPage() {
           </>
         }
       />
+      {generateMutation.isSuccess && (
+        <div className="mb-4">
+          {generateMutation.data.length > 0 ? (
+            <SuccessNotice message={`Berhasil generate ${generateMutation.data.length} baris honor.`} />
+          ) : (
+            <SuccessNotice message="Tidak ada honor baru -- semua guru mapel untuk bulan ini belum punya sesi Absensi Mapel yang tercatat, atau honornya sudah pernah di-generate sebelumnya." />
+          )}
+        </div>
+      )}
       {(generateMutation.isError || payMutation.isError) && (
         <div className="mb-4">
           <ErrorNotice
