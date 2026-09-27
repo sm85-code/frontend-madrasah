@@ -25,6 +25,7 @@ import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedbac
 import { FieldError, Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { ROLE_LABEL } from '../../config/roles'
+import { useUnitStore } from '../../store/unitStore'
 import type { MadrasahUnit, Role, User } from '../../types'
 
 const UNIT_SCOPED_ROLES: Role[] = ['kepala_sekolah', 'lembaga_admin', 'kurikulum', 'bendahara', 'wali_kelas', 'guru', 'wali_santri']
@@ -235,10 +236,18 @@ function EditAkunAction({ user, units }: { user: User; units: MadrasahUnit[] }) 
 
 export function AdminKelolaAkunPage() {
   const queryClient = useQueryClient()
-  const akunQuery = useQuery({ queryKey: ['admin', 'akun'], queryFn: listAkun })
+  const selectedUnitId = useUnitStore((s) => s.selectedUnitId)
+  const tabYayasan = selectedUnitId === '__yayasan__'
+  const akunQuery = useQuery({ queryKey: ['admin', 'akun', selectedUnitId], queryFn: listAkun })
   const unitQuery = useQuery({ queryKey: ['yayasan', 'unit'], queryFn: listUnit })
   const units = unitQuery.data ?? []
   const unitName = (id?: string | null) => units.find((u) => u.id === id)?.nama ?? '—'
+  const rows = (akunQuery.data ?? []).filter((u) =>
+    tabYayasan ? u.role === 'admin' || u.role === 'yayasan_admin' : UNIT_SCOPED_ROLES.includes(u.role),
+  )
+  const roleOptions = tabYayasan
+    ? ROLE_OPTIONS.filter((opt) => opt.value === 'admin' || opt.value === 'yayasan_admin')
+    : ROLE_OPTIONS.filter((opt) => UNIT_SCOPED_ROLES.includes(opt.value))
 
   const [nama, setNama] = useState('')
   const [noHp, setNoHp] = useState('')
@@ -246,6 +255,12 @@ export function AdminKelolaAkunPage() {
   const [role, setRole] = useState<Role>('wali_kelas')
   const [unitId, setUnitId] = useState('')
   const [passwordSementara, setPasswordSementara] = useState<{ nama: string; password: string } | null>(null)
+
+  useEffect(() => {
+    if (tabYayasan) setRole('admin')
+    else setRole('wali_kelas')
+    if (selectedUnitId && selectedUnitId !== '__yayasan__') setUnitId(selectedUnitId)
+  }, [tabYayasan, selectedUnitId])
 
   const createMutation = useMutation({
     mutationFn: () =>
@@ -295,7 +310,11 @@ export function AdminKelolaAkunPage() {
     <div>
       <PageHeader
         title="Kelola Akun"
-        description="Semua akun lintas role -- termasuk admin, kepala madrasah, dan admin yayasan. Khusus admin aplikasi."
+        description={
+          tabYayasan
+            ? 'Akun Admin Utama dan Admin Yayasan.'
+            : 'Akun pegawai dan wali santri di unit yang dipilih.'
+        }
       />
 
       {deleteMutation.isError && (
@@ -335,7 +354,7 @@ export function AdminKelolaAkunPage() {
             <div>
               <Label htmlFor="role-akun">Role</Label>
               <Select id="role-akun" value={role} onChange={(e) => setRole(e.target.value as Role)}>
-                {ROLE_OPTIONS.map((opt) => (
+                {roleOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
                   </option>
@@ -376,7 +395,7 @@ export function AdminKelolaAkunPage() {
 
       <Card>
         <CardBody>
-          {akunQuery.isLoading ? <Spinner /> : <DataTable columns={columns} rows={akunQuery.data ?? []} rowKey={(u) => u.id} />}
+          {akunQuery.isLoading ? <Spinner /> : <DataTable columns={columns} rows={rows} rowKey={(u) => u.id} />}
         </CardBody>
       </Card>
     </div>
