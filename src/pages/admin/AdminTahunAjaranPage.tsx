@@ -16,8 +16,8 @@ import { DataTable, type Column } from '../../components/ui/DataTable'
 import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
-import { canWrite, INFO_AKADEMIK_ROLES } from '../../config/roles'
-import { useAuthStore } from '../../store/authStore'
+import { INFO_AKADEMIK_ROLES } from '../../config/roles'
+import { useCanWrite } from '../../hooks/useCanWrite'
 import type { Semester } from '../../types'
 
 const STATUS_TONE: Record<Semester['status'], 'success' | 'neutral' | 'warning'> = {
@@ -28,8 +28,7 @@ const STATUS_TONE: Record<Semester['status'], 'success' | 'neutral' | 'warning'>
 
 export function AdminTahunAjaranPage() {
   const queryClient = useQueryClient()
-  const role = useAuthStore((s) => s.user?.role)
-  const writable = canWrite(role, INFO_AKADEMIK_ROLES)
+  const writable = useCanWrite(INFO_AKADEMIK_ROLES)
   const tahunAjaranQuery = useQuery({ queryKey: ['akademik', 'tahun-ajaran'], queryFn: listTahunAjaran })
   const semesterQuery = useQuery({ queryKey: ['akademik', 'semester'], queryFn: listSemester })
 

@@ -1,5 +1,5 @@
 import { apiClient } from '../lib/apiClient'
-import type { Mapel, Pengumuman, Pesan, Santri, Tagihan } from '../types'
+import type { Mapel, Pesan, Santri, Tagihan } from '../types'
 
 export async function getKurikulumRingkas(): Promise<Mapel[]> {
   const { data } = await apiClient.get<Mapel[]>('/wali-kelas/kurikulum')
@@ -40,11 +40,6 @@ export async function ajukanPembayaran(tagihanId: string): Promise<Tagihan> {
 
 export async function patchSantriWaliKelas(santriId: string, payload: { nama?: string; orang_tua_id?: string }) {
   const { data } = await apiClient.patch<Santri>(`/wali-kelas/santri/${santriId}`, payload)
-  return data
-}
-
-export async function createPengumumanWaliKelas(payload: { judul: string; isi: string }) {
-  const { data } = await apiClient.post<Pengumuman>('/wali-kelas/pengumuman', payload)
   return data
 }
 

@@ -10,10 +10,13 @@ import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { PENUGASAN_WRITE_ROLES } from '../../config/roles'
+import { useCanWrite } from '../../hooks/useCanWrite'
 import type { Penugasan } from '../../types'
 
 export function PenugasanPage() {
   const queryClient = useQueryClient()
+  const writable = useCanWrite(PENUGASAN_WRITE_ROLES)
   const guruQuery = useQuery({ queryKey: ['admin', 'guru'], queryFn: listGuru })
   const mapelQuery = useQuery({ queryKey: ['kurikulum', 'mapel'], queryFn: listMapel })
   const rombelQuery = useQuery({ queryKey: ['admin', 'rombel'], queryFn: listRombel })
@@ -40,7 +43,7 @@ export function PenugasanPage() {
     {
       header: '',
       className: 'w-10 text-right',
-      cell: (p) => <DeleteRowButton onClick={() => deleteMutation.mutate(p.id)} />,
+      cell: (p) => (writable ? <DeleteRowButton onClick={() => deleteMutation.mutate(p.id)} /> : null),
     },
   ]
 
@@ -48,6 +51,7 @@ export function PenugasanPage() {
     <div>
       <PageHeader title="Penugasan Guru Mapel" description="Guru mana mengajar mapel apa di rombel mana." />
 
+      {writable && (
       <Card className="mb-5">
         <CardBody>
           <form
@@ -101,6 +105,7 @@ export function PenugasanPage() {
           </form>
         </CardBody>
       </Card>
+      )}
 
       <Card>
         <CardBody>
