@@ -71,7 +71,6 @@ function App() {
                 <Route path="pendaftaran" element={<AdminPendaftaranPage />} />
                 <Route path="pengaturan" element={<AdminPengaturanPage />} />
                 <Route path="profil-lembaga" element={<AdminProfilLembagaPage />} />
-                <Route path="audit-log" element={<AdminAuditLogPage />} />
                 <Route path="keuangan/buku-kas" element={<BukuKasPage />} />
                 <Route path="keuangan/laba-rugi" element={<LabaRugiPage />} />
                 <Route path="keuangan/honor" element={<HonorPage />} />
@@ -80,6 +79,7 @@ function App() {
               <Route element={<RoleGuard roles={APP_ADMIN_ROLES} />}>
                 <Route path="guru" element={<AdminGuruPage />} />
                 <Route path="kelola-akun" element={<AdminKelolaAkunPage />} />
+                <Route path="audit-log" element={<AdminAuditLogPage />} />
               </Route>
 
               <Route element={<RoleGuard roles={YAYASAN_ROLES} />}>

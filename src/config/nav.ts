@@ -65,7 +65,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: 'Pendaftaran PSB', path: '/portal/pendaftaran', roles: ADMIN_ROLES, icon: UserPlus },
       { label: 'Profil Lembaga', path: '/portal/profil-lembaga', roles: ADMIN_ROLES, icon: Landmark },
       { label: 'Pengaturan', path: '/portal/pengaturan', roles: ADMIN_ROLES, icon: Settings },
-      { label: 'Audit Log', path: '/portal/audit-log', roles: ADMIN_ROLES, icon: ScrollText },
+      { label: 'Audit Log', path: '/portal/audit-log', roles: APP_ADMIN_ROLES, icon: ScrollText },
     ],
   },
   {
