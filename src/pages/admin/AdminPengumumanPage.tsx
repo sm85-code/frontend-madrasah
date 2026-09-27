@@ -2,9 +2,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { createPengumuman } from '../../api/admin'
 import { getPengumuman } from '../../api/public'
+import { ApiError } from '../../lib/apiClient'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 
@@ -44,6 +45,9 @@ export function AdminPengumumanPage() {
               <Label htmlFor="isi-pengumuman">Isi</Label>
               <Textarea id="isi-pengumuman" rows={4} value={isi} onChange={(e) => setIsi(e.target.value)} />
             </div>
+            {mutation.isError && (
+              <ErrorNotice message={mutation.error instanceof ApiError ? mutation.error.message : 'Gagal menerbitkan pengumuman.'} />
+            )}
             <Button type="submit" loading={mutation.isPending}>
               Terbitkan
             </Button>

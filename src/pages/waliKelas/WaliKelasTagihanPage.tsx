@@ -2,10 +2,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { listRombelScoped } from '../../api/shared'
 import { ajukanPembayaran, getTagihanRombel } from '../../api/waliKelas'
+import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
+import { ErrorNotice } from '../../components/ui/Feedback'
 import { Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Tagihan } from '../../types'
@@ -66,6 +68,11 @@ export function WaliKelasTagihanPage() {
               ))}
             </Select>
           </div>
+          {ajukanMutation.isError && (
+            <div className="mb-4">
+              <ErrorNotice message={ajukanMutation.error instanceof ApiError ? ajukanMutation.error.message : 'Gagal mengajukan pembayaran.'} />
+            </div>
+          )}
           {rombelId && <DataTable columns={columns} rows={tagihanQuery.data ?? []} rowKey={(t) => t.id} />}
         </CardBody>
       </Card>

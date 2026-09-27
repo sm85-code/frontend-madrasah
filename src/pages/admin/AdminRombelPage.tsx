@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { createRombel, createTingkat, deleteRombel, deleteTingkat, listRombel, listTingkat } from '../../api/admin'
+import { ApiError } from '../../lib/apiClient'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
 import { Button } from '../../components/ui/AppButton'
 import { DataTable, type Column } from '../../components/ui/DataTable'
 import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Rombel, Tingkat } from '../../types'
@@ -89,6 +90,11 @@ export function AdminRombelPage() {
               <Button type="submit" loading={createTingkatMutation.isPending} className="w-full sm:w-auto">
                 Tambah
               </Button>
+              {createTingkatMutation.isError && (
+                <ErrorNotice
+                  message={createTingkatMutation.error instanceof ApiError ? createTingkatMutation.error.message : 'Gagal menambah tingkat.'}
+                />
+              )}
             </form>
             {tingkatQuery.isLoading ? (
               <Spinner />
@@ -128,6 +134,11 @@ export function AdminRombelPage() {
               <Button type="submit" loading={createRombelMutation.isPending} className="w-full sm:col-span-2 sm:w-auto sm:justify-self-start">
                 Tambah
               </Button>
+              {createRombelMutation.isError && (
+                <ErrorNotice
+                  message={createRombelMutation.error instanceof ApiError ? createRombelMutation.error.message : 'Gagal menambah rombel.'}
+                />
+              )}
             </form>
             {rombelQuery.isLoading ? (
               <Spinner />

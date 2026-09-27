@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { kenaikanKelasMassal, listRombel, listSantriAdmin } from '../../api/admin'
+import { ApiError } from '../../lib/apiClient'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
-import { SuccessNotice, Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, SuccessNotice, Spinner } from '../../components/ui/Feedback'
 import { Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 
@@ -59,6 +60,11 @@ export function AdminKenaikanKelasPage() {
           <SuccessNotice
             message={`Berhasil: ${mutation.data.dipindah.length} santri dipindah, ${mutation.data.diluluskan.length} diluluskan.`}
           />
+        </div>
+      )}
+      {mutation.isError && (
+        <div className="mb-4">
+          <ErrorNotice message={mutation.error instanceof ApiError ? mutation.error.message : 'Gagal memproses kenaikan kelas.'} />
         </div>
       )}
 

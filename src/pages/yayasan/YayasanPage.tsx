@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { createUnit, getRekapYayasan, listUnit, patchUnit } from '../../api/yayasan'
+import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { useAuthStore } from '../../store/authStore'
@@ -105,7 +106,19 @@ export function YayasanPage() {
               <Button type="submit" loading={createMutation.isPending} className="sm:col-span-3 sm:w-fit">
                 Tambah Unit
               </Button>
+              {createMutation.isError && (
+                <div className="sm:col-span-3">
+                  <ErrorNotice message={createMutation.error instanceof ApiError ? createMutation.error.message : 'Gagal menambah unit.'} />
+                </div>
+              )}
             </form>
+            {toggleAktifMutation.isError && (
+              <div className="mb-4">
+                <ErrorNotice
+                  message={toggleAktifMutation.error instanceof ApiError ? toggleAktifMutation.error.message : 'Gagal mengubah status unit.'}
+                />
+              </div>
+            )}
             {unitQuery.isLoading ? <Spinner /> : <DataTable columns={unitColumns} rows={unitQuery.data ?? []} rowKey={(u) => u.id} />}
           </CardBody>
         </Card>
