@@ -17,6 +17,10 @@ export interface User {
   nama: string
   no_hp: string
   role: Role
+  // Hanya terisi sekali, tepat setelah akun dibuat tanpa password
+  // manual -- server generate password acak dan mengembalikannya di
+  // respons create (bukan field yang tersimpan/bisa dibaca ulang).
+  password_sementara?: string
 }
 
 export interface Pengaturan {

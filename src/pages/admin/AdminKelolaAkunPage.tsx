@@ -205,10 +205,12 @@ export function AdminKelolaAkunPage() {
   const [noHp, setNoHp] = useState('')
   const [password, setPassword] = useState('')
   const [role, setRole] = useState<Role>('wali_kelas')
+  const [passwordSementara, setPasswordSementara] = useState<{ nama: string; password: string } | null>(null)
 
   const createMutation = useMutation({
     mutationFn: () => createAkun({ nama, no_hp: noHp, role, password: password || undefined }),
-    onSuccess: () => {
+    onSuccess: (created) => {
+      setPasswordSementara(created.password_sementara ? { nama: created.nama, password: created.password_sementara } : null)
       setNama('')
       setNoHp('')
       setPassword('')
@@ -273,7 +275,7 @@ export function AdminKelolaAkunPage() {
               <Input
                 id="password-akun"
                 type="password"
-                placeholder="default: password123"
+                placeholder="kosongkan untuk dibuatkan acak"
                 autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -298,6 +300,13 @@ export function AdminKelolaAkunPage() {
               </div>
             )}
           </form>
+          {passwordSementara && (
+            <div className="mt-3">
+              <SuccessNotice
+                message={`Akun ${passwordSementara.nama} dibuat. Password sementara: ${passwordSementara.password} -- catat sekarang, tidak akan ditampilkan lagi.`}
+              />
+            </div>
+          )}
         </CardBody>
       </Card>
 
