@@ -8,7 +8,7 @@ export const BENDAHARA_ROLES: Role[] = ['bendahara', 'kepala_sekolah', 'admin']
 export const WALI_KELAS_ROLES: Role[] = ['wali_kelas', 'guru', 'kepala_sekolah', 'admin']
 export const GURU_MAPEL_ROLES: Role[] = ['guru', 'wali_kelas', 'kepala_sekolah', 'admin']
 export const WALI_SANTRI_ROLES: Role[] = ['wali_santri', 'kepala_sekolah', 'admin']
-export const YAYASAN_ROLES: Role[] = ['yayasan_admin', 'kepala_sekolah', 'admin']
+export const YAYASAN_ROLES: Role[] = ['yayasan_admin', 'admin']
 // Pengelolaan akun (Kelola Akun + Guru & Wali Santri) sengaja dipersempit
 // ke "admin" saja, BEDA dari ADMIN_ROLES yang juga meloloskan
 // kepala_sekolah untuk halaman admin lain (Santri, Rombel, dst) -- lihat

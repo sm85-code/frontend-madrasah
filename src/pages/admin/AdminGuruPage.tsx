@@ -14,6 +14,7 @@ import {
   patchGuru,
   patchWaliSantri,
 } from '../../api/admin'
+import { listUnit } from '../../api/yayasan'
 import { ApiError } from '../../lib/apiClient'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
@@ -115,12 +116,15 @@ function ResetPasswordAction({ user, onSubmit }: { user: User; onSubmit: (passwo
 export function AdminGuruPage() {
   const queryClient = useQueryClient()
   const guruQuery = useQuery({ queryKey: ['admin', 'guru'], queryFn: listGuru })
+  const unitQuery = useQuery({ queryKey: ['yayasan', 'unit'], queryFn: listUnit })
+  const units = unitQuery.data ?? []
   const waliSantriQuery = useQuery({ queryKey: ['admin', 'wali-santri'], queryFn: listWaliSantri })
 
   const [namaGuru, setNamaGuru] = useState('')
   const [noHpGuru, setNoHpGuru] = useState('')
   const [passwordGuru, setPasswordGuru] = useState('')
   const [roleGuru, setRoleGuru] = useState('wali_kelas')
+  const [unitGuru, setUnitGuru] = useState('')
 
   const [namaWali, setNamaWali] = useState('')
   const [noHpWali, setNoHpWali] = useState('')
@@ -130,7 +134,13 @@ export function AdminGuruPage() {
 
   const createGuruMutation = useMutation({
     mutationFn: () =>
-      createGuru({ nama: namaGuru, no_hp: noHpGuru, role: roleGuru, password: passwordGuru || undefined }),
+      createGuru({
+        nama: namaGuru,
+        no_hp: noHpGuru,
+        role: roleGuru,
+        password: passwordGuru || undefined,
+        madrasah_unit_id: unitGuru || undefined,
+      }),
     onSuccess: (created) => {
       setPasswordSementara(created.password_sementara ? { nama: created.nama, password: created.password_sementara } : null)
       setNamaGuru('')
@@ -242,6 +252,17 @@ export function AdminGuruPage() {
                   {GURU_ROLE_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              <div className="min-w-[150px]">
+                <Label htmlFor="unit-guru">Unit</Label>
+                <Select id="unit-guru" value={unitGuru} onChange={(e) => setUnitGuru(e.target.value)} required>
+                  <option value="">Pilih unit</option>
+                  {units.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.nama}
                     </option>
                   ))}
                 </Select>

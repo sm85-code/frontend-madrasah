@@ -24,38 +24,26 @@ import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { FieldError, Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { useAuthStore } from '../../store/authStore'
-import { ADMIN_ROLES, APP_ADMIN_ROLES } from '../../config/roles'
-import type { MadrasahUnit, RekapUnit } from '../../types'
+import { APP_ADMIN_ROLES } from '../../config/roles'
+import type { MadrasahUnit, RekapUnit, User } from '../../types'
 
-/** Dropdown akun Kepala Madrasah (role kepala_sekolah) -- dipakai di form
- * tambah unit dan Edit Unit supaya "Kepala Unit" selalu diisi dari akun
- * yang benar-benar ada (bukan ketik bebas yang gampang salah mapping/typo).
- * listAkun cuma bisa dipanggil admin aplikasi (APP_ADMIN_ROLES), jadi query
- * ini hanya enabled untuk admin -- kepala_sekolah tetap pakai input teks
- * biasa di form tambah unit. */
 function useKepalaMadrasahOptions(enabled: boolean) {
   const query = useQuery({ queryKey: ['admin', 'akun'], queryFn: listAkun, enabled })
-  const options = (query.data ?? []).filter((u) => u.role === 'kepala_sekolah').map((u) => u.nama)
-  return { options, isLoading: query.isLoading }
+  const users = (query.data ?? []).filter((u) => u.role === 'kepala_sekolah')
+  return { users, isLoading: query.isLoading }
 }
 
 const editUnitSchema = z.object({
   nama: z.string().min(1, 'Wajib diisi'),
   alamat: z.string(),
-  kepala_unit: z.string(),
+  kepala_user_id: z.string(),
 })
 type EditUnitValues = z.infer<typeof editUnitSchema>
 
-/** Edit lengkap (nama/alamat/kepala unit) khusus admin utama (APP_ADMIN_ROLES)
- * -- kepala_sekolah belum ditugaskan ke unit tertentu, jadi menugaskan
- * "Kepala Unit" untuk unit lain sengaja tidak diserahkan ke kepala_sekolah,
- * beda dari toggle aktif/nonaktif yang tetap ADMIN_ROLES (lihat backend
- * admin_unit_patch di madrasah_router.py -- endpointnya sendiri masih
- * ADMIN_ROLES, restriksi "admin saja" ini di level UI). */
-function EditUnitAction({ unit }: { unit: MadrasahUnit }) {
+function EditUnitAction({ unit, kepalaUsers }: { unit: MadrasahUnit; kepalaUsers: User[] }) {
   const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
-  const { options: kepalaOptions } = useKepalaMadrasahOptions(open)
+  const currentId = kepalaUsers.find((u) => u.nama === unit.kepala_unit)?.id ?? ''
   const {
     register,
     handleSubmit,
@@ -65,23 +53,20 @@ function EditUnitAction({ unit }: { unit: MadrasahUnit }) {
     formState: { errors },
   } = useForm<EditUnitValues>({
     resolver: zodResolver(editUnitSchema),
-    defaultValues: { nama: unit.nama, alamat: unit.alamat, kepala_unit: unit.kepala_unit },
+    defaultValues: { nama: unit.nama, alamat: unit.alamat, kepala_user_id: currentId },
   })
 
   useEffect(() => {
-    if (open) reset({ nama: unit.nama, alamat: unit.alamat, kepala_unit: unit.kepala_unit })
-  }, [open, unit, reset])
-
-  // Kalau kepala_unit yang tersimpan bukan lagi nama akun kepala_sekolah
-  // yang valid (mis. sudah dihapus/diganti), tetap tambahkan sebagai opsi
-  // supaya dropdown tidak diam-diam menggantinya ke opsi lain.
-  const kepalaUnitValue = watch('kepala_unit')
-  const allKepalaOptions = kepalaUnitValue && !kepalaOptions.includes(kepalaUnitValue) ? [kepalaUnitValue, ...kepalaOptions] : kepalaOptions
+    if (open) reset({ nama: unit.nama, alamat: unit.alamat, kepala_user_id: currentId })
+  }, [open, unit, reset, currentId])
 
   const mutation = useMutation({
-    mutationFn: (values: EditUnitValues) => patchUnit(unit.id, values),
+    mutationFn: (values: EditUnitValues) =>
+      patchUnit(unit.id, { nama: values.nama, alamat: values.alamat, kepala_user_id: values.kepala_user_id || undefined }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['yayasan'] })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'guru'] })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'akun'] })
       setOpen(false)
     },
   })
@@ -108,13 +93,13 @@ function EditUnitAction({ unit }: { unit: MadrasahUnit }) {
             <Label htmlFor={`edit-kepala-unit-${unit.id}`}>Kepala unit</Label>
             <Select
               id={`edit-kepala-unit-${unit.id}`}
-              value={watch('kepala_unit')}
-              onChange={(e) => setValue('kepala_unit', e.target.value, { shouldValidate: true })}
+              value={watch('kepala_user_id')}
+              onChange={(e) => setValue('kepala_user_id', e.target.value, { shouldValidate: true })}
             >
               <option value="">Belum ditugaskan</option>
-              {allKepalaOptions.map((nama) => (
-                <option key={nama} value={nama}>
-                  {nama}
+              {kepalaUsers.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.nama}
                 </option>
               ))}
             </Select>
@@ -140,24 +125,25 @@ function EditUnitAction({ unit }: { unit: MadrasahUnit }) {
 export function YayasanPage() {
   const queryClient = useQueryClient()
   const user = useAuthStore((s) => s.user)
-  const canManageUnit = user ? ADMIN_ROLES.includes(user.role) : false
-  const canEditUnit = user ? APP_ADMIN_ROLES.includes(user.role) : false
-  const { options: kepalaOptionsCreate } = useKepalaMadrasahOptions(canEditUnit)
+  const canManageUnit = user ? APP_ADMIN_ROLES.includes(user.role) : false
+  const { users: kepalaUsers } = useKepalaMadrasahOptions(canManageUnit)
 
   const rekapQuery = useQuery({ queryKey: ['yayasan', 'rekap'], queryFn: getRekapYayasan })
   const unitQuery = useQuery({ queryKey: ['yayasan', 'unit'], queryFn: listUnit, enabled: canManageUnit })
 
   const [nama, setNama] = useState('')
   const [alamat, setAlamat] = useState('')
-  const [kepalaUnit, setKepalaUnit] = useState('')
+  const [kepalaUserId, setKepalaUserId] = useState('')
 
   const createMutation = useMutation({
-    mutationFn: () => createUnit({ nama, alamat, kepala_unit: kepalaUnit }),
+    mutationFn: () => createUnit({ nama, alamat, kepala_user_id: kepalaUserId || undefined }),
     onSuccess: () => {
       setNama('')
       setAlamat('')
-      setKepalaUnit('')
+      setKepalaUserId('')
       queryClient.invalidateQueries({ queryKey: ['yayasan'] })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'guru'] })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'akun'] })
     },
   })
 
@@ -171,7 +157,7 @@ export function YayasanPage() {
     { header: 'Status', cell: (r) => <Badge tone={r.aktif ? 'success' : 'neutral'}>{r.aktif ? 'Aktif' : 'Nonaktif'}</Badge> },
     { header: 'Santri', cell: (r) => r.total_santri },
     { header: 'Rombel', cell: (r) => r.total_rombel },
-    { header: 'Guru', cell: (r) => r.total_guru },
+    { header: 'Staf', cell: (r) => r.total_guru },
     { header: 'SPP Lunas', cell: (r) => r.tagihan_lunas },
     { header: 'SPP Belum', cell: (r) => r.tagihan_belum },
   ]
@@ -185,7 +171,7 @@ export function YayasanPage() {
       header: 'Aksi',
       cell: (u) => (
         <div className="flex items-center gap-1">
-          {canEditUnit && <EditUnitAction unit={u} />}
+          {canManageUnit && <EditUnitAction unit={u} kepalaUsers={kepalaUsers} />}
           <Button size="sm" variant="secondary" onClick={() => toggleAktifMutation.mutate({ id: u.id, aktif: !u.aktif })}>
             {u.aktif ? 'Nonaktifkan' : 'Aktifkan'}
           </Button>
@@ -226,17 +212,17 @@ export function YayasanPage() {
               </div>
               <div>
                 <Label htmlFor="kepala-unit">Kepala unit</Label>
-                {canEditUnit ? (
-                  <Select id="kepala-unit" value={kepalaUnit} onChange={(e) => setKepalaUnit(e.target.value)}>
+                {canManageUnit ? (
+                  <Select id="kepala-unit" value={kepalaUserId} onChange={(e) => setKepalaUserId(e.target.value)}>
                     <option value="">Belum ditugaskan</option>
-                    {kepalaOptionsCreate.map((nama) => (
-                      <option key={nama} value={nama}>
-                        {nama}
+                    {kepalaUsers.map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.nama}
                       </option>
                     ))}
                   </Select>
                 ) : (
-                  <Input id="kepala-unit" value={kepalaUnit} onChange={(e) => setKepalaUnit(e.target.value)} />
+                  <Input id="kepala-unit" value={kepalaUserId} onChange={(e) => setKepalaUserId(e.target.value)} />
                 )}
               </div>
               <div>
