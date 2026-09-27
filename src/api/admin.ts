@@ -194,6 +194,15 @@ export async function listPengumumanAdmin(): Promise<Pengumuman[]> {
   return data
 }
 
+export async function patchPengumuman(id: string, payload: { judul?: string; isi?: string; publik?: boolean }) {
+  const { data } = await apiClient.patch<Pengumuman>(`/admin/pengumuman/${id}`, payload)
+  return data
+}
+
+export async function deletePengumuman(id: string) {
+  await apiClient.delete(`/admin/pengumuman/${id}`)
+}
+
 export async function createPengumuman(payload: { judul: string; isi: string }) {
   const { data } = await apiClient.post<Pengumuman>('/admin/pengumuman', payload)
   return data
