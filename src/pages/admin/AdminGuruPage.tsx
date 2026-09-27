@@ -38,7 +38,7 @@ const GURU_ROLE_OPTIONS = [
   { value: 'guru', label: 'Guru Mapel' },
   { value: 'kurikulum', label: 'Kurikulum' },
   { value: 'bendahara', label: 'Bendahara' },
-  { value: 'kepala_sekolah', label: 'Kepala Sekolah' },
+  { value: 'kepala_sekolah', label: 'Kepala Madrasah' },
 ]
 
 const resetPasswordSchema = z.object({
