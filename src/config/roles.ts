@@ -9,6 +9,16 @@ export const WALI_KELAS_ROLES: Role[] = ['wali_kelas', 'guru', 'kepala_sekolah',
 export const GURU_MAPEL_ROLES: Role[] = ['guru', 'wali_kelas', 'kepala_sekolah', 'admin']
 export const WALI_SANTRI_ROLES: Role[] = ['wali_santri', 'kepala_sekolah', 'admin']
 export const YAYASAN_ROLES: Role[] = ['yayasan_admin', 'kepala_sekolah', 'admin']
+export const ALL_ROLES: Role[] = [
+  'admin',
+  'kepala_sekolah',
+  'kurikulum',
+  'bendahara',
+  'wali_kelas',
+  'guru',
+  'wali_santri',
+  'yayasan_admin',
+]
 
 export const ROLE_LABEL: Record<Role, string> = {
   admin: 'Admin',

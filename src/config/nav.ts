@@ -15,8 +15,10 @@ import {
   MessageCircle,
   Receipt,
   ScrollText,
+  Landmark,
   Settings,
   TrendingUp,
+  UserCircle,
   UserCog,
   UserPlus,
   Users,
@@ -25,6 +27,7 @@ import {
 import type { Role } from '../types'
 import {
   ADMIN_ROLES,
+  ALL_ROLES,
   BENDAHARA_ROLES,
   GURU_MAPEL_ROLES,
   KURIKULUM_ROLES,
@@ -57,6 +60,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: 'Tahun Ajaran', path: '/portal/tahun-ajaran', roles: ADMIN_ROLES, icon: CalendarRange },
       { label: 'Pengumuman', path: '/portal/pengumuman', roles: ADMIN_ROLES, icon: Megaphone },
       { label: 'Pendaftaran PSB', path: '/portal/pendaftaran', roles: ADMIN_ROLES, icon: UserPlus },
+      { label: 'Profil Lembaga', path: '/portal/profil-lembaga', roles: ADMIN_ROLES, icon: Landmark },
       { label: 'Pengaturan', path: '/portal/pengaturan', roles: ADMIN_ROLES, icon: Settings },
       { label: 'Audit Log', path: '/portal/audit-log', roles: ADMIN_ROLES, icon: ScrollText },
     ],
@@ -105,6 +109,15 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     title: 'Wali Santri',
     items: [{ label: 'Anak Saya', path: '/portal/wali-santri', roles: WALI_SANTRI_ROLES, icon: Heart }],
+  },
+  {
+    // Selalu ditaruh paling akhir: firstAccessiblePath() memilih item
+    // section PERTAMA yang cocok dengan role user sebagai halaman
+    // pendaratan setelah login -- taruh section ini di awal akan membuat
+    // semua role mendarat di Profil Saya alih-alih halaman kerja
+    // utamanya masing-masing.
+    title: 'Akun',
+    items: [{ label: 'Profil Saya', path: '/portal/profil', roles: ALL_ROLES, icon: UserCircle }],
   },
 ]
 

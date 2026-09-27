@@ -18,7 +18,7 @@ export function BottomNav({ items }: { items: NavItem[] }) {
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-20 flex items-stretch border-t border-border bg-card/95 backdrop-blur md:hidden"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)', boxShadow: '0 -2px 8px -2px oklch(0.16 0.014 240 / 8%)' }}
     >
       {items.map((item) => {
         const Icon = item.icon

@@ -109,7 +109,7 @@ export function PortalLayout() {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-border bg-card/95 px-4 py-3 backdrop-blur sm:px-5">
+        <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-border bg-card/95 px-4 py-3 shadow-soft backdrop-blur sm:px-5">
           {/* Hidden on mobile: BottomNav's "Lainnya" button opens the same
            * sidebar sheet, closer to the thumb than top-left. */}
           <SidebarTrigger className="hidden md:flex" />
