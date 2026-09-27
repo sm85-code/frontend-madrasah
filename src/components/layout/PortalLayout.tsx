@@ -3,6 +3,7 @@ import { GraduationCap, LogOut } from 'lucide-react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { logout as apiLogout } from '../../api/auth'
 import { Button } from '../ui/AppButton'
+import { BottomNav } from './BottomNav'
 import {
   Sidebar,
   SidebarContent,
@@ -41,6 +42,11 @@ export function PortalLayout() {
     ...section,
     items: section.items.filter((item) => item.roles.includes(user.role)),
   })).filter((section) => section.items.length > 0)
+
+  // Top 4 items across this role's own sections, in the order config/nav.ts
+  // already ranks them (Dashboard etc. first) -- shown in the bottom tab
+  // bar so they're a thumb's reach away instead of top-left.
+  const primaryItems = sections.flatMap((s) => s.items).slice(0, 4)
 
   return (
     <SidebarProvider>
@@ -103,15 +109,18 @@ export function PortalLayout() {
       </Sidebar>
       <SidebarInset>
         <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-border bg-card/95 px-4 py-3 backdrop-blur sm:px-5">
-          <SidebarTrigger />
+          {/* Hidden on mobile: BottomNav's "Lainnya" button opens the same
+           * sidebar sheet, closer to the thumb than top-left. */}
+          <SidebarTrigger className="hidden md:flex" />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-foreground">{user.nama}</p>
             <p className="truncate text-xs text-muted-foreground">{ROLE_LABEL[user.role]}</p>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto bg-muted/30 p-4 sm:p-5">
+        <main className="flex-1 overflow-y-auto bg-muted/30 p-4 pb-20 sm:p-5 md:pb-5">
           <Outlet />
         </main>
+        <BottomNav items={primaryItems} />
       </SidebarInset>
     </SidebarProvider>
   )
