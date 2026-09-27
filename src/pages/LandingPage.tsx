@@ -216,7 +216,7 @@ export function LandingPage() {
             <span className="mx-auto mb-6 flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-soft">
               <GraduationCap className="size-7" strokeWidth={2.25} />
             </span>
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
               {loadingPengaturan ? 'Memuat…' : pengaturan?.nama_sekolah ?? 'Sistem Informasi Madrasah'}
             </h1>
             <p className="mx-auto mt-3 max-w-xl text-base text-muted-foreground">
@@ -249,7 +249,7 @@ export function LandingPage() {
                   <span className="flex size-10 items-center justify-center rounded-xl bg-accent text-primary">
                     <Icon className="size-5" strokeWidth={2.25} />
                   </span>
-                  <h3 className="mt-3 font-semibold text-foreground">{title}</h3>
+                  <h3 className="mt-3 text-base font-semibold text-foreground">{title}</h3>
                   <p className="mt-1 text-sm text-muted-foreground">{description}</p>
                 </CardBody>
               </Card>
@@ -277,7 +277,7 @@ export function LandingPage() {
                         <span className="flex size-10 items-center justify-center rounded-xl bg-accent text-primary">
                           <Sparkles className="size-5" strokeWidth={2.25} />
                         </span>
-                        <h3 className="mt-3 font-semibold text-foreground">{k.judul}</h3>
+                        <h3 className="mt-3 text-base font-semibold text-foreground">{k.judul}</h3>
                         {k.deskripsi && <p className="mt-1 text-sm text-muted-foreground">{k.deskripsi}</p>}
                       </CardBody>
                     </Card>
@@ -351,7 +351,7 @@ export function LandingPage() {
                 <Card key={item.id} className="shadow-soft transition-shadow hover:shadow-md">
                   <CardBody>
                     <div className="flex items-baseline justify-between gap-3">
-                      <h3 className="font-semibold text-foreground">{item.judul}</h3>
+                      <h3 className="text-base font-semibold text-foreground">{item.judul}</h3>
                       <span className="shrink-0 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">{item.tanggal}</span>
                     </div>
                     <p className="mt-1.5 whitespace-pre-line text-sm text-muted-foreground">{item.isi}</p>
