@@ -59,6 +59,7 @@ export interface NavItem {
 export interface NavSection {
   title: string
   items: NavItem[]
+  hideFor?: Role[]
 }
 
 export const NAV_SECTIONS: NavSection[] = [
@@ -112,6 +113,7 @@ export const NAV_SECTIONS: NavSection[] = [
   },
   {
     title: 'Wali Kelas',
+    hideFor: ['yayasan_admin'],
     items: [
       { label: 'Absensi', path: '/portal/wali-kelas/absensi', roles: ABSENSI_REKAP_ROLES, icon: CheckSquare },
       { label: 'Progres Santri', path: '/portal/wali-kelas/progres', roles: WALI_KELAS_READ_ROLES, icon: LineChart },
@@ -121,6 +123,7 @@ export const NAV_SECTIONS: NavSection[] = [
   },
   {
     title: 'Guru Mapel',
+    hideFor: ['yayasan_admin'],
     items: [
       { label: 'Penugasan Saya', path: '/portal/guru-mapel/penugasan', roles: PENUGASAN_SAYA_ROLES, icon: ClipboardList },
       { label: 'Absensi Mapel', path: '/portal/guru-mapel/absensi', roles: ABSENSI_MAPEL_READ_ROLES, icon: CheckSquare },

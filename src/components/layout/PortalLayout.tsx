@@ -41,10 +41,12 @@ export function PortalLayout() {
   if (!user) return null
   const userRoles = rolesOf(user)
 
-  const sections = NAV_SECTIONS.map((section) => ({
-    ...section,
-    items: section.items.filter((item) => item.roles.some((r) => userRoles.includes(r))),
-  })).filter((section) => section.items.length > 0)
+  const sections = NAV_SECTIONS.filter((section) => !section.hideFor?.some((r) => userRoles.includes(r)))
+    .map((section) => ({
+      ...section,
+      items: section.items.filter((item) => item.roles.some((r) => userRoles.includes(r))),
+    }))
+    .filter((section) => section.items.length > 0)
 
   // Top 4 items across this role's own sections, in the order config/nav.ts
   // already ranks them (Dashboard etc. first) -- shown in the bottom tab
