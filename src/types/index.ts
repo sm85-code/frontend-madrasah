@@ -63,6 +63,7 @@ export interface Pengumuman {
   tanggal: string
   dibuat_by: string | null
   madrasah_unit_id?: string | null
+  publik?: boolean
 }
 
 export interface Tingkat {
