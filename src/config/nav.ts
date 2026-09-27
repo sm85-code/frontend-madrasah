@@ -57,7 +57,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: 'Dashboard', path: '/portal/dashboard', roles: ADMIN_ROLES, icon: LayoutDashboard },
       { label: 'Santri', path: '/portal/santri', roles: ADMIN_ROLES, icon: Users },
       { label: 'Rombel & Tingkat', path: '/portal/rombel', roles: ADMIN_ROLES, icon: Layers },
-      { label: 'Guru & Wali Santri', path: '/portal/guru', roles: APP_ADMIN_ROLES, icon: UserCog },
+      { label: 'Guru & Wali Santri', path: '/portal/guru', roles: ADMIN_ROLES, icon: UserCog },
       { label: 'Kelola Akun', path: '/portal/kelola-akun', roles: APP_ADMIN_ROLES, icon: ShieldCheck },
       { label: 'Kenaikan Kelas', path: '/portal/kenaikan-kelas', roles: ADMIN_ROLES, icon: TrendingUp },
       { label: 'Tahun Ajaran', path: '/portal/tahun-ajaran', roles: ADMIN_ROLES, icon: CalendarRange },

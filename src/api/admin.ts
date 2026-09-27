@@ -55,12 +55,21 @@ export async function listAkun(): Promise<User[]> {
   return data
 }
 
-export async function createAkun(payload: { nama: string; no_hp: string; password?: string; role: string }) {
+export async function createAkun(payload: {
+  nama: string
+  no_hp: string
+  password?: string
+  role: string
+  madrasah_unit_id?: string | null
+}) {
   const { data } = await apiClient.post<User>('/admin/akun', payload)
   return data
 }
 
-export async function patchAkun(id: string, payload: { nama?: string; no_hp?: string; role?: string; password?: string }) {
+export async function patchAkun(
+  id: string,
+  payload: { nama?: string; no_hp?: string; role?: string; password?: string; madrasah_unit_id?: string | null },
+) {
   const { data } = await apiClient.patch<User>(`/admin/akun/${id}`, payload)
   return data
 }

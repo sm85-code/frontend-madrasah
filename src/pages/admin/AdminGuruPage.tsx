@@ -14,6 +14,7 @@ import {
   patchGuru,
   patchWaliSantri,
 } from '../../api/admin'
+import { listUnit } from '../../api/yayasan'
 import { ApiError } from '../../lib/apiClient'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
@@ -31,6 +32,7 @@ import {
 import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedback'
 import { FieldError, Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { useAuthStore } from '../../store/authStore'
 import type { User } from '../../types'
 
 const GURU_ROLE_OPTIONS = [
@@ -114,13 +116,19 @@ function ResetPasswordAction({ user, onSubmit }: { user: User; onSubmit: (passwo
 
 export function AdminGuruPage() {
   const queryClient = useQueryClient()
+  const me = useAuthStore((s) => s.user)
+  const isKepala = me?.role === 'kepala_sekolah'
+  const roleOptions = isKepala ? GURU_ROLE_OPTIONS.filter((opt) => opt.value !== 'kepala_sekolah') : GURU_ROLE_OPTIONS
   const guruQuery = useQuery({ queryKey: ['admin', 'guru'], queryFn: listGuru })
+  const unitQuery = useQuery({ queryKey: ['yayasan', 'unit'], queryFn: listUnit, enabled: !isKepala })
+  const units = unitQuery.data ?? []
   const waliSantriQuery = useQuery({ queryKey: ['admin', 'wali-santri'], queryFn: listWaliSantri })
 
   const [namaGuru, setNamaGuru] = useState('')
   const [noHpGuru, setNoHpGuru] = useState('')
   const [passwordGuru, setPasswordGuru] = useState('')
   const [roleGuru, setRoleGuru] = useState('wali_kelas')
+  const [unitGuru, setUnitGuru] = useState('')
 
   const [namaWali, setNamaWali] = useState('')
   const [noHpWali, setNoHpWali] = useState('')
@@ -130,7 +138,13 @@ export function AdminGuruPage() {
 
   const createGuruMutation = useMutation({
     mutationFn: () =>
-      createGuru({ nama: namaGuru, no_hp: noHpGuru, role: roleGuru, password: passwordGuru || undefined }),
+      createGuru({
+        nama: namaGuru,
+        no_hp: noHpGuru,
+        role: roleGuru,
+        password: passwordGuru || undefined,
+        madrasah_unit_id: isKepala ? undefined : unitGuru || undefined,
+      }),
     onSuccess: (created) => {
       setPasswordSementara(created.password_sementara ? { nama: created.nama, password: created.password_sementara } : null)
       setNamaGuru('')
@@ -168,12 +182,13 @@ export function AdminGuruPage() {
     {
       header: '',
       className: 'w-20 text-right',
-      cell: (u) => (
-        <div className="flex justify-end gap-1">
-          <ResetPasswordAction user={u} onSubmit={(password) => patchGuru(u.id, { password })} />
-          <DeleteRowButton onClick={() => deleteGuruMutation.mutate(u.id)} />
-        </div>
-      ),
+      cell: (u) =>
+        isKepala && u.role === 'kepala_sekolah' ? null : (
+          <div className="flex justify-end gap-1">
+            <ResetPasswordAction user={u} onSubmit={(password) => patchGuru(u.id, { password })} />
+            <DeleteRowButton onClick={() => deleteGuruMutation.mutate(u.id)} />
+          </div>
+        ),
     },
   ]
 
@@ -194,7 +209,14 @@ export function AdminGuruPage() {
 
   return (
     <div>
-      <PageHeader title="Guru & Wali Santri" description="Kelola akun staf dan orang tua/wali santri." />
+      <PageHeader
+        title="Guru & Wali Santri"
+        description={
+          isKepala
+            ? 'Anda admin unit ini. Buat akun guru, staf, dan wali santri hanya untuk unit Anda.'
+            : 'Kelola akun staf dan orang tua/wali santri.'
+        }
+      />
 
       {passwordSementara && (
         <div className="mb-4">
@@ -239,13 +261,26 @@ export function AdminGuruPage() {
               <div className="min-w-[150px]">
                 <Label htmlFor="role-guru">Role</Label>
                 <Select id="role-guru" value={roleGuru} onChange={(e) => setRoleGuru(e.target.value)}>
-                  {GURU_ROLE_OPTIONS.map((opt) => (
+                  {roleOptions.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
                     </option>
                   ))}
                 </Select>
               </div>
+              {!isKepala && (
+              <div className="min-w-[150px]">
+                <Label htmlFor="unit-guru">Unit</Label>
+                <Select id="unit-guru" value={unitGuru} onChange={(e) => setUnitGuru(e.target.value)} required>
+                  <option value="">Pilih unit</option>
+                  {units.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.nama}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              )}
               <Button type="submit" loading={createGuruMutation.isPending}>
                 Tambah
               </Button>

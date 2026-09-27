@@ -16,12 +16,15 @@ export async function listUnit(): Promise<MadrasahUnit[]> {
   return data
 }
 
-export async function createUnit(payload: { nama: string; alamat?: string; kepala_unit?: string }) {
+export async function createUnit(payload: { nama: string; alamat?: string; kepala_unit?: string; kepala_user_id?: string }) {
   const { data } = await apiClient.post<MadrasahUnit>('/admin/unit', payload)
   return data
 }
 
-export async function patchUnit(id: string, payload: Partial<{ nama: string; alamat: string; kepala_unit: string; aktif: boolean }>) {
+export async function patchUnit(
+  id: string,
+  payload: Partial<{ nama: string; alamat: string; kepala_unit: string; kepala_user_id: string; aktif: boolean }>,
+) {
   const { data } = await apiClient.patch<MadrasahUnit>(`/admin/unit/${id}`, payload)
   return data
 }

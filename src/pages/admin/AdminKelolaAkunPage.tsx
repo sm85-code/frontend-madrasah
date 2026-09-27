@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { createAkun, deleteAkun, listAkun, patchAkun } from '../../api/admin'
+import { listUnit } from '../../api/yayasan'
 import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
@@ -24,7 +25,9 @@ import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedbac
 import { FieldError, Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { ROLE_LABEL } from '../../config/roles'
-import type { Role, User } from '../../types'
+import type { MadrasahUnit, Role, User } from '../../types'
+
+const UNIT_SCOPED_ROLES: Role[] = ['kepala_sekolah', 'kurikulum', 'bendahara', 'wali_kelas', 'guru', 'wali_santri']
 
 const ROLE_OPTIONS: { value: Role; label: string }[] = [
   { value: 'admin', label: ROLE_LABEL.admin },
@@ -113,10 +116,11 @@ const editAkunSchema = z.object({
   nama: z.string().min(1, 'Wajib diisi'),
   no_hp: z.string().min(3, 'Minimal 3 karakter'),
   role: z.string().min(1),
+  madrasah_unit_id: z.string(),
 })
 type EditAkunValues = z.infer<typeof editAkunSchema>
 
-function EditAkunAction({ user }: { user: User }) {
+function EditAkunAction({ user, units }: { user: User; units: MadrasahUnit[] }) {
   const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
   const {
@@ -128,18 +132,31 @@ function EditAkunAction({ user }: { user: User }) {
     formState: { errors },
   } = useForm<EditAkunValues>({
     resolver: zodResolver(editAkunSchema),
-    defaultValues: { nama: user.nama, no_hp: user.no_hp, role: user.role },
+    defaultValues: {
+      nama: user.nama,
+      no_hp: user.no_hp,
+      role: user.role,
+      madrasah_unit_id: user.madrasah_unit_id ?? '',
+    },
   })
 
   // Form dibuka berkali-kali untuk baris yang sama sepanjang hidup
   // komponen (dialog di-mount sekali, bukan remount per open) -- reset
   // nilainya ke data terbaru user tiap kali dialognya dibuka.
   useEffect(() => {
-    if (open) reset({ nama: user.nama, no_hp: user.no_hp, role: user.role })
+    if (open) {
+      reset({ nama: user.nama, no_hp: user.no_hp, role: user.role, madrasah_unit_id: user.madrasah_unit_id ?? '' })
+    }
   }, [open, user, reset])
 
   const mutation = useMutation({
-    mutationFn: (values: EditAkunValues) => patchAkun(user.id, values),
+    mutationFn: (values: EditAkunValues) =>
+      patchAkun(user.id, {
+        nama: values.nama,
+        no_hp: values.no_hp,
+        role: values.role,
+        madrasah_unit_id: UNIT_SCOPED_ROLES.includes(values.role as Role) ? values.madrasah_unit_id || null : null,
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'akun'] })
       setOpen(false)
@@ -183,6 +200,23 @@ function EditAkunAction({ user }: { user: User }) {
               ))}
             </Select>
           </div>
+          {UNIT_SCOPED_ROLES.includes(watch('role') as Role) && (
+            <div>
+              <Label htmlFor={`edit-unit-${user.id}`}>Unit</Label>
+              <Select
+                id={`edit-unit-${user.id}`}
+                value={watch('madrasah_unit_id')}
+                onChange={(e) => setValue('madrasah_unit_id', e.target.value, { shouldValidate: true })}
+              >
+                <option value="">Pilih unit</option>
+                {units.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.nama}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          )}
           {mutation.isError && (
             <ErrorNotice message={mutation.error instanceof ApiError ? mutation.error.message : 'Gagal menyimpan perubahan.'} />
           )}
@@ -200,15 +234,26 @@ function EditAkunAction({ user }: { user: User }) {
 export function AdminKelolaAkunPage() {
   const queryClient = useQueryClient()
   const akunQuery = useQuery({ queryKey: ['admin', 'akun'], queryFn: listAkun })
+  const unitQuery = useQuery({ queryKey: ['yayasan', 'unit'], queryFn: listUnit })
+  const units = unitQuery.data ?? []
+  const unitName = (id?: string | null) => units.find((u) => u.id === id)?.nama ?? '—'
 
   const [nama, setNama] = useState('')
   const [noHp, setNoHp] = useState('')
   const [password, setPassword] = useState('')
   const [role, setRole] = useState<Role>('wali_kelas')
+  const [unitId, setUnitId] = useState('')
   const [passwordSementara, setPasswordSementara] = useState<{ nama: string; password: string } | null>(null)
 
   const createMutation = useMutation({
-    mutationFn: () => createAkun({ nama, no_hp: noHp, role, password: password || undefined }),
+    mutationFn: () =>
+      createAkun({
+        nama,
+        no_hp: noHp,
+        role,
+        password: password || undefined,
+        madrasah_unit_id: UNIT_SCOPED_ROLES.includes(role) ? unitId || undefined : null,
+      }),
     onSuccess: (created) => {
       setPasswordSementara(created.password_sementara ? { nama: created.nama, password: created.password_sementara } : null)
       setNama('')
@@ -228,11 +273,15 @@ export function AdminKelolaAkunPage() {
     { header: 'Username', cell: (u) => u.no_hp },
     { header: 'Role', cell: (u) => <Badge tone={ROLE_BADGE_TONE[u.role]}>{ROLE_LABEL[u.role]}</Badge> },
     {
+      header: 'Unit',
+      cell: (u) => (UNIT_SCOPED_ROLES.includes(u.role) ? unitName(u.madrasah_unit_id) : 'Semua unit'),
+    },
+    {
       header: '',
       className: 'w-28 text-right',
       cell: (u) => (
         <div className="flex justify-end gap-1">
-          <EditAkunAction user={u} />
+          <EditAkunAction user={u} units={units} />
           <ResetPasswordAction user={u} />
           <DeleteRowButton onClick={() => deleteMutation.mutate(u.id)} itemName={u.nama} />
         </div>
@@ -291,6 +340,19 @@ export function AdminKelolaAkunPage() {
                 ))}
               </Select>
             </div>
+            {UNIT_SCOPED_ROLES.includes(role) && (
+              <div>
+                <Label htmlFor="unit-akun">Unit</Label>
+                <Select id="unit-akun" value={unitId} onChange={(e) => setUnitId(e.target.value)} required>
+                  <option value="">Pilih unit</option>
+                  {units.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.nama}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            )}
             <Button type="submit" loading={createMutation.isPending} className="self-end">
               Tambah Akun
             </Button>

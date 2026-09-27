@@ -76,8 +76,11 @@ function App() {
                 <Route path="keuangan/honor" element={<HonorPage />} />
               </Route>
 
-              <Route element={<RoleGuard roles={APP_ADMIN_ROLES} />}>
+              <Route element={<RoleGuard roles={ADMIN_ROLES} />}>
                 <Route path="guru" element={<AdminGuruPage />} />
+              </Route>
+
+              <Route element={<RoleGuard roles={APP_ADMIN_ROLES} />}>
                 <Route path="kelola-akun" element={<AdminKelolaAkunPage />} />
                 <Route path="audit-log" element={<AdminAuditLogPage />} />
               </Route>
