@@ -251,6 +251,7 @@ export interface RekapUmum {
   per_rombel: { rombel: string; jumlah_santri: number }[]
   unit_id?: string | null
   unit_nama?: string | null
+  per_unit?: RekapUmum[]
 }
 
 export interface AuditLogEntry {

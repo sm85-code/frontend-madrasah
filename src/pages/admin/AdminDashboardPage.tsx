@@ -89,11 +89,13 @@ export function AdminDashboardPage() {
         description={
           lintasUnit
             ? 'Ringkasan tiap unit, terpisah.'
-            : unitData?.unit_nama
-              ? `Ringkasan unit ${unitData.unit_nama}.`
-              : unitData && !unitData.unit_id
-                ? 'Akun ini belum terikat unit. Angka kosong sampai Kepala dipilih di halaman Unit.'
-                : 'Ringkasan unit Anda.'
+            : unitData?.per_unit && unitData.per_unit.length > 1
+              ? 'Ringkasan tiap unit tempat Anda ditugaskan.'
+              : unitData?.unit_nama
+                ? `Ringkasan unit ${unitData.unit_nama}.`
+                : unitData && !unitData.unit_id
+                  ? 'Akun ini belum terikat unit.'
+                  : 'Ringkasan unit Anda.'
         }
       />
       {isError ? (
@@ -118,6 +120,21 @@ export function AdminDashboardPage() {
               />
             ))
           )}
+        </div>
+      ) : unitData?.per_unit && unitData.per_unit.length > 0 ? (
+        <div className="space-y-8">
+          {unitData.per_unit.map((u) => (
+            <UnitStats
+              key={u.unit_id ?? u.unit_nama ?? 'unit'}
+              title={u.unit_nama ?? 'Unit'}
+              total_santri={u.total_santri}
+              total_guru={u.total_guru}
+              total_rombel={u.total_rombel}
+              tagihan_lunas={u.tagihan_lunas}
+              tagihan_belum={u.tagihan_belum}
+              per_rombel={u.per_rombel}
+            />
+          ))}
         </div>
       ) : unitData ? (
         <UnitStats

@@ -4,7 +4,7 @@ export const APP_ADMIN_ROLES: Role[] = ['admin']
 export const YAYASAN_ROLES: Role[] = ['yayasan_admin', 'admin']
 export const UNIT_ADMIN_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin']
 
-export const DASHBOARD_ROLES: Role[] = ['admin', 'yayasan_admin', 'kepala_sekolah', 'lembaga_admin']
+export const DASHBOARD_ROLES: Role[] = ['admin', 'yayasan_admin', 'kepala_sekolah', 'lembaga_admin', 'guru', 'wali_kelas', 'kurikulum', 'bendahara']
 export const SANTRI_READ_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin', 'yayasan_admin']
 export const SANTRI_WRITE_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin']
 export const ROMBEL_READ_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin', 'kurikulum', 'yayasan_admin']
