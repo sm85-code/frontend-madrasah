@@ -126,10 +126,13 @@ export function AdminGuruPage() {
   const [noHpWali, setNoHpWali] = useState('')
   const [passwordWali, setPasswordWali] = useState('')
 
+  const [passwordSementara, setPasswordSementara] = useState<{ nama: string; password: string } | null>(null)
+
   const createGuruMutation = useMutation({
     mutationFn: () =>
       createGuru({ nama: namaGuru, no_hp: noHpGuru, role: roleGuru, password: passwordGuru || undefined }),
-    onSuccess: () => {
+    onSuccess: (created) => {
+      setPasswordSementara(created.password_sementara ? { nama: created.nama, password: created.password_sementara } : null)
       setNamaGuru('')
       setNoHpGuru('')
       setPasswordGuru('')
@@ -144,7 +147,8 @@ export function AdminGuruPage() {
 
   const createWaliMutation = useMutation({
     mutationFn: () => createWaliSantri({ nama: namaWali, no_hp: noHpWali, password: passwordWali || undefined }),
-    onSuccess: () => {
+    onSuccess: (created) => {
+      setPasswordSementara(created.password_sementara ? { nama: created.nama, password: created.password_sementara } : null)
       setNamaWali('')
       setNoHpWali('')
       setPasswordWali('')
@@ -192,6 +196,14 @@ export function AdminGuruPage() {
     <div>
       <PageHeader title="Guru & Wali Santri" description="Kelola akun staf dan orang tua/wali santri." />
 
+      {passwordSementara && (
+        <div className="mb-4">
+          <SuccessNotice
+            message={`Akun ${passwordSementara.nama} dibuat. Password sementara: ${passwordSementara.password} -- catat sekarang, tidak akan ditampilkan lagi.`}
+          />
+        </div>
+      )}
+
       <div className="grid gap-5 lg:grid-cols-2">
         <Card>
           <CardHeader>
@@ -218,7 +230,7 @@ export function AdminGuruPage() {
                 <Input
                   id="password-guru"
                   type="password"
-                  placeholder="default: password123"
+                  placeholder="kosongkan untuk dibuatkan acak"
                   autoComplete="new-password"
                   value={passwordGuru}
                   onChange={(e) => setPasswordGuru(e.target.value)}
@@ -267,7 +279,7 @@ export function AdminGuruPage() {
                 <Input
                   id="password-wali"
                   type="password"
-                  placeholder="default: password123"
+                  placeholder="kosongkan untuk dibuatkan acak"
                   autoComplete="new-password"
                   value={passwordWali}
                   onChange={(e) => setPasswordWali(e.target.value)}

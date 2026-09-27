@@ -1,22 +1,114 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { Pencil } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 import { createUnit, getRekapYayasan, listUnit, patchUnit } from '../../api/yayasan'
 import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../../components/ui/dialog'
 import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
-import { Input, Label } from '../../components/ui/AppInput'
+import { FieldError, Input, Label } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { useAuthStore } from '../../store/authStore'
-import { ADMIN_ROLES } from '../../config/roles'
+import { ADMIN_ROLES, APP_ADMIN_ROLES } from '../../config/roles'
 import type { MadrasahUnit, RekapUnit } from '../../types'
+
+const editUnitSchema = z.object({
+  nama: z.string().min(1, 'Wajib diisi'),
+  alamat: z.string(),
+  kepala_unit: z.string(),
+})
+type EditUnitValues = z.infer<typeof editUnitSchema>
+
+/** Edit lengkap (nama/alamat/kepala unit) khusus admin utama (APP_ADMIN_ROLES)
+ * -- kepala_sekolah belum ditugaskan ke unit tertentu, jadi menugaskan
+ * "Kepala Unit" untuk unit lain sengaja tidak diserahkan ke kepala_sekolah,
+ * beda dari toggle aktif/nonaktif yang tetap ADMIN_ROLES (lihat backend
+ * admin_unit_patch di madrasah_router.py -- endpointnya sendiri masih
+ * ADMIN_ROLES, restriksi "admin saja" ini di level UI). */
+function EditUnitAction({ unit }: { unit: MadrasahUnit }) {
+  const queryClient = useQueryClient()
+  const [open, setOpen] = useState(false)
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<EditUnitValues>({
+    resolver: zodResolver(editUnitSchema),
+    defaultValues: { nama: unit.nama, alamat: unit.alamat, kepala_unit: unit.kepala_unit },
+  })
+
+  useEffect(() => {
+    if (open) reset({ nama: unit.nama, alamat: unit.alamat, kepala_unit: unit.kepala_unit })
+  }, [open, unit, reset])
+
+  const mutation = useMutation({
+    mutationFn: (values: EditUnitValues) => patchUnit(unit.id, values),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['yayasan'] })
+      setOpen(false)
+    },
+  })
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="ghost" aria-label="Edit unit" title="Edit unit">
+          <Pencil className="size-4" strokeWidth={2} />
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Edit Unit</DialogTitle>
+          <DialogDescription>Ubah nama, alamat, atau kepala unit untuk {unit.nama}.</DialogDescription>
+        </DialogHeader>
+        <form className="space-y-3" onSubmit={handleSubmit((values) => mutation.mutate(values))}>
+          <div>
+            <Label htmlFor={`edit-nama-unit-${unit.id}`}>Nama unit</Label>
+            <Input id={`edit-nama-unit-${unit.id}`} {...register('nama')} />
+            <FieldError message={errors.nama?.message} />
+          </div>
+          <div>
+            <Label htmlFor={`edit-kepala-unit-${unit.id}`}>Kepala unit</Label>
+            <Input id={`edit-kepala-unit-${unit.id}`} {...register('kepala_unit')} />
+          </div>
+          <div>
+            <Label htmlFor={`edit-alamat-unit-${unit.id}`}>Alamat</Label>
+            <Input id={`edit-alamat-unit-${unit.id}`} {...register('alamat')} />
+          </div>
+          {mutation.isError && (
+            <ErrorNotice message={mutation.error instanceof ApiError ? mutation.error.message : 'Gagal menyimpan perubahan.'} />
+          )}
+          <DialogFooter>
+            <Button type="submit" loading={mutation.isPending}>
+              Simpan
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
 
 export function YayasanPage() {
   const queryClient = useQueryClient()
   const user = useAuthStore((s) => s.user)
   const canManageUnit = user ? ADMIN_ROLES.includes(user.role) : false
+  const canEditUnit = user ? APP_ADMIN_ROLES.includes(user.role) : false
 
   const rekapQuery = useQuery({ queryKey: ['yayasan', 'rekap'], queryFn: getRekapYayasan })
   const unitQuery = useQuery({ queryKey: ['yayasan', 'unit'], queryFn: listUnit, enabled: canManageUnit })
@@ -58,9 +150,12 @@ export function YayasanPage() {
     {
       header: 'Aksi',
       cell: (u) => (
-        <Button size="sm" variant="secondary" onClick={() => toggleAktifMutation.mutate({ id: u.id, aktif: !u.aktif })}>
-          {u.aktif ? 'Nonaktifkan' : 'Aktifkan'}
-        </Button>
+        <div className="flex items-center gap-1">
+          {canEditUnit && <EditUnitAction unit={u} />}
+          <Button size="sm" variant="secondary" onClick={() => toggleAktifMutation.mutate({ id: u.id, aktif: !u.aktif })}>
+            {u.aktif ? 'Nonaktifkan' : 'Aktifkan'}
+          </Button>
+        </div>
       ),
     },
   ]
