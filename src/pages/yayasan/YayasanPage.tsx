@@ -5,12 +5,13 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { listAkun } from '../../api/admin'
-import { createUnit, getRekapYayasan, listUnit, patchUnit } from '../../api/yayasan'
+import { createUnit, deleteUnit, getRekapYayasan, listUnit, patchUnit } from '../../api/yayasan'
 import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
+import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import {
   Dialog,
   DialogContent,
@@ -126,6 +127,7 @@ export function YayasanPage() {
   const queryClient = useQueryClient()
   const user = useAuthStore((s) => s.user)
   const canManageUnit = user ? YAYASAN_ROLES.includes(user.role) : false
+  const canDeleteUnit = user?.role === 'admin'
   const { users: kepalaUsers } = useKepalaMadrasahOptions(canManageUnit)
 
   const rekapQuery = useQuery({ queryKey: ['yayasan', 'rekap'], queryFn: getRekapYayasan })
@@ -152,6 +154,11 @@ export function YayasanPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['yayasan'] }),
   })
 
+  const deleteUnitMutation = useMutation({
+    mutationFn: deleteUnit,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['yayasan'] }),
+  })
+
   const rekapColumns: Column<RekapUnit>[] = [
     { header: 'Unit', cell: (r) => r.unit_nama },
     { header: 'Status', cell: (r) => <Badge tone={r.aktif ? 'success' : 'neutral'}>{r.aktif ? 'Aktif' : 'Nonaktif'}</Badge> },
@@ -175,6 +182,7 @@ export function YayasanPage() {
           <Button size="sm" variant="secondary" onClick={() => toggleAktifMutation.mutate({ id: u.id, aktif: !u.aktif })}>
             {u.aktif ? 'Nonaktifkan' : 'Aktifkan'}
           </Button>
+          {canDeleteUnit && <DeleteRowButton onClick={() => deleteUnitMutation.mutate(u.id)} itemName={u.nama} />}
         </div>
       ),
     },
@@ -238,6 +246,13 @@ export function YayasanPage() {
                 </div>
               )}
             </form>
+            {deleteUnitMutation.isError && (
+              <div className="mb-4">
+                <ErrorNotice
+                  message={deleteUnitMutation.error instanceof ApiError ? deleteUnitMutation.error.message : 'Gagal menghapus unit.'}
+                />
+              </div>
+            )}
             {toggleAktifMutation.isError && (
               <div className="mb-4">
                 <ErrorNotice

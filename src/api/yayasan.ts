@@ -29,6 +29,10 @@ export async function patchUnit(
   return data
 }
 
+export async function deleteUnit(id: string) {
+  await apiClient.delete(`/admin/unit/${id}`)
+}
+
 export async function getRekapYayasan(): Promise<RekapUnit[]> {
   const { data } = await apiClient.get<RekapUnit[]>('/admin/yayasan/rekap')
   return data
