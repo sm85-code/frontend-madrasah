@@ -11,6 +11,7 @@ import { AdminGuruPage } from './pages/admin/AdminGuruPage'
 import { AdminKenaikanKelasPage } from './pages/admin/AdminKenaikanKelasPage'
 import { AdminPendaftaranPage } from './pages/admin/AdminPendaftaranPage'
 import { AdminPengaturanPage } from './pages/admin/AdminPengaturanPage'
+import { AdminProfilLembagaPage } from './pages/admin/AdminProfilLembagaPage'
 import { AdminPengumumanPage } from './pages/admin/AdminPengumumanPage'
 import { AdminRombelPage } from './pages/admin/AdminRombelPage'
 import { AdminSantriPage } from './pages/admin/AdminSantriPage'
@@ -29,6 +30,7 @@ import { LandingPage } from './pages/LandingPage'
 import { LoginPage } from './pages/LoginPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { PortalIndexPage } from './pages/PortalIndexPage'
+import { ProfilSayaPage } from './pages/ProfilSayaPage'
 import { WaliKelasAbsensiPage } from './pages/waliKelas/WaliKelasAbsensiPage'
 import { WaliKelasPesanPage } from './pages/waliKelas/WaliKelasPesanPage'
 import { WaliKelasProgresPage } from './pages/waliKelas/WaliKelasProgresPage'
@@ -47,6 +49,7 @@ function App() {
 
             <Route path="/portal" element={<PortalLayout />}>
               <Route index element={<PortalIndexPage />} />
+              <Route path="profil" element={<ProfilSayaPage />} />
 
               <Route element={<RoleGuard roles={ADMIN_ROLES} />}>
                 <Route path="dashboard" element={<AdminDashboardPage />} />
@@ -58,6 +61,7 @@ function App() {
                 <Route path="pengumuman" element={<AdminPengumumanPage />} />
                 <Route path="pendaftaran" element={<AdminPendaftaranPage />} />
                 <Route path="pengaturan" element={<AdminPengaturanPage />} />
+                <Route path="profil-lembaga" element={<AdminProfilLembagaPage />} />
                 <Route path="audit-log" element={<AdminAuditLogPage />} />
                 <Route path="keuangan/buku-kas" element={<BukuKasPage />} />
                 <Route path="keuangan/laba-rugi" element={<LabaRugiPage />} />
