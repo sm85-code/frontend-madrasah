@@ -32,7 +32,7 @@ function UnitStats({
       {title && <h2 className="font-heading text-base font-semibold leading-6 text-foreground">{title}</h2>}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         <StatCard label="Total Santri" value={total_santri} icon={Users} />
-        <StatCard label="Total Guru" value={total_guru} icon={GraduationCap} />
+        <StatCard label="Total Staf" value={total_guru} icon={GraduationCap} />
         <StatCard label="Total Rombel" value={total_rombel} icon={School} />
         <StatCard label="SPP Lunas" value={tagihan_lunas} tone="success" icon={CheckCircle2} />
         <StatCard label="SPP Belum Lunas" value={tagihan_belum} tone="warning" icon={CircleDollarSign} />
