@@ -1,6 +1,9 @@
 import { apiClient } from '../lib/apiClient'
 import type {
   AuditLogEntry,
+  Kegiatan,
+  Pendaftaran,
+  Pengaturan,
   Pengumuman,
   RekapUmum,
   Rombel,
@@ -144,5 +147,29 @@ export async function createPengumuman(payload: { judul: string; isi: string }) 
 
 export async function getAuditLog(limit = 200): Promise<AuditLogEntry[]> {
   const { data } = await apiClient.get<AuditLogEntry[]>('/admin/audit-log', { params: { limit } })
+  return data
+}
+
+export async function updatePengaturan(payload: Partial<Pengaturan>) {
+  const { data } = await apiClient.patch<Pengaturan>('/admin/pengaturan', payload)
+  return data
+}
+
+export async function createKegiatan(payload: { judul: string; deskripsi?: string; urutan?: number }) {
+  const { data } = await apiClient.post<Kegiatan>('/admin/kegiatan', payload)
+  return data
+}
+
+export async function deleteKegiatan(id: string) {
+  await apiClient.delete(`/admin/kegiatan/${id}`)
+}
+
+export async function listPendaftaran(): Promise<Pendaftaran[]> {
+  const { data } = await apiClient.get<Pendaftaran[]>('/admin/pendaftaran')
+  return data
+}
+
+export async function patchPendaftaran(id: string, payload: Partial<Pick<Pendaftaran, 'status' | 'catatan'>>) {
+  const { data } = await apiClient.patch<Pendaftaran>(`/admin/pendaftaran/${id}`, payload)
   return data
 }
