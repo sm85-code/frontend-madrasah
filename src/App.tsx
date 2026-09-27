@@ -31,6 +31,7 @@ import { AdminGuruPage } from './pages/admin/AdminGuruPage'
 import { AdminKelolaAkunPage } from './pages/admin/AdminKelolaAkunPage'
 import { AdminKenaikanKelasPage } from './pages/admin/AdminKenaikanKelasPage'
 import { AdminPendaftaranPage } from './pages/admin/AdminPendaftaranPage'
+import { AdminKegiatanPage } from './pages/admin/AdminKegiatanPage'
 import { AdminPengaturanPage } from './pages/admin/AdminPengaturanPage'
 import { AdminProfilLembagaPage } from './pages/admin/AdminProfilLembagaPage'
 import { AdminPengumumanPage } from './pages/admin/AdminPengumumanPage'
@@ -57,6 +58,7 @@ import { WaliKelasProgresPage } from './pages/waliKelas/WaliKelasProgresPage'
 import { WaliKelasTagihanPage } from './pages/waliKelas/WaliKelasTagihanPage'
 import { WaliSantriPage } from './pages/waliSantri/WaliSantriPage'
 import { YayasanPage } from './pages/yayasan/YayasanPage'
+import { YayasanProfilPage } from './pages/yayasan/YayasanProfilPage'
 
 function App() {
   return (
@@ -86,6 +88,7 @@ function App() {
               <Route element={<RoleGuard roles={INFO_AKADEMIK_READ_ROLES} />}>
                 <Route path="tahun-ajaran" element={<AdminTahunAjaranPage />} />
                 <Route path="pengumuman" element={<AdminPengumumanPage />} />
+                <Route path="kegiatan" element={<AdminKegiatanPage />} />
                 <Route path="pengaturan" element={<AdminPengaturanPage />} />
               </Route>
               <Route element={<RoleGuard roles={PSB_READ_ROLES} />}>
@@ -110,7 +113,7 @@ function App() {
 
               <Route element={<RoleGuard roles={YAYASAN_ROLES} />}>
                 <Route path="yayasan" element={<YayasanPage />} />
-                <Route path="yayasan/profil" element={<YayasanPage />} />
+                <Route path="yayasan/profil" element={<YayasanProfilPage />} />
               </Route>
 
               <Route element={<RoleGuard roles={KURIKULUM_READ_ROLES} />}>

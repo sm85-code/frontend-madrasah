@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { updatePengaturan } from '../../api/admin'
-import { getPengaturan } from '../../api/public'
+import { listUnit, patchUnit } from '../../api/yayasan'
 import { ApiError } from '../../lib/apiClient'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCard'
@@ -10,26 +9,15 @@ import { Input, Label, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { PROFIL_LEMBAGA_WRITE_ROLES } from '../../config/roles'
 import { useCanWrite } from '../../hooks/useCanWrite'
-import type { Pengaturan } from '../../types'
+import type { MadrasahUnit } from '../../types'
 
-/** Mounted only once `pengaturan` has loaded (see the `isLoading` gate
- * below), so its form state can be initialized straight from the fetched
- * row -- no effect needed to copy query data into state after the fact. */
-function ProfilLembagaForm({ pengaturan }: { pengaturan: Pengaturan }) {
+function UnitProfilForm({ unit, writable }: { unit: MadrasahUnit; writable: boolean }) {
   const queryClient = useQueryClient()
-  const writable = useCanWrite(PROFIL_LEMBAGA_WRITE_ROLES)
-  const [namaSekolah, setNamaSekolah] = useState(pengaturan.nama_sekolah)
-  const [tagline, setTagline] = useState(pengaturan.tagline)
-  const [alamat, setAlamat] = useState(pengaturan.alamat)
-  const [infoPsb, setInfoPsb] = useState(pengaturan.info_psb)
-  const [kontakPsb, setKontakPsb] = useState(pengaturan.kontak_psb)
-
-  const pengaturanMutation = useMutation({
-    mutationFn: () =>
-      updatePengaturan({ nama_sekolah: namaSekolah, tagline, alamat, info_psb: infoPsb, kontak_psb: kontakPsb }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pengaturan'] })
-    },
+  const [nama, setNama] = useState(unit.nama)
+  const [alamat, setAlamat] = useState(unit.alamat)
+  const mutation = useMutation({
+    mutationFn: () => patchUnit(unit.id, { nama, alamat }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['yayasan', 'unit'] }),
   })
 
   return (
@@ -37,67 +25,54 @@ function ProfilLembagaForm({ pengaturan }: { pengaturan: Pengaturan }) {
       className="space-y-3"
       onSubmit={(e) => {
         e.preventDefault()
-        pengaturanMutation.mutate()
+        mutation.mutate()
       }}
     >
       <div>
-        <Label htmlFor="nama-sekolah">Nama sekolah</Label>
-        <Input id="nama-sekolah" value={namaSekolah} onChange={(e) => setNamaSekolah(e.target.value)} required />
+        <Label htmlFor={`nama-unit-${unit.id}`}>Nama lembaga</Label>
+        <Input id={`nama-unit-${unit.id}`} value={nama} onChange={(e) => setNama(e.target.value)} disabled={!writable} required />
       </div>
       <div>
-        <Label htmlFor="tagline">Tagline</Label>
-        <Input id="tagline" value={tagline} onChange={(e) => setTagline(e.target.value)} />
+        <Label htmlFor={`alamat-unit-${unit.id}`}>Alamat</Label>
+        <Textarea id={`alamat-unit-${unit.id}`} rows={2} value={alamat} onChange={(e) => setAlamat(e.target.value)} disabled={!writable} />
       </div>
-      <div>
-        <Label htmlFor="alamat">Alamat</Label>
-        <Textarea id="alamat" rows={2} value={alamat} onChange={(e) => setAlamat(e.target.value)} />
-      </div>
-      <div>
-        <Label htmlFor="kontak-psb">Kontak PSB (nomor WA/telepon)</Label>
-        <Input id="kontak-psb" placeholder="0812xxxxxxxx" value={kontakPsb} onChange={(e) => setKontakPsb(e.target.value)} />
-      </div>
-      <div>
-        <Label htmlFor="info-psb">Info PSB (syarat, jadwal, biaya)</Label>
-        <Textarea
-          id="info-psb"
-          rows={6}
-          placeholder={'Contoh:\nSyarat: fotokopi KK, akta lahir, pas foto 3x4.\nJadwal: Januari - Juni 2026.\nBiaya pendaftaran: Rp 100.000.'}
-          value={infoPsb}
-          onChange={(e) => setInfoPsb(e.target.value)}
-        />
-        <p className="mt-1 text-xs text-muted-foreground">Tampil apa adanya (baris baru dipertahankan) di section PSB landing page.</p>
-      </div>
-
-      {pengaturanMutation.isError && (
-        <ErrorNotice
-          message={pengaturanMutation.error instanceof ApiError ? pengaturanMutation.error.message : 'Gagal menyimpan profil lembaga.'}
-        />
+      {mutation.isError && (
+        <ErrorNotice message={mutation.error instanceof ApiError ? mutation.error.message : 'Gagal menyimpan profil lembaga.'} />
       )}
-      {pengaturanMutation.isSuccess && <SuccessNotice message="Profil lembaga tersimpan." />}
-
+      {mutation.isSuccess && <SuccessNotice message="Profil lembaga tersimpan." />}
       {writable && (
-      <Button type="submit" loading={pengaturanMutation.isPending}>
-        Simpan
-      </Button>
+        <Button type="submit" loading={mutation.isPending}>
+          Simpan
+        </Button>
       )}
     </form>
   )
 }
 
 export function AdminProfilLembagaPage() {
-  const pengaturanQuery = useQuery({ queryKey: ['pengaturan'], queryFn: getPengaturan })
+  const writable = useCanWrite(PROFIL_LEMBAGA_WRITE_ROLES)
+  const unitQuery = useQuery({ queryKey: ['yayasan', 'unit'], queryFn: listUnit })
 
   return (
     <div>
-      <PageHeader title="Profil Lembaga" description="Identitas madrasah dan info PSB yang tampil di halaman publik." />
-      <Card className="max-w-xl">
-        <CardHeader>
-          <CardTitle>Identitas & PSB</CardTitle>
-        </CardHeader>
-        <CardBody>
-          {pengaturanQuery.isLoading || !pengaturanQuery.data ? <Spinner /> : <ProfilLembagaForm pengaturan={pengaturanQuery.data} />}
-        </CardBody>
-      </Card>
+      <PageHeader title="Profil Lembaga" description="Identitas tiap unit. Terpisah dari Profil Yayasan, Pengumuman, Kegiatan, dan PSB." />
+      {unitQuery.isLoading ? (
+        <Spinner />
+      ) : (
+        <div className="space-y-5">
+          {(unitQuery.data ?? []).map((unit) => (
+            <Card key={unit.id} className="max-w-xl">
+              <CardHeader>
+                <CardTitle>{unit.nama}</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <UnitProfilForm unit={unit} writable={writable} />
+              </CardBody>
+            </Card>
+          ))}
+          {(unitQuery.data ?? []).length === 0 && <p className="text-sm text-muted-foreground">Belum ada unit.</p>}
+        </div>
+      )}
     </div>
   )
 }
