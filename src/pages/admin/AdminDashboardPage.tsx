@@ -9,6 +9,7 @@ import { PageHeader } from '../../components/ui/PageHeader'
 import { StatCard } from '../../components/ui/StatCard'
 import { hasAnyRole } from '../../config/roles'
 import { useAuthStore } from '../../store/authStore'
+import { useUnitStore } from '../../store/unitStore'
 import type { RekapUmum, RekapUnit } from '../../types'
 
 function UnitStats({
@@ -63,10 +64,11 @@ function UnitStats({
 
 export function AdminDashboardPage() {
   const user = useAuthStore((s) => s.user)
-  const lintasUnit = hasAnyRole(user, ['admin', 'yayasan_admin'])
+  const selectedUnitId = useUnitStore((s) => s.selectedUnitId)
+  const lintasUnit = hasAnyRole(user, ['admin', 'yayasan_admin']) && !selectedUnitId
 
   const unitQuery = useQuery({
-    queryKey: ['admin', 'rekap'],
+    queryKey: ['admin', 'rekap', selectedUnitId],
     queryFn: getRekap,
     enabled: !lintasUnit,
   })

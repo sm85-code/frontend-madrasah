@@ -9,6 +9,7 @@ import { Input, Label, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { PROFIL_LEMBAGA_WRITE_ROLES } from '../../config/roles'
 import { useCanWrite } from '../../hooks/useCanWrite'
+import { useUnitStore } from '../../store/unitStore'
 import type { MadrasahUnit } from '../../types'
 
 function UnitProfilForm({ unit, writable }: { unit: MadrasahUnit; writable: boolean }) {
@@ -51,7 +52,9 @@ function UnitProfilForm({ unit, writable }: { unit: MadrasahUnit; writable: bool
 
 export function AdminProfilLembagaPage() {
   const writable = useCanWrite(PROFIL_LEMBAGA_WRITE_ROLES)
+  const selectedUnitId = useUnitStore((s) => s.selectedUnitId)
   const unitQuery = useQuery({ queryKey: ['yayasan', 'unit'], queryFn: listUnit })
+  const units = (unitQuery.data ?? []).filter((u) => !selectedUnitId || u.id === selectedUnitId)
 
   return (
     <div>
@@ -60,7 +63,7 @@ export function AdminProfilLembagaPage() {
         <Spinner />
       ) : (
         <div className="space-y-5">
-          {(unitQuery.data ?? []).map((unit) => (
+          {units.map((unit) => (
             <Card key={unit.id} className="max-w-xl">
               <CardHeader>
                 <CardTitle>{unit.nama}</CardTitle>
@@ -70,7 +73,7 @@ export function AdminProfilLembagaPage() {
               </CardBody>
             </Card>
           ))}
-          {(unitQuery.data ?? []).length === 0 && <p className="text-sm text-muted-foreground">Belum ada unit.</p>}
+          {units.length === 0 && <p className="text-sm text-muted-foreground">Belum ada unit.</p>}
         </div>
       )}
     </div>

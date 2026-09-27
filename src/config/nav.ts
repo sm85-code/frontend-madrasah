@@ -63,28 +63,8 @@ export interface NavSection {
 
 export const NAV_SECTIONS: NavSection[] = [
   {
-    title: 'Admin',
-    items: [
-      { label: 'Dashboard', path: '/portal/dashboard', roles: DASHBOARD_ROLES, icon: LayoutDashboard },
-      { label: 'Santri', path: '/portal/santri', roles: SANTRI_READ_ROLES, icon: Users },
-      { label: 'Rombel & Tingkat', path: '/portal/rombel', roles: ROMBEL_READ_ROLES, icon: Layers },
-      { label: 'Guru & Wali Santri', path: '/portal/guru', roles: UNIT_ACCOUNT_READ_ROLES, icon: UserCog },
-      { label: 'Kelola Akun', path: '/portal/kelola-akun', roles: APP_ADMIN_ROLES, icon: ShieldCheck },
-      { label: 'Kenaikan Kelas', path: '/portal/kenaikan-kelas', roles: KENAIKAN_READ_ROLES, icon: TrendingUp },
-      { label: 'Tahun Ajaran', path: '/portal/tahun-ajaran', roles: INFO_AKADEMIK_READ_ROLES, icon: CalendarRange },
-      { label: 'Pengumuman', path: '/portal/pengumuman', roles: INFO_AKADEMIK_READ_ROLES, icon: Megaphone },
-      { label: 'Kegiatan & Program', path: '/portal/kegiatan', roles: INFO_AKADEMIK_READ_ROLES, icon: Settings },
-      { label: 'Pendaftaran PSB', path: '/portal/pendaftaran', roles: PSB_READ_ROLES, icon: UserPlus },
-      { label: 'Profil Lembaga', path: '/portal/profil-lembaga', roles: PROFIL_LEMBAGA_READ_ROLES, icon: Landmark },
-      { label: 'Audit Log', path: '/portal/audit-log', roles: APP_ADMIN_ROLES, icon: ScrollText },
-    ],
-  },
-  {
-    title: 'Keuangan',
-    items: [
-      { label: 'Buku Kas', path: '/portal/keuangan/buku-kas', roles: KEUANGAN_READ_ROLES, icon: Banknote },
-      { label: 'Honor Mengajar', path: '/portal/keuangan/honor', roles: KEUANGAN_READ_ROLES, icon: Receipt },
-    ],
+    title: 'Ringkasan',
+    items: [{ label: 'Dashboard', path: '/portal/dashboard', roles: DASHBOARD_ROLES, icon: LayoutDashboard }],
   },
   {
     title: 'Yayasan',
@@ -94,16 +74,41 @@ export const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
-    title: 'Kurikulum',
+    title: 'Lembaga',
     items: [
+      { label: 'Profil Lembaga', path: '/portal/profil-lembaga', roles: PROFIL_LEMBAGA_READ_ROLES, icon: Landmark },
+      { label: 'Pengumuman', path: '/portal/pengumuman', roles: INFO_AKADEMIK_READ_ROLES, icon: Megaphone },
+      { label: 'Kegiatan & Program', path: '/portal/kegiatan', roles: INFO_AKADEMIK_READ_ROLES, icon: Settings },
+      { label: 'Pendaftaran PSB', path: '/portal/pendaftaran', roles: PSB_READ_ROLES, icon: UserPlus },
+    ],
+  },
+  {
+    title: 'Akademik',
+    items: [
+      { label: 'Santri', path: '/portal/santri', roles: SANTRI_READ_ROLES, icon: Users },
+      { label: 'Rombel & Tingkat', path: '/portal/rombel', roles: ROMBEL_READ_ROLES, icon: Layers },
+      { label: 'Kenaikan Kelas', path: '/portal/kenaikan-kelas', roles: KENAIKAN_READ_ROLES, icon: TrendingUp },
+      { label: 'Tahun Ajaran', path: '/portal/tahun-ajaran', roles: INFO_AKADEMIK_READ_ROLES, icon: CalendarRange },
       { label: 'Mapel & Materi', path: '/portal/kurikulum/mapel', roles: KURIKULUM_READ_ROLES, icon: BookOpen },
       { label: 'Jadwal', path: '/portal/kurikulum/jadwal', roles: KURIKULUM_READ_ROLES, icon: CalendarDays },
       { label: 'Penugasan Guru', path: '/portal/kurikulum/penugasan', roles: KURIKULUM_READ_ROLES, icon: ClipboardList },
     ],
   },
   {
-    title: 'Bendahara',
-    items: [{ label: 'SPP Syahriyah', path: '/portal/bendahara/spp', roles: KEUANGAN_READ_ROLES, icon: Receipt }],
+    title: 'Keuangan',
+    items: [
+      { label: 'Buku Kas', path: '/portal/keuangan/buku-kas', roles: KEUANGAN_READ_ROLES, icon: Banknote },
+      { label: 'Honor Mengajar', path: '/portal/keuangan/honor', roles: KEUANGAN_READ_ROLES, icon: Receipt },
+      { label: 'SPP Syahriyah', path: '/portal/bendahara/spp', roles: KEUANGAN_READ_ROLES, icon: Receipt },
+    ],
+  },
+  {
+    title: 'Pengguna',
+    items: [
+      { label: 'Guru & Wali Santri', path: '/portal/guru', roles: UNIT_ACCOUNT_READ_ROLES, icon: UserCog },
+      { label: 'Kelola Akun', path: '/portal/kelola-akun', roles: APP_ADMIN_ROLES, icon: ShieldCheck },
+      { label: 'Audit Log', path: '/portal/audit-log', roles: APP_ADMIN_ROLES, icon: ScrollText },
+    ],
   },
   {
     title: 'Wali Kelas',
@@ -127,11 +132,6 @@ export const NAV_SECTIONS: NavSection[] = [
     items: [{ label: 'Anak Saya', path: '/portal/wali-santri', roles: ANAK_SAYA_ROLES, icon: Heart }],
   },
   {
-    // Selalu ditaruh paling akhir: firstAccessiblePath() memilih item
-    // section PERTAMA yang cocok dengan role user sebagai halaman
-    // pendaratan setelah login -- taruh section ini di awal akan membuat
-    // semua role mendarat di Profil Saya alih-alih halaman kerja
-    // utamanya masing-masing.
     title: 'Akun',
     items: [{ label: 'Profil Saya', path: '/portal/profil', roles: ALL_ROLES, icon: UserCircle }],
   },
