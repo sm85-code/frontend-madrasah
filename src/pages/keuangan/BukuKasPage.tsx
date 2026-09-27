@@ -12,11 +12,14 @@ import { Input, Label, Select, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { StatCard } from '../../components/ui/StatCard'
 import type { BukuKasEntry } from '../../types'
+import { KEUANGAN_WRITE_ROLES } from '../../config/roles'
+import { useCanWrite } from '../../hooks/useCanWrite'
 
 const formatRupiah = (value: string) => `Rp ${Number(value).toLocaleString('id-ID')}`
 
 export function BukuKasPage() {
   const queryClient = useQueryClient()
+  const writable = useCanWrite(KEUANGAN_WRITE_ROLES)
   const [bulan, setBulan] = useState('')
   const [tanggal, setTanggal] = useState(new Date().toISOString().slice(0, 10))
   const [tipe, setTipe] = useState<'masuk' | 'keluar'>('keluar')
@@ -66,6 +69,7 @@ export function BukuKasPage() {
         </div>
       )}
 
+      {writable && (
       <Card className="mb-5">
         <CardBody>
           <form
@@ -104,6 +108,7 @@ export function BukuKasPage() {
           </form>
         </CardBody>
       </Card>
+      )}
 
       <Card>
         <CardBody>

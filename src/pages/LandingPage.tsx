@@ -13,13 +13,13 @@ import {
 } from 'lucide-react'
 import { useState, type ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { getKegiatan, getPengaturan, getPengumuman, submitPendaftaran } from '../api/public'
+import { getKegiatan, getPengaturan, getPengumuman, listUnitPublik, submitPendaftaran } from '../api/public'
 import { ApiError } from '../lib/apiClient'
 import { AppearancePopover } from '../components/AppearancePopover'
 import { Card, CardBody } from '../components/ui/AppCard'
 import { Button } from '../components/ui/AppButton'
 import { ErrorNotice, Spinner, SuccessNotice } from '../components/ui/Feedback'
-import { Input, Label, Textarea } from '../components/ui/AppInput'
+import { Input, Label, Select, Textarea } from '../components/ui/AppInput'
 
 const LAYANAN = [
   {
@@ -51,6 +51,7 @@ function waLink(kontak: string) {
 }
 
 function PendaftaranForm() {
+  const unitQuery = useQuery({ queryKey: ['unit-publik'], queryFn: listUnitPublik })
   const [form, setForm] = useState({
     nama_calon: '',
     tempat_lahir: '',
@@ -60,6 +61,7 @@ function PendaftaranForm() {
     alamat: '',
     asal_sekolah: '',
     catatan: '',
+    madrasah_unit_id: '',
   })
 
   const mutation = useMutation({
@@ -74,6 +76,7 @@ function PendaftaranForm() {
         alamat: '',
         asal_sekolah: '',
         catatan: '',
+        madrasah_unit_id: '',
       })
     },
   })
@@ -128,6 +131,17 @@ function PendaftaranForm() {
             <Label htmlFor="asal_sekolah">Asal sekolah (jika ada)</Label>
             <Input id="asal_sekolah" value={form.asal_sekolah} onChange={set('asal_sekolah')} />
           </div>
+          <div>
+            <Label htmlFor="madrasah_unit_id">Unit / lembaga</Label>
+            <Select id="madrasah_unit_id" value={form.madrasah_unit_id} onChange={(e) => setForm((prev) => ({ ...prev, madrasah_unit_id: e.target.value }))} required>
+              <option value="">Pilih unit</option>
+              {unitQuery.data?.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.nama}
+                </option>
+              ))}
+            </Select>
+          </div>
           <div className="sm:col-span-2">
             <Label htmlFor="alamat">Alamat</Label>
             <Textarea id="alamat" rows={2} value={form.alamat} onChange={set('alamat')} />
@@ -172,6 +186,11 @@ export function LandingPage() {
     queryKey: ['kegiatan-publik'],
     queryFn: getKegiatan,
   })
+  const { data: unitPublik } = useQuery({
+    queryKey: ['unit-publik'],
+    queryFn: listUnitPublik,
+  })
+  const namaUnit = (id?: string | null) => unitPublik?.find((u) => u.id === id)?.nama
   // Defensive: only ever render these as lists. If VITE_API_BASE_URL is
   // misconfigured, a relative request can resolve against this same dev
   // server/host instead of the backend and come back non-JSON -- fail
@@ -278,6 +297,9 @@ export function LandingPage() {
                           <Sparkles className="size-5" strokeWidth={2.25} />
                         </span>
                         <h3 className="mt-3 text-base font-semibold text-foreground">{k.judul}</h3>
+                        {namaUnit(k.madrasah_unit_id) && (
+                          <p className="mt-1 text-xs text-muted-foreground">{namaUnit(k.madrasah_unit_id)}</p>
+                        )}
                         {k.deskripsi && <p className="mt-1 text-sm text-muted-foreground">{k.deskripsi}</p>}
                       </CardBody>
                     </Card>
@@ -354,6 +376,9 @@ export function LandingPage() {
                       <h3 className="text-base font-semibold text-foreground">{item.judul}</h3>
                       <span className="shrink-0 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">{item.tanggal}</span>
                     </div>
+                    {namaUnit(item.madrasah_unit_id) && (
+                      <p className="mt-1 text-xs text-muted-foreground">{namaUnit(item.madrasah_unit_id)}</p>
+                    )}
                     <p className="mt-1.5 whitespace-pre-line text-sm text-muted-foreground">{item.isi}</p>
                   </CardBody>
                 </Card>

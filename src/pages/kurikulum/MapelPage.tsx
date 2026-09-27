@@ -9,9 +9,12 @@ import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { KURIKULUM_WRITE_ROLES } from '../../config/roles'
+import { useCanWrite } from '../../hooks/useCanWrite'
 
 export function MapelPage() {
   const queryClient = useQueryClient()
+  const writable = useCanWrite(KURIKULUM_WRITE_ROLES)
   const mapelQuery = useQuery({ queryKey: ['kurikulum', 'mapel'], queryFn: listMapel })
 
   const [kode, setKode] = useState('')
@@ -49,6 +52,7 @@ export function MapelPage() {
     <div>
       <PageHeader title="Mapel & Materi" description="Kurikulum: mata pelajaran dan target materi per mapel." />
 
+      {writable && (
       <Card className="mb-5">
         <CardBody>
           <form
@@ -79,6 +83,7 @@ export function MapelPage() {
           </form>
         </CardBody>
       </Card>
+      )}
 
       {mapelQuery.isLoading ? (
         <Spinner />
@@ -90,18 +95,19 @@ export function MapelPage() {
                 <CardTitle>
                   {mapel.nama} <Badge className="ml-1">{mapel.kode}</Badge>
                 </CardTitle>
-                <DeleteRowButton onClick={() => deleteMapelMutation.mutate(mapel.id)} label={`Hapus ${mapel.nama}`} />
+                {writable && <DeleteRowButton onClick={() => deleteMapelMutation.mutate(mapel.id)} label={`Hapus ${mapel.nama}`} />}
               </CardHeader>
               <CardBody>
                 <ul className="mb-3 divide-y divide-border text-sm">
                   {mapel.materi.map((m) => (
                     <li key={m.id} className="flex items-center justify-between gap-2 py-1.5">
                       <span className="text-foreground">{m.judul}</span>
-                      <DeleteRowButton onClick={() => deleteMateriMutation.mutate(m.id)} label={`Hapus ${m.judul}`} />
+                      {writable && <DeleteRowButton onClick={() => deleteMateriMutation.mutate(m.id)} label={`Hapus ${m.judul}`} />}
                     </li>
                   ))}
                   {mapel.materi.length === 0 && <li className="py-1.5 text-muted-foreground">Belum ada materi.</li>}
                 </ul>
+                {writable && (
                 <form
                   className="flex gap-2"
                   onSubmit={(e) => {
@@ -118,6 +124,7 @@ export function MapelPage() {
                     Tambah
                   </Button>
                 </form>
+                )}
                 {createMateriMutation.isError && createMateriMutation.variables === mapel.id && (
                   <div className="mt-2">
                     <ErrorNotice

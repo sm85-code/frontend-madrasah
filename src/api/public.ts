@@ -18,6 +18,11 @@ export async function getKegiatan(): Promise<Kegiatan[]> {
   return data
 }
 
+export async function listUnitPublik(): Promise<{ id: string; nama: string }[]> {
+  const { data } = await apiClient.get<{ id: string; nama: string }[]>('/unit')
+  return data
+}
+
 export interface PendaftaranPayload {
   nama_calon: string
   tempat_lahir?: string
@@ -27,6 +32,7 @@ export interface PendaftaranPayload {
   alamat?: string
   asal_sekolah?: string
   catatan?: string
+  madrasah_unit_id?: string
 }
 
 // Form PSB publik -- juga tanpa auth, calon wali santri belum punya akun.

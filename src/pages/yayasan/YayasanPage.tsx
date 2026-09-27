@@ -24,7 +24,7 @@ import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { FieldError, Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { useAuthStore } from '../../store/authStore'
-import { APP_ADMIN_ROLES } from '../../config/roles'
+import { YAYASAN_ROLES } from '../../config/roles'
 import type { MadrasahUnit, RekapUnit, User } from '../../types'
 
 function useKepalaMadrasahOptions(enabled: boolean) {
@@ -125,7 +125,7 @@ function EditUnitAction({ unit, kepalaUsers }: { unit: MadrasahUnit; kepalaUsers
 export function YayasanPage() {
   const queryClient = useQueryClient()
   const user = useAuthStore((s) => s.user)
-  const canManageUnit = user ? APP_ADMIN_ROLES.includes(user.role) : false
+  const canManageUnit = user ? YAYASAN_ROLES.includes(user.role) : false
   const { users: kepalaUsers } = useKepalaMadrasahOptions(canManageUnit)
 
   const rekapQuery = useQuery({ queryKey: ['yayasan', 'rekap'], queryFn: getRekapYayasan })

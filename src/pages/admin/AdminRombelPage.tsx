@@ -10,9 +10,12 @@ import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Rombel, Tingkat } from '../../types'
+import { ROMBEL_WRITE_ROLES } from '../../config/roles'
+import { useCanWrite } from '../../hooks/useCanWrite'
 
 export function AdminRombelPage() {
   const queryClient = useQueryClient()
+  const writable = useCanWrite(ROMBEL_WRITE_ROLES)
   const tingkatQuery = useQuery({ queryKey: ['admin', 'tingkat'], queryFn: listTingkat })
   const rombelQuery = useQuery({ queryKey: ['admin', 'rombel'], queryFn: listRombel })
 
@@ -52,7 +55,7 @@ export function AdminRombelPage() {
     {
       header: '',
       className: 'w-10 text-right',
-      cell: (t) => <DeleteRowButton onClick={() => deleteTingkatMutation.mutate(t.id)} />,
+      cell: (t) => (writable ? <DeleteRowButton onClick={() => deleteTingkatMutation.mutate(t.id)} /> : null),
     },
   ]
 
@@ -62,7 +65,7 @@ export function AdminRombelPage() {
     {
       header: '',
       className: 'w-10 text-right',
-      cell: (r) => <DeleteRowButton onClick={() => deleteRombelMutation.mutate(r.id)} />,
+      cell: (r) => (writable ? <DeleteRowButton onClick={() => deleteRombelMutation.mutate(r.id)} /> : null),
     },
   ]
 
@@ -76,6 +79,7 @@ export function AdminRombelPage() {
             <CardTitle>Tingkat</CardTitle>
           </CardHeader>
           <CardBody>
+            {writable && (
             <form
               className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end"
               onSubmit={(e) => {
@@ -96,6 +100,7 @@ export function AdminRombelPage() {
                 />
               )}
             </form>
+            )}
             {tingkatQuery.isLoading ? (
               <Spinner />
             ) : (
@@ -109,6 +114,7 @@ export function AdminRombelPage() {
             <CardTitle>Rombel</CardTitle>
           </CardHeader>
           <CardBody>
+            {writable && (
             <form
               className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto] sm:items-end"
               onSubmit={(e) => {
@@ -140,6 +146,7 @@ export function AdminRombelPage() {
                 />
               )}
             </form>
+            )}
             {rombelQuery.isLoading ? (
               <Spinner />
             ) : (

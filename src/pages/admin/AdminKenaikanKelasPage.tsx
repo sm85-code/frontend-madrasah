@@ -7,11 +7,14 @@ import { Card, CardBody } from '../../components/ui/AppCard'
 import { ErrorNotice, SuccessNotice, Spinner } from '../../components/ui/Feedback'
 import { Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { KENAIKAN_WRITE_ROLES } from '../../config/roles'
+import { useCanWrite } from '../../hooks/useCanWrite'
 
 const LULUS_VALUE = '__LULUS__'
 
 export function AdminKenaikanKelasPage() {
   const queryClient = useQueryClient()
+  const writable = useCanWrite(KENAIKAN_WRITE_ROLES)
   const rombelQuery = useQuery({ queryKey: ['admin', 'rombel'], queryFn: listRombel })
   const santriQuery = useQuery({ queryKey: ['admin', 'santri', 'aktif'], queryFn: () => listSantriAdmin('aktif') })
 
@@ -99,9 +102,11 @@ export function AdminKenaikanKelasPage() {
                     </div>
                   ))}
                 </div>
+                {writable && (
                 <Button className="mt-4" loading={mutation.isPending} onClick={() => mutation.mutate()}>
                   Proses Kenaikan Kelas
                 </Button>
+                )}
               </>
             )}
           </CardBody>

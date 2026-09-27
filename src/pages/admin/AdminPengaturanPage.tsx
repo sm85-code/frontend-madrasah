@@ -33,7 +33,7 @@ export function AdminPengaturanPage() {
 
   return (
     <div>
-      <PageHeader title="Pengaturan" description="Kegiatan & program yang tampil di halaman publik." />
+      <PageHeader title="Kegiatan & Program" description="Kegiatan yang tampil di halaman publik." />
 
       <Card className="max-w-xl">
         <CardHeader>

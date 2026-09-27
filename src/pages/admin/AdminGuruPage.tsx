@@ -35,12 +35,11 @@ import { PageHeader } from '../../components/ui/PageHeader'
 import { useAuthStore } from '../../store/authStore'
 import type { User } from '../../types'
 
-const GURU_ROLE_OPTIONS = [
+const PEGAWAI_ROLES = [
   { value: 'wali_kelas', label: 'Wali Kelas' },
   { value: 'guru', label: 'Guru Mapel' },
   { value: 'kurikulum', label: 'Kurikulum' },
   { value: 'bendahara', label: 'Bendahara' },
-  { value: 'kepala_sekolah', label: 'Kepala Madrasah' },
 ]
 
 const resetPasswordSchema = z.object({
@@ -117,10 +116,17 @@ function ResetPasswordAction({ user, onSubmit }: { user: User; onSubmit: (passwo
 export function AdminGuruPage() {
   const queryClient = useQueryClient()
   const me = useAuthStore((s) => s.user)
-  const isKepala = me?.role === 'kepala_sekolah'
-  const roleOptions = isKepala ? GURU_ROLE_OPTIONS.filter((opt) => opt.value !== 'kepala_sekolah') : GURU_ROLE_OPTIONS
+  const isPengelolaUnit = me?.role === 'kepala_sekolah' || me?.role === 'lembaga_admin'
+  const writable = me?.role !== 'yayasan_admin'
+  const roleOptions =
+    me?.role === 'lembaga_admin'
+      ? PEGAWAI_ROLES
+      : me?.role === 'kepala_sekolah'
+        ? [...PEGAWAI_ROLES, { value: 'lembaga_admin', label: 'Admin Lembaga' }]
+        : [...PEGAWAI_ROLES, { value: 'lembaga_admin', label: 'Admin Lembaga' }, { value: 'kepala_sekolah', label: 'Kepala Madrasah' }]
+  const bolehKelola = new Set(roleOptions.map((opt) => opt.value))
   const guruQuery = useQuery({ queryKey: ['admin', 'guru'], queryFn: listGuru })
-  const unitQuery = useQuery({ queryKey: ['yayasan', 'unit'], queryFn: listUnit, enabled: !isKepala })
+  const unitQuery = useQuery({ queryKey: ['yayasan', 'unit'], queryFn: listUnit, enabled: !isPengelolaUnit })
   const units = unitQuery.data ?? []
   const waliSantriQuery = useQuery({ queryKey: ['admin', 'wali-santri'], queryFn: listWaliSantri })
 
@@ -143,7 +149,7 @@ export function AdminGuruPage() {
         no_hp: noHpGuru,
         role: roleGuru,
         password: passwordGuru || undefined,
-        madrasah_unit_id: isKepala ? undefined : unitGuru || undefined,
+        madrasah_unit_id: isPengelolaUnit ? undefined : unitGuru || undefined,
       }),
     onSuccess: (created) => {
       setPasswordSementara(created.password_sementara ? { nama: created.nama, password: created.password_sementara } : null)
@@ -183,7 +189,7 @@ export function AdminGuruPage() {
       header: '',
       className: 'w-20 text-right',
       cell: (u) =>
-        isKepala && u.role === 'kepala_sekolah' ? null : (
+        isPengelolaUnit && !bolehKelola.has(u.role) ? null : !writable ? null : (
           <div className="flex justify-end gap-1">
             <ResetPasswordAction user={u} onSubmit={(password) => patchGuru(u.id, { password })} />
             <DeleteRowButton onClick={() => deleteGuruMutation.mutate(u.id)} />
@@ -198,12 +204,13 @@ export function AdminGuruPage() {
     {
       header: '',
       className: 'w-20 text-right',
-      cell: (u) => (
+      cell: (u) =>
+        writable ? (
         <div className="flex justify-end gap-1">
           <ResetPasswordAction user={u} onSubmit={(password) => patchWaliSantri(u.id, { password })} />
           <DeleteRowButton onClick={() => deleteWaliMutation.mutate(u.id)} />
         </div>
-      ),
+        ) : null,
     },
   ]
 
@@ -212,8 +219,8 @@ export function AdminGuruPage() {
       <PageHeader
         title="Guru & Wali Santri"
         description={
-          isKepala
-            ? 'Anda admin unit ini. Buat akun guru, staf, dan wali santri hanya untuk unit Anda.'
+          isPengelolaUnit
+            ? 'Anda mengurus akun pegawai unit ini saja. Admin utama tetap melihat semua unit.'
             : 'Kelola akun staf dan orang tua/wali santri.'
         }
       />
@@ -232,6 +239,7 @@ export function AdminGuruPage() {
             <CardTitle>Guru / Staf</CardTitle>
           </CardHeader>
           <CardBody>
+            {writable && (
             <form
               className="mb-4 flex flex-wrap items-end gap-2"
               onSubmit={(e) => {
@@ -268,7 +276,7 @@ export function AdminGuruPage() {
                   ))}
                 </Select>
               </div>
-              {!isKepala && (
+              {!isPengelolaUnit && (
               <div className="min-w-[150px]">
                 <Label htmlFor="unit-guru">Unit</Label>
                 <Select id="unit-guru" value={unitGuru} onChange={(e) => setUnitGuru(e.target.value)} required>
@@ -285,6 +293,7 @@ export function AdminGuruPage() {
                 Tambah
               </Button>
             </form>
+            )}
             {guruQuery.isLoading ? <Spinner /> : <DataTable columns={guruColumns} rows={guruQuery.data ?? []} rowKey={(u) => u.id} />}
           </CardBody>
         </Card>
@@ -294,6 +303,7 @@ export function AdminGuruPage() {
             <CardTitle>Wali Santri</CardTitle>
           </CardHeader>
           <CardBody>
+            {writable && (
             <form
               className="mb-4 flex flex-wrap items-end gap-2"
               onSubmit={(e) => {
@@ -324,6 +334,7 @@ export function AdminGuruPage() {
                 Tambah
               </Button>
             </form>
+            )}
             {waliSantriQuery.isLoading ? (
               <Spinner />
             ) : (

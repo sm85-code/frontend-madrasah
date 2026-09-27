@@ -11,6 +11,8 @@ import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Santri } from '../../types'
+import { canWrite, SANTRI_WRITE_ROLES } from '../../config/roles'
+import { useAuthStore } from '../../store/authStore'
 
 const STATUS_TONE: Record<string, 'success' | 'neutral' | 'warning'> = {
   aktif: 'success',
@@ -21,6 +23,8 @@ const STATUS_TONE: Record<string, 'success' | 'neutral' | 'warning'> = {
 
 export function AdminSantriPage() {
   const queryClient = useQueryClient()
+  const role = useAuthStore((s) => s.user?.role)
+  const writable = canWrite(role, SANTRI_WRITE_ROLES)
   const [nama, setNama] = useState('')
   const [rombelId, setRombelId] = useState('')
   const [filterStatus, setFilterStatus] = useState('semua')
@@ -61,7 +65,8 @@ export function AdminSantriPage() {
     },
     {
       header: 'Aksi',
-      cell: (s) => (
+      cell: (s) =>
+        writable ? (
         <div className="flex gap-1">
           {s.status !== 'aktif' && (
             <Button size="sm" variant="secondary" onClick={() => statusMutation.mutate({ id: s.id, status: 'aktif' })}>
@@ -84,7 +89,9 @@ export function AdminSantriPage() {
             itemName={`santri ${s.nama}`}
           />
         </div>
-      ),
+        ) : (
+          <span className="text-xs text-muted-foreground">Lihat saja</span>
+        ),
     },
   ]
 
@@ -92,6 +99,7 @@ export function AdminSantriPage() {
     <div>
       <PageHeader title="Santri" description="Kelola data santri, penempatan rombel, dan status." />
 
+      {writable && (
       <Card className="mb-5">
         <CardBody>
           <form
@@ -120,9 +128,9 @@ export function AdminSantriPage() {
               Tambah Santri
             </Button>
           </form>
-          {createMutation.isError && <div className="mt-3"><ErrorNotice message="Gagal menambah santri." /></div>}
         </CardBody>
       </Card>
+      )}
 
       <div className="mb-3 flex items-center gap-2">
         <Label htmlFor="filter-status" className="mb-0">

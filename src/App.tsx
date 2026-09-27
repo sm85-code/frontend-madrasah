@@ -4,14 +4,25 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { PortalLayout } from './components/layout/PortalLayout'
 import { RoleGuard } from './components/RoleGuard'
 import {
-  ADMIN_ROLES,
   APP_ADMIN_ROLES,
-  BENDAHARA_ROLES,
-  GURU_MAPEL_ROLES,
-  KURIKULUM_ROLES,
-  WALI_KELAS_ROLES,
-  WALI_SANTRI_ROLES,
+  UNIT_ACCOUNT_READ_ROLES,
+  KEUANGAN_READ_ROLES,
+  KURIKULUM_READ_ROLES,
+  INFO_AKADEMIK_ROLES,
+  DASHBOARD_ROLES,
+  SANTRI_READ_ROLES,
+  ROMBEL_READ_ROLES,
+  KENAIKAN_READ_ROLES,
+  PROFIL_LEMBAGA_READ_ROLES,
+  PSB_READ_ROLES,
   YAYASAN_ROLES,
+  ANAK_SAYA_ROLES,
+  ABSENSI_REKAP_ROLES,
+  ABSENSI_MAPEL_READ_ROLES,
+  WALI_KELAS_READ_ROLES,
+  PESAN_ROLES,
+  PENUGASAN_SAYA_ROLES,
+  RAPOR_READ_ROLES,
 } from './config/roles'
 import { queryClient } from './lib/queryClient'
 import { AdminAuditLogPage } from './pages/admin/AdminAuditLogPage'
@@ -61,22 +72,36 @@ function App() {
               <Route index element={<PortalIndexPage />} />
               <Route path="profil" element={<ProfilSayaPage />} />
 
-              <Route element={<RoleGuard roles={ADMIN_ROLES} />}>
+              <Route element={<RoleGuard roles={DASHBOARD_ROLES} />}>
                 <Route path="dashboard" element={<AdminDashboardPage />} />
+              </Route>
+              <Route element={<RoleGuard roles={SANTRI_READ_ROLES} />}>
                 <Route path="santri" element={<AdminSantriPage />} />
+              </Route>
+              <Route element={<RoleGuard roles={ROMBEL_READ_ROLES} />}>
                 <Route path="rombel" element={<AdminRombelPage />} />
+              </Route>
+              <Route element={<RoleGuard roles={KENAIKAN_READ_ROLES} />}>
                 <Route path="kenaikan-kelas" element={<AdminKenaikanKelasPage />} />
+              </Route>
+              <Route element={<RoleGuard roles={INFO_AKADEMIK_ROLES} />}>
                 <Route path="tahun-ajaran" element={<AdminTahunAjaranPage />} />
                 <Route path="pengumuman" element={<AdminPengumumanPage />} />
-                <Route path="pendaftaran" element={<AdminPendaftaranPage />} />
                 <Route path="pengaturan" element={<AdminPengaturanPage />} />
+              </Route>
+              <Route element={<RoleGuard roles={PSB_READ_ROLES} />}>
+                <Route path="pendaftaran" element={<AdminPendaftaranPage />} />
+              </Route>
+              <Route element={<RoleGuard roles={PROFIL_LEMBAGA_READ_ROLES} />}>
                 <Route path="profil-lembaga" element={<AdminProfilLembagaPage />} />
+              </Route>
+              <Route element={<RoleGuard roles={KEUANGAN_READ_ROLES} />}>
                 <Route path="keuangan/buku-kas" element={<BukuKasPage />} />
                 <Route path="keuangan/laba-rugi" element={<LabaRugiPage />} />
                 <Route path="keuangan/honor" element={<HonorPage />} />
               </Route>
 
-              <Route element={<RoleGuard roles={ADMIN_ROLES} />}>
+              <Route element={<RoleGuard roles={UNIT_ACCOUNT_READ_ROLES} />}>
                 <Route path="guru" element={<AdminGuruPage />} />
               </Route>
 
@@ -87,32 +112,41 @@ function App() {
 
               <Route element={<RoleGuard roles={YAYASAN_ROLES} />}>
                 <Route path="yayasan" element={<YayasanPage />} />
+                <Route path="yayasan/profil" element={<YayasanPage />} />
               </Route>
 
-              <Route element={<RoleGuard roles={KURIKULUM_ROLES} />}>
+              <Route element={<RoleGuard roles={KURIKULUM_READ_ROLES} />}>
                 <Route path="kurikulum/mapel" element={<MapelPage />} />
                 <Route path="kurikulum/jadwal" element={<JadwalPage />} />
                 <Route path="kurikulum/penugasan" element={<PenugasanPage />} />
               </Route>
 
-              <Route element={<RoleGuard roles={BENDAHARA_ROLES} />}>
+              <Route element={<RoleGuard roles={KEUANGAN_READ_ROLES} />}>
                 <Route path="bendahara/spp" element={<SppPage />} />
               </Route>
 
-              <Route element={<RoleGuard roles={WALI_KELAS_ROLES} />}>
+              <Route element={<RoleGuard roles={ABSENSI_REKAP_ROLES} />}>
                 <Route path="wali-kelas/absensi" element={<WaliKelasAbsensiPage />} />
+              </Route>
+              <Route element={<RoleGuard roles={WALI_KELAS_READ_ROLES} />}>
                 <Route path="wali-kelas/progres" element={<WaliKelasProgresPage />} />
                 <Route path="wali-kelas/tagihan" element={<WaliKelasTagihanPage />} />
+              </Route>
+              <Route element={<RoleGuard roles={PESAN_ROLES} />}>
                 <Route path="wali-kelas/pesan" element={<WaliKelasPesanPage />} />
               </Route>
 
-              <Route element={<RoleGuard roles={GURU_MAPEL_ROLES} />}>
+              <Route element={<RoleGuard roles={PENUGASAN_SAYA_ROLES} />}>
                 <Route path="guru-mapel/penugasan" element={<PenugasanSayaPage />} />
+              </Route>
+              <Route element={<RoleGuard roles={ABSENSI_MAPEL_READ_ROLES} />}>
                 <Route path="guru-mapel/absensi" element={<AbsensiMapelPage />} />
+              </Route>
+              <Route element={<RoleGuard roles={RAPOR_READ_ROLES} />}>
                 <Route path="guru-mapel/rapor" element={<RaporPage />} />
               </Route>
 
-              <Route element={<RoleGuard roles={WALI_SANTRI_ROLES} />}>
+              <Route element={<RoleGuard roles={ANAK_SAYA_ROLES} />}>
                 <Route path="wali-santri" element={<WaliSantriPage />} />
               </Route>
             </Route>
