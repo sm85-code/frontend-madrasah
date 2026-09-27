@@ -95,8 +95,8 @@ export function PortalLayout() {
         <SidebarFooter>
           <div className="flex items-center justify-between gap-2 px-2 py-1">
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-sidebar-foreground">{user.nama}</p>
-              <p className="truncate text-xs text-muted-foreground">{ROLE_LABEL[user.role]}</p>
+              <p className="truncate text-sm font-semibold leading-5 text-sidebar-foreground">{user.nama}</p>
+              <p className="truncate text-sm leading-5 text-muted-foreground">{ROLE_LABEL[user.role]}</p>
             </div>
             <Button
               variant="ghost"
@@ -115,8 +115,8 @@ export function PortalLayout() {
            * sidebar sheet, closer to the thumb than top-left. */}
           <SidebarTrigger className="hidden md:flex" />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-foreground">{user.nama}</p>
-            <p className="truncate text-xs text-muted-foreground">{ROLE_LABEL[user.role]}</p>
+            <p className="truncate text-sm font-semibold leading-5 text-foreground">{user.nama}</p>
+            <p className="truncate text-sm leading-5 text-muted-foreground">{ROLE_LABEL[user.role]}</p>
           </div>
           <UnitSwitcher />
           <AppearancePopover />

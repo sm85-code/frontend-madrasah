@@ -18,7 +18,7 @@ export { Select } from './select-adapter'
  * uses a label-above-field layout, which is the only way Label is used
  * in this app (no inline checkbox/radio labels yet). */
 export function Label({ className, ...props }: ComponentProps<typeof ShadLabel>) {
-  return <ShadLabel className={cn('mb-1.5 block', className)} {...props} />
+  return <ShadLabel className={cn('mb-1.5 block text-sm font-medium leading-5', className)} {...props} />
 }
 
 export function FieldError({ message }: { message?: string }) {

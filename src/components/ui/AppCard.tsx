@@ -23,7 +23,7 @@ function CardHeader({ className, ...props }: ComponentProps<typeof ShadCardHeade
 }
 
 function CardTitle({ className, ...props }: ComponentProps<typeof ShadCardTitle>) {
-  return <ShadCardTitle className={cn('text-base font-semibold', className)} {...props} />
+  return <ShadCardTitle className={cn('font-heading text-base font-semibold leading-6', className)} {...props} />
 }
 
 export { Card, CardBody, CardHeader, CardTitle, CardDescription, CardFooter }
