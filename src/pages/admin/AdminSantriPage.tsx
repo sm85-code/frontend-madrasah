@@ -7,7 +7,7 @@ import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
 import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
-import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedback'
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Santri } from '../../types'
@@ -26,9 +26,10 @@ export function AdminSantriPage() {
   const role = useAuthStore((s) => s.user?.role)
   const writable = canWrite(role, SANTRI_WRITE_ROLES)
   const [nama, setNama] = useState('')
+  const [namaWali, setNamaWali] = useState('')
   const [rombelId, setRombelId] = useState('')
-  const [waliId, setWaliId] = useState('')
   const [filterStatus, setFilterStatus] = useState('semua')
+  const [waliBaru, setWaliBaru] = useState<{ nama: string; username: string; password: string } | null>(null)
 
   const santriQuery = useQuery({
     queryKey: ['admin', 'santri', filterStatus],
@@ -38,12 +39,18 @@ export function AdminSantriPage() {
   const waliQuery = useQuery({ queryKey: ['admin', 'wali-santri'], queryFn: listWaliSantri })
 
   const createMutation = useMutation({
-    mutationFn: () => createSantri({ nama, rombel_id: rombelId || null, orang_tua_id: waliId || null }),
-    onSuccess: () => {
+    mutationFn: () => createSantri({ nama, nama_wali: namaWali, rombel_id: rombelId || null }),
+    onSuccess: (created) => {
       setNama('')
+      setNamaWali('')
       setRombelId('')
-      setWaliId('')
+      if (created.wali_password_sementara && created.wali_username) {
+        setWaliBaru({ nama: namaWali || created.nama, username: created.wali_username, password: created.wali_password_sementara })
+      } else {
+        setWaliBaru(null)
+      }
       queryClient.invalidateQueries({ queryKey: ['admin', 'santri'] })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'wali-santri'] })
     },
   })
 
@@ -131,7 +138,20 @@ export function AdminSantriPage() {
 
   return (
     <div>
-      <PageHeader title="Santri" description="Kelola data santri, rombel, dan ikatan wali santri." />
+      <PageHeader title="Santri" description="Isi nama santri dan nama wali. Wali yang namanya sama di unit ini dipakai ulang." />
+
+      {waliBaru && (
+        <div className="mb-4">
+          <SuccessNotice
+            message={`Akun wali ${waliBaru.nama} dibuat. Username: ${waliBaru.username}. Password sementara: ${waliBaru.password}`}
+          />
+        </div>
+      )}
+      {createMutation.isError && (
+        <div className="mb-4">
+          <ErrorNotice message={createMutation.error instanceof ApiError ? createMutation.error.message : 'Gagal menambah santri.'} />
+        </div>
+      )}
 
       {writable && (
       <Card className="mb-5">
@@ -147,6 +167,10 @@ export function AdminSantriPage() {
               <Label htmlFor="nama-santri">Nama santri</Label>
               <Input id="nama-santri" value={nama} onChange={(e) => setNama(e.target.value)} required />
             </div>
+            <div className="min-w-[180px] flex-1">
+              <Label htmlFor="nama-wali">Nama wali santri</Label>
+              <Input id="nama-wali" value={namaWali} onChange={(e) => setNamaWali(e.target.value)} required />
+            </div>
             <div className="min-w-[180px]">
               <Label htmlFor="rombel-santri">Rombel</Label>
               <Select id="rombel-santri" value={rombelId} onChange={(e) => setRombelId(e.target.value)}>
@@ -154,17 +178,6 @@ export function AdminSantriPage() {
                 {rombelQuery.data?.map((r) => (
                   <option key={r.id} value={r.id}>
                     {r.nama}
-                  </option>
-                ))}
-              </Select>
-            </div>
-            <div className="min-w-[180px]">
-              <Label htmlFor="wali-santri">Wali Santri</Label>
-              <Select id="wali-santri" value={waliId} onChange={(e) => setWaliId(e.target.value)}>
-                <option value="">Belum diikat</option>
-                {waliQuery.data?.map((w) => (
-                  <option key={w.id} value={w.id}>
-                    {w.nama}
                   </option>
                 ))}
               </Select>
