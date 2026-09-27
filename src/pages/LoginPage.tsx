@@ -6,6 +6,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { login } from '../api/auth'
 import { getPengaturan } from '../api/public'
 import { ApiError } from '../lib/apiClient'
+import { AppearancePopover } from '../components/AppearancePopover'
 import { Button } from '../components/ui/AppButton'
 import { ErrorNotice } from '../components/ui/Feedback'
 import { FieldError, Input, Label } from '../components/ui/AppInput'
@@ -38,7 +39,7 @@ export function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 px-4 py-8">
-      <div className="mb-4 w-full max-w-3xl">
+      <div className="mb-4 flex w-full max-w-3xl items-center justify-between">
         <Link
           to="/"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -46,6 +47,7 @@ export function LoginPage() {
           <ArrowLeft className="size-4" strokeWidth={2} />
           Kembali ke Beranda
         </Link>
+        <AppearancePopover />
       </div>
       <div className="grid w-full max-w-3xl overflow-hidden rounded-3xl border border-border bg-card shadow-lg md:grid-cols-2">
         <div className="hidden flex-col justify-between bg-gradient-to-br from-primary to-primary/70 p-8 text-primary-foreground md:flex">

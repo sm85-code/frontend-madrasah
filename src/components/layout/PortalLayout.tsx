@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { GraduationCap, LogOut } from 'lucide-react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { logout as apiLogout } from '../../api/auth'
+import { AppearancePopover } from '../AppearancePopover'
 import { Button } from '../ui/AppButton'
 import { BottomNav } from './BottomNav'
 import {
@@ -112,10 +113,11 @@ export function PortalLayout() {
           {/* Hidden on mobile: BottomNav's "Lainnya" button opens the same
            * sidebar sheet, closer to the thumb than top-left. */}
           <SidebarTrigger className="hidden md:flex" />
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-foreground">{user.nama}</p>
             <p className="truncate text-xs text-muted-foreground">{ROLE_LABEL[user.role]}</p>
           </div>
+          <AppearancePopover />
         </header>
         <main className="flex-1 overflow-y-auto bg-muted/30 p-4 pb-20 sm:p-5 md:pb-5">
           <Outlet />
