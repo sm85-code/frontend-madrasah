@@ -29,8 +29,8 @@ export function StatCard({ label, value, hint, tone = 'default', icon: Icon }: S
     <Card className="shadow-soft transition-shadow hover:shadow-md">
       <CardContent className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-sm font-medium text-muted-foreground">{label}</p>
-          <p className={cn('mt-1 text-2xl font-semibold tabular-nums', toneClass[tone])}>{value}</p>
+          <p className="truncate text-xs font-medium text-muted-foreground sm:text-sm">{label}</p>
+          <p className={cn('mt-1 text-xl font-semibold tabular-nums sm:text-2xl', toneClass[tone])}>{value}</p>
           {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
         </div>
         {Icon && (

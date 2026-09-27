@@ -55,7 +55,7 @@ export function LoginPage() {
             <GraduationCap className="size-6" strokeWidth={2.25} />
           </span>
           <div>
-            <h1 className="text-xl font-semibold leading-tight">{pengaturan?.nama_sekolah ?? 'Sistem Informasi Madrasah'}</h1>
+            <h1 className="text-xl font-semibold leading-tight lg:text-2xl">{pengaturan?.nama_sekolah ?? 'Sistem Informasi Madrasah'}</h1>
             <p className="mt-2 text-sm text-primary-foreground/80">{pengaturan?.tagline ?? 'Masuk untuk melanjutkan'}</p>
           </div>
           <p className="text-xs text-primary-foreground/60">Satu portal untuk seluruh kebutuhan akademik dan administrasi madrasah.</p>
