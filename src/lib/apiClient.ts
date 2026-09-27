@@ -13,18 +13,14 @@ const baseURL = `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/madrasah`
 export const apiClient = axios.create({
   baseURL,
   withCredentials: true,
-  // Tanpa ini, browser sesekali melakukan conditional GET (If-None-Match)
-  // ke endpoint ini dan dapat 304 Not Modified -- axios menganggap apa pun
-  // di luar 200-299 sebagai error (lihat interceptor di bawah), jadi
-  // response yang sebenarnya valid ("data belum berubah, pakai versi
-  // sebelumnya") malah muncul sebagai error aneh "Request failed with
-  // status code 304" di UI (dashboard, dsb). Endpoint-endpoint ini memang
-  // harus selalu fresh (dashboard, tagihan, dll), jadi matikan caching di
-  // sisi request sama sekali daripada menambal di banyak tempat.
-  headers: {
-    'Cache-Control': 'no-cache, no-store',
-    Pragma: 'no-cache',
-  },
+  // NOTE: previously set Cache-Control/Pragma headers here to stop the
+  // browser's conditional GETs (which return 304, see the interceptor
+  // below). Reverted -- those aren't in the backend's CORS allow_headers
+  // (main.py in sm85-arch), so the browser's preflight got rejected and
+  // EVERY request, including login, broke with a network error. The 304
+  // fallback message below is enough on its own; fixing the request
+  // headers properly means adding them to the backend's CORS config too,
+  // not just this file.
 })
 
 /** Thrown for any non-2xx response, with the backend's `detail` message
