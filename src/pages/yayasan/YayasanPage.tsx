@@ -253,6 +253,7 @@ export function YayasanPage() {
                 />
               </div>
             )}
+            {toggleAktifMutation.isError && (
               <div className="mb-4">
                 <ErrorNotice
                   message={toggleAktifMutation.error instanceof ApiError ? toggleAktifMutation.error.message : 'Gagal mengubah status unit.'}
