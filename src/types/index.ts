@@ -39,6 +39,7 @@ export interface Kegiatan {
   deskripsi: string
   urutan: number
   madrasah_unit_id?: string | null
+  unit_nama?: string | null
 }
 
 export interface Pendaftaran {
@@ -54,6 +55,7 @@ export interface Pendaftaran {
   status: 'baru' | 'dihubungi' | 'diterima' | 'ditolak'
   dibuat_pada: string
   madrasah_unit_id?: string | null
+  unit_nama?: string | null
 }
 
 export interface Pengumuman {
@@ -63,6 +65,7 @@ export interface Pengumuman {
   tanggal: string
   dibuat_by: string | null
   madrasah_unit_id?: string | null
+  unit_nama?: string | null
   publik?: boolean
 }
 
@@ -71,6 +74,7 @@ export interface Tingkat {
   nama: string
   urutan: number
   madrasah_unit_id?: string | null
+  unit_nama?: string | null
 }
 
 export interface Rombel {
@@ -80,6 +84,7 @@ export interface Rombel {
   wali_kelas_id: string | null
   wali_kelas: string | null
   madrasah_unit_id?: string | null
+  unit_nama?: string | null
 }
 
 export interface Santri {
@@ -91,6 +96,7 @@ export interface Santri {
   orang_tua?: string | null
   status?: 'aktif' | 'lulus' | 'keluar' | 'pindah'
   madrasah_unit_id?: string | null
+  unit_nama?: string | null
 }
 
 export interface Mapel {
@@ -99,6 +105,7 @@ export interface Mapel {
   nama: string
   materi: MateriTarget[]
   madrasah_unit_id?: string | null
+  unit_nama?: string | null
 }
 
 export interface MateriTarget {
@@ -223,6 +230,7 @@ export interface TahunAjaran {
   tanggal_mulai: string
   tanggal_selesai: string
   madrasah_unit_id?: string | null
+  unit_nama?: string | null
 }
 
 export interface Semester {
