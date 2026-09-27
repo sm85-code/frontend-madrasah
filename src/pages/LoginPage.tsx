@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { GraduationCap } from 'lucide-react'
+import { ArrowLeft, GraduationCap } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { login } from '../api/auth'
 import { getPengaturan } from '../api/public'
 import { ApiError } from '../lib/apiClient'
@@ -37,7 +37,16 @@ export function LoginPage() {
   if (user) return <Navigate to="/portal" replace />
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4 py-8">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 px-4 py-8">
+      <div className="mb-4 w-full max-w-3xl">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" strokeWidth={2} />
+          Kembali ke Beranda
+        </Link>
+      </div>
       <div className="grid w-full max-w-3xl overflow-hidden rounded-3xl border border-border bg-card shadow-lg md:grid-cols-2">
         <div className="hidden flex-col justify-between bg-gradient-to-br from-primary to-primary/70 p-8 text-primary-foreground md:flex">
           <span className="flex size-11 items-center justify-center rounded-2xl bg-white/15">
