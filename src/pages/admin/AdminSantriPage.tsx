@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { createSantri, deleteSantri, listRombel, listSantriAdmin, setSantriStatus } from '../../api/admin'
+import { createSantri, deleteSantri, listRombel, listSantriAdmin, listWaliSantri, patchSantri, setSantriStatus } from '../../api/admin'
 import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
@@ -27,6 +27,7 @@ export function AdminSantriPage() {
   const writable = canWrite(role, SANTRI_WRITE_ROLES)
   const [nama, setNama] = useState('')
   const [rombelId, setRombelId] = useState('')
+  const [waliId, setWaliId] = useState('')
   const [filterStatus, setFilterStatus] = useState('semua')
 
   const santriQuery = useQuery({
@@ -34,12 +35,14 @@ export function AdminSantriPage() {
     queryFn: () => listSantriAdmin(filterStatus),
   })
   const rombelQuery = useQuery({ queryKey: ['admin', 'rombel'], queryFn: listRombel })
+  const waliQuery = useQuery({ queryKey: ['admin', 'wali-santri'], queryFn: listWaliSantri })
 
   const createMutation = useMutation({
-    mutationFn: () => createSantri({ nama, rombel_id: rombelId || null }),
+    mutationFn: () => createSantri({ nama, rombel_id: rombelId || null, orang_tua_id: waliId || null }),
     onSuccess: () => {
       setNama('')
       setRombelId('')
+      setWaliId('')
       queryClient.invalidateQueries({ queryKey: ['admin', 'santri'] })
     },
   })
@@ -54,11 +57,42 @@ export function AdminSantriPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'santri'] }),
   })
 
+  const patchMutation = useMutation({
+    mutationFn: ({ id, orang_tua_id }: { id: string; orang_tua_id: string | null }) =>
+      patchSantri(id, { orang_tua_id }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'santri'] }),
+  })
+
   const rombelName = (id: string | null) => rombelQuery.data?.find((r) => r.id === id)?.nama ?? '-'
+
+  const waliName = (id: string | null) =>
+    waliQuery.data?.find((w) => w.id === id)?.nama ?? (id ? 'Wali terhapus' : '-')
 
   const columns: Column<Santri>[] = [
     { header: 'Nama', cell: (s) => s.nama },
     { header: 'Rombel', cell: (s) => rombelName(s.rombel_id) },
+    {
+      header: 'Wali Santri',
+      cell: (s) =>
+        writable ? (
+          <Select
+            className="w-auto min-w-[140px]"
+            value={s.orang_tua_id ?? ''}
+            onChange={(e) =>
+              patchMutation.mutate({ id: s.id, orang_tua_id: e.target.value || null })
+            }
+          >
+            <option value="">Belum diikat</option>
+            {waliQuery.data?.map((w) => (
+              <option key={w.id} value={w.id}>
+                {w.nama}
+              </option>
+            ))}
+          </Select>
+        ) : (
+          <span>{s.orang_tua || waliName(s.orang_tua_id)}</span>
+        ),
+    },
     {
       header: 'Status',
       cell: (s) => <Badge tone={STATUS_TONE[s.status ?? 'aktif']}>{s.status ?? 'aktif'}</Badge>,
@@ -97,7 +131,7 @@ export function AdminSantriPage() {
 
   return (
     <div>
-      <PageHeader title="Santri" description="Kelola data santri, penempatan rombel, dan status." />
+      <PageHeader title="Santri" description="Kelola data santri, rombel, dan ikatan wali santri." />
 
       {writable && (
       <Card className="mb-5">
@@ -120,6 +154,17 @@ export function AdminSantriPage() {
                 {rombelQuery.data?.map((r) => (
                   <option key={r.id} value={r.id}>
                     {r.nama}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <div className="min-w-[180px]">
+              <Label htmlFor="wali-santri">Wali Santri</Label>
+              <Select id="wali-santri" value={waliId} onChange={(e) => setWaliId(e.target.value)}>
+                <option value="">Belum diikat</option>
+                {waliQuery.data?.map((w) => (
+                  <option key={w.id} value={w.id}>
+                    {w.nama}
                   </option>
                 ))}
               </Select>
