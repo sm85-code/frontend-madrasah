@@ -12,7 +12,16 @@ export function AdminDashboardPage() {
 
   return (
     <div>
-      <PageHeader title="Dashboard" description="Ringkasan operasional madrasah." />
+      <PageHeader
+        title="Dashboard"
+        description={
+          data?.unit_nama
+            ? `Ringkasan unit ${data.unit_nama}.`
+            : data && data.unit_id === null && data.unit_nama === null && data.total_santri === 0
+              ? 'Akun ini belum terikat unit. Angka kosong sampai Kepala dipilih di halaman Unit.'
+              : 'Ringkasan operasional madrasah.'
+        }
+      />
       {isError ? (
         <ErrorNotice message={error instanceof ApiError ? error.message : 'Gagal memuat data dashboard.'} />
       ) : isLoading || !data ? (

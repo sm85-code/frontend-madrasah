@@ -249,6 +249,8 @@ export interface RekapUmum {
   tagihan_lunas: number
   tagihan_belum: number
   per_rombel: { rombel: string; jumlah_santri: number }[]
+  unit_id?: string | null
+  unit_nama?: string | null
 }
 
 export interface AuditLogEntry {
