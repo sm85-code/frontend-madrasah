@@ -39,7 +39,11 @@ apiClient.interceptors.request.use((config) => {
   const user = useAuthStore.getState().user
   const selected = useUnitStore.getState().selectedUnitId
   if (user && (user.role === 'admin' || user.role === 'yayasan_admin') && selected) {
-    config.params = { ...(config.params ?? {}), unit_id: selected }
+    const url = String(config.url ?? '')
+    const skip = url.includes('/admin/yayasan') || url.includes('/admin/unit')
+    if (!skip) {
+      config.params = { ...(config.params ?? {}), unit_id: selected }
+    }
   }
   return config
 })

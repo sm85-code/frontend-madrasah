@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { listUnit } from '../../api/yayasan'
 import { useAuthStore } from '../../store/authStore'
 import { useUnitStore } from '../../store/unitStore'
@@ -8,6 +9,8 @@ import { cn } from '../../lib/utils'
 const CROSS_UNIT_ROLES = new Set(['admin', 'yayasan_admin'])
 
 export function UnitTabs() {
+  const location = useLocation()
+  const diMenuYayasan = location.pathname.startsWith('/portal/yayasan')
   const role = useAuthStore((s) => s.user?.role)
   const selected = useUnitStore((s) => s.selectedUnitId)
   const setSelected = useUnitStore((s) => s.setSelectedUnitId)
@@ -24,7 +27,7 @@ export function UnitTabs() {
     }
   }, [enabled, list, selected, setSelected, queryClient])
 
-  if (!enabled || list.length === 0) return null
+  if (!enabled || diMenuYayasan || list.length === 0) return null
 
   return (
     <div className="border-b border-border bg-card px-4 py-2 sm:px-5">
