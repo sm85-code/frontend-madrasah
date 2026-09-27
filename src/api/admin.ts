@@ -172,6 +172,11 @@ export async function kenaikanKelasMassal(items: { santri_id: string; rombel_tuj
   return data
 }
 
+export async function listPengumumanAdmin(): Promise<Pengumuman[]> {
+  const { data } = await apiClient.get<Pengumuman[]>('/admin/pengumuman')
+  return data
+}
+
 export async function createPengumuman(payload: { judul: string; isi: string }) {
   const { data } = await apiClient.post<Pengumuman>('/admin/pengumuman', payload)
   return data
@@ -184,6 +189,11 @@ export async function getAuditLog(limit = 200): Promise<AuditLogEntry[]> {
 
 export async function updatePengaturan(payload: Partial<Pengaturan>) {
   const { data } = await apiClient.patch<Pengaturan>('/admin/pengaturan', payload)
+  return data
+}
+
+export async function listKegiatanAdmin(): Promise<Kegiatan[]> {
+  const { data } = await apiClient.get<Kegiatan[]>('/admin/kegiatan')
   return data
 }
 
