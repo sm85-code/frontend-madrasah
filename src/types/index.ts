@@ -88,6 +88,7 @@ export interface Santri {
   rombel_id: string | null
   kelas_id?: string | null
   orang_tua_id: string | null
+  orang_tua?: string | null
   status?: 'aktif' | 'lulus' | 'keluar' | 'pindah'
   madrasah_unit_id?: string | null
 }

@@ -137,7 +137,7 @@ export async function createSantri(payload: {
   return data
 }
 
-export async function patchSantri(id: string, payload: Partial<{ nama: string; rombel_id: string; orang_tua_id: string }>) {
+export async function patchSantri(id: string, payload: Partial<{ nama: string; rombel_id: string | null; orang_tua_id: string | null }>) {
   const { data } = await apiClient.patch<Santri>(`/admin/santri/${id}`, payload)
   return data
 }
