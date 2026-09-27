@@ -17,6 +17,10 @@ export async function createBukuKasEntry(payload: {
   return data
 }
 
+export async function deleteBukuKasEntry(id: string) {
+  await apiClient.delete(`/keuangan/buku-kas/${id}`)
+}
+
 export async function getLaporanKeuangan(bulan?: string): Promise<LaporanKeuangan> {
   const { data } = await apiClient.get<LaporanKeuangan>('/keuangan/laporan', { params: { bulan } })
   return data
