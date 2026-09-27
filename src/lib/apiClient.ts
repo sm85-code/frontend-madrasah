@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
+import { useUnitStore } from '../store/unitStore'
 
 /**
  * Backend auth is a cookie (httpOnly, set by POST /auth/login) validated on
@@ -33,6 +34,15 @@ export class ApiError extends Error {
     this.name = 'ApiError'
   }
 }
+
+apiClient.interceptors.request.use((config) => {
+  const user = useAuthStore.getState().user
+  const selected = useUnitStore.getState().selectedUnitId
+  if (user && (user.role === 'admin' || user.role === 'yayasan_admin') && selected) {
+    config.params = { ...(config.params ?? {}), unit_id: selected }
+  }
+  return config
+})
 
 apiClient.interceptors.response.use(
   (response) => {

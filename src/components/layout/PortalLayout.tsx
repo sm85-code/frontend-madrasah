@@ -3,6 +3,7 @@ import { GraduationCap, LogOut } from 'lucide-react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { logout as apiLogout } from '../../api/auth'
 import { AppearancePopover } from '../AppearancePopover'
+import { UnitSwitcher } from './UnitSwitcher'
 import { Button } from '../ui/AppButton'
 import { BottomNav } from './BottomNav'
 import {
@@ -117,6 +118,7 @@ export function PortalLayout() {
             <p className="truncate text-sm font-semibold text-foreground">{user.nama}</p>
             <p className="truncate text-xs text-muted-foreground">{ROLE_LABEL[user.role]}</p>
           </div>
+          <UnitSwitcher />
           <AppearancePopover />
         </header>
         <main className="flex-1 overflow-y-auto bg-muted/30 p-4 pb-20 sm:p-5 md:pb-5">
