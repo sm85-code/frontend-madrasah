@@ -397,9 +397,12 @@ export function AdminGuruPage() {
                 <Label htmlFor="tugas-user">Pegawai</Label>
                 <Select id="tugas-user" value={tugasUserId} onChange={(e) => setTugasUserId(e.target.value)} required>
                   <option value="">Pilih pegawai</option>
+                  {me && !(guruQuery.data ?? []).some((u) => u.id === me.id) && (
+                    <option value={me.id}>{me.nama} (saya)</option>
+                  )}
                   {(guruQuery.data ?? []).map((u) => (
                     <option key={u.id} value={u.id}>
-                      {u.nama}
+                      {u.id === me?.id ? `${u.nama} (saya)` : u.nama}
                     </option>
                   ))}
                 </Select>
@@ -430,6 +433,22 @@ export function AdminGuruPage() {
               <Button type="submit" loading={createTugasMutation.isPending}>
                 Tugaskan
               </Button>
+              {hasAnyRole(me, ['kepala_sekolah', 'lembaga_admin']) && me && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  loading={createTugasMutation.isPending}
+                  onClick={() =>
+                    createTugas({
+                      user_id: me.id,
+                      jenis: 'guru_mapel',
+                      madrasah_unit_id: isPengelolaUnit ? undefined : tugasUnitId || undefined,
+                    }).then(() => queryClient.invalidateQueries({ queryKey: ['admin', 'tugas'] }))
+                  }
+                >
+                  Tugaskan saya sebagai guru mapel
+                </Button>
+              )}
             </form>
             {createTugasMutation.isError && (
               <ErrorNotice
