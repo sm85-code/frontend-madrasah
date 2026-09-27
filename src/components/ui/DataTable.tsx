@@ -31,7 +31,7 @@ export function DataTable<T>({ columns, rows, rowKey, emptyMessage = 'Belum ada 
         <TableHeader className="bg-muted/50">
           <TableRow>
             {columns.map((col) => (
-              <TableHead key={col.header} className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <TableHead key={col.header} className="text-sm font-medium text-muted-foreground">
                 {col.header}
               </TableHead>
             ))}

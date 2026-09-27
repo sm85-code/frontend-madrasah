@@ -27,11 +27,11 @@ const toneIconClass: Record<Required<StatCardProps>['tone'], string> = {
 export function StatCard({ label, value, hint, tone = 'default', icon: Icon }: StatCardProps) {
   return (
     <Card className="shadow-soft transition-shadow hover:shadow-md">
-      <CardContent className="flex items-start justify-between gap-3">
+      <CardContent className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-xs font-medium text-muted-foreground sm:text-sm">{label}</p>
-          <p className={cn('mt-1 text-xl font-semibold tabular-nums sm:text-2xl', toneClass[tone])}>{value}</p>
-          {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
+          <p className="truncate text-sm leading-5 text-muted-foreground">{label}</p>
+          <p className={cn('mt-1 text-2xl font-semibold leading-none tabular-nums', toneClass[tone])}>{value}</p>
+          {hint && <p className="mt-1.5 text-sm leading-5 text-muted-foreground">{hint}</p>}
         </div>
         {Icon && (
           <span className={cn('flex size-9 shrink-0 items-center justify-center rounded-xl', toneIconClass[tone])}>
