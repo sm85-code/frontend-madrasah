@@ -2,11 +2,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowDownCircle, ArrowUpCircle, Wallet } from 'lucide-react'
 import { useState } from 'react'
 import { createBukuKasEntry, getLaporanKeuangan } from '../../api/keuangan'
+import { ApiError } from '../../lib/apiClient'
 import { Badge } from '../../components/ui/AppBadge'
 import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
-import { Spinner } from '../../components/ui/Feedback'
+import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Select, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { StatCard } from '../../components/ui/StatCard'
@@ -106,7 +107,9 @@ export function BukuKasPage() {
 
       <Card>
         <CardBody>
-          {laporanQuery.isLoading ? (
+          {laporanQuery.isError ? (
+            <ErrorNotice message={laporanQuery.error instanceof ApiError ? laporanQuery.error.message : 'Gagal memuat buku kas.'} />
+          ) : laporanQuery.isLoading ? (
             <Spinner />
           ) : (
             <DataTable columns={columns} rows={laporanQuery.data?.entries ?? []} rowKey={(e) => e.id} />
