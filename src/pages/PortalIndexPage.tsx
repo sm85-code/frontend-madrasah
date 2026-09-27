@@ -5,5 +5,5 @@ import { useAuthStore } from '../store/authStore'
 export function PortalIndexPage() {
   const user = useAuthStore((s) => s.user)
   if (!user) return <Navigate to="/login" replace />
-  return <Navigate to={firstAccessiblePath(user.role)} replace />
+  return <Navigate to={firstAccessiblePath(user.role, user.roles)} replace />
 }

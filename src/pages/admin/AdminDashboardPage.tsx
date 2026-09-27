@@ -7,6 +7,7 @@ import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCa
 import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { StatCard } from '../../components/ui/StatCard'
+import { hasAnyRole } from '../../config/roles'
 import { useAuthStore } from '../../store/authStore'
 import type { RekapUmum, RekapUnit } from '../../types'
 
@@ -61,8 +62,8 @@ function UnitStats({
 }
 
 export function AdminDashboardPage() {
-  const role = useAuthStore((s) => s.user?.role)
-  const lintasUnit = role === 'admin' || role === 'yayasan_admin'
+  const user = useAuthStore((s) => s.user)
+  const lintasUnit = hasAnyRole(user, ['admin', 'yayasan_admin'])
 
   const unitQuery = useQuery({
     queryKey: ['admin', 'rekap'],

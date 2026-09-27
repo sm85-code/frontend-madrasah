@@ -12,6 +12,23 @@ import type {
   User,
 } from '../types'
 
+export async function listTugas(userId?: string) {
+  const { data } = await apiClient.get<{ id: string; user_id: string; user: string | null; jenis: string; madrasah_unit_id: string }[]>(
+    '/admin/tugas',
+    { params: userId ? { user_id: userId } : undefined },
+  )
+  return data
+}
+
+export async function createTugas(payload: { user_id: string; jenis: string; madrasah_unit_id?: string }) {
+  const { data } = await apiClient.post('/admin/tugas', payload)
+  return data
+}
+
+export async function deleteTugas(id: string) {
+  await apiClient.delete(`/admin/tugas/${id}`)
+}
+
 export async function getRekap(): Promise<RekapUmum> {
   const { data } = await apiClient.get<RekapUmum>('/admin/rekap')
   return data

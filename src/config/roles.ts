@@ -66,6 +66,15 @@ export const ROLE_LABEL: Record<Role, string> = {
   yayasan_admin: 'Admin Yayasan',
 }
 
+export function userRoles(user: { role: Role; roles?: Role[] } | null | undefined): Role[] {
+  if (!user) return []
+  return Array.from(new Set([user.role, ...(user.roles ?? [])]))
+}
+
 export function canWrite(role: Role | undefined, writeRoles: Role[]): boolean {
   return !!role && writeRoles.includes(role)
+}
+
+export function hasAnyRole(user: { role: Role; roles?: Role[] } | null | undefined, roles: Role[]): boolean {
+  return userRoles(user).some((r) => roles.includes(r))
 }

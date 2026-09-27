@@ -31,7 +31,7 @@ export function LoginPage() {
     mutationFn: (values: LoginFormValues) => login(values.no_hp, values.password),
     onSuccess: (loggedInUser) => {
       setUser(loggedInUser)
-      navigate(firstAccessiblePath(loggedInUser.role), { replace: true })
+      navigate(firstAccessiblePath(loggedInUser.role, loggedInUser.roles), { replace: true })
     },
   })
 
