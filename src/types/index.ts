@@ -17,6 +17,7 @@ export interface User {
   nama: string
   no_hp: string
   role: Role
+  madrasah_unit_id?: string | null
   // Hanya terisi sekali, tepat setelah akun dibuat tanpa password
   // manual -- server generate password acak dan mengembalikannya di
   // respons create (bukan field yang tersimpan/bisa dibaca ulang).
@@ -65,6 +66,7 @@ export interface Tingkat {
   id: string
   nama: string
   urutan: number
+  madrasah_unit_id?: string | null
 }
 
 export interface Rombel {
@@ -73,6 +75,7 @@ export interface Rombel {
   tingkat_id: string | null
   wali_kelas_id: string | null
   wali_kelas: string | null
+  madrasah_unit_id?: string | null
 }
 
 export interface Santri {
@@ -82,6 +85,7 @@ export interface Santri {
   kelas_id?: string | null
   orang_tua_id: string | null
   status?: 'aktif' | 'lulus' | 'keluar' | 'pindah'
+  madrasah_unit_id?: string | null
 }
 
 export interface Mapel {
@@ -89,6 +93,7 @@ export interface Mapel {
   kode: string
   nama: string
   materi: MateriTarget[]
+  madrasah_unit_id?: string | null
 }
 
 export interface MateriTarget {
