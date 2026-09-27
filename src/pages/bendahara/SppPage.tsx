@@ -9,7 +9,8 @@ import { DataTable, type Column } from '../../components/ui/DataTable'
 import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedback'
 import { Input, Label } from '../../components/ui/AppInput'
-import { PageHeader } from '../../components/ui/PageHeader'
+import { KEUANGAN_WRITE_ROLES } from '../../config/roles'
+import { useCanWrite } from '../../hooks/useCanWrite'
 import type { Tagihan } from '../../types'
 
 const formatRupiah = (value: number) => `Rp ${value.toLocaleString('id-ID')}`
@@ -17,6 +18,7 @@ const bulanIni = () => new Date().toISOString().slice(0, 7)
 
 export function SppPage() {
   const queryClient = useQueryClient()
+  const writable = useCanWrite(KEUANGAN_WRITE_ROLES)
   const [bulanFilter, setBulanFilter] = useState(bulanIni())
   const menungguQuery = useQuery({ queryKey: ['bendahara', 'menunggu'], queryFn: listSppMenunggu })
   const semuaQuery = useQuery({ queryKey: ['bendahara', 'spp', bulanFilter], queryFn: () => listSppSemua(bulanFilter) })
@@ -43,11 +45,12 @@ export function SppPage() {
     { header: 'Status', cell: (t) => <Badge tone="warning">{t.status}</Badge> },
     {
       header: 'Aksi',
-      cell: (t) => (
+      cell: (t) =>
+        writable ? (
         <Button size="sm" loading={payMutation.isPending} onClick={() => payMutation.mutate(t.id)}>
           Konfirmasi Lunas
         </Button>
-      ),
+        ) : null,
     },
   ]
 
@@ -63,7 +66,7 @@ export function SppPage() {
       header: '',
       className: 'w-10 text-right',
       cell: (t) =>
-        t.lunas ? (
+        t.lunas || !writable ? (
           <span className="text-xs text-muted-foreground" title="Tagihan lunas tidak bisa dihapus (sudah tercatat di buku kas)">
             —
           </span>
@@ -83,9 +86,11 @@ export function SppPage() {
         title="SPP / Syahriyah"
         description="Generate tagihan bulanan dan verifikasi pembayaran yang diajukan wali kelas."
         actions={
+          {writable && (
           <Button loading={generateMutation.isPending} onClick={() => generateMutation.mutate()}>
             Generate SPP Bulan Ini
           </Button>
+          )}
         }
       />
 

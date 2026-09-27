@@ -8,7 +8,8 @@ import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCa
 import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { Input, Label, Textarea } from '../../components/ui/AppInput'
-import { PageHeader } from '../../components/ui/PageHeader'
+import { INFO_AKADEMIK_ROLES } from '../../config/roles'
+import { useCanWrite } from '../../hooks/useCanWrite'
 
 export function AdminPengaturanPage() {
   const queryClient = useQueryClient()
@@ -33,7 +34,7 @@ export function AdminPengaturanPage() {
 
   return (
     <div>
-      <PageHeader title="Pengaturan" description="Kegiatan & program yang tampil di halaman publik." />
+      <PageHeader title="Kegiatan & Program" description="Kegiatan yang tampil di halaman publik." />
 
       <Card className="max-w-xl">
         <CardHeader>

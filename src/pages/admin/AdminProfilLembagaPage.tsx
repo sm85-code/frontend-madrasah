@@ -8,13 +8,15 @@ import { Card, CardBody, CardHeader, CardTitle } from '../../components/ui/AppCa
 import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedback'
 import { Input, Label, Textarea } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
-import type { Pengaturan } from '../../types'
+import { PROFIL_LEMBAGA_WRITE_ROLES } from '../../config/roles'
+import { useCanWrite } from '../../hooks/useCanWrite'
 
 /** Mounted only once `pengaturan` has loaded (see the `isLoading` gate
  * below), so its form state can be initialized straight from the fetched
  * row -- no effect needed to copy query data into state after the fact. */
 function ProfilLembagaForm({ pengaturan }: { pengaturan: Pengaturan }) {
   const queryClient = useQueryClient()
+  const writable = useCanWrite(PROFIL_LEMBAGA_WRITE_ROLES)
   const [namaSekolah, setNamaSekolah] = useState(pengaturan.nama_sekolah)
   const [tagline, setTagline] = useState(pengaturan.tagline)
   const [alamat, setAlamat] = useState(pengaturan.alamat)
@@ -72,9 +74,11 @@ function ProfilLembagaForm({ pengaturan }: { pengaturan: Pengaturan }) {
       )}
       {pengaturanMutation.isSuccess && <SuccessNotice message="Profil lembaga tersimpan." />}
 
+      {writable && (
       <Button type="submit" loading={pengaturanMutation.isPending}>
         Simpan
       </Button>
+      )}
     </form>
   )
 }

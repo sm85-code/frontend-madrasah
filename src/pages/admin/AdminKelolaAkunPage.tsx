@@ -27,11 +27,12 @@ import { PageHeader } from '../../components/ui/PageHeader'
 import { ROLE_LABEL } from '../../config/roles'
 import type { MadrasahUnit, Role, User } from '../../types'
 
-const UNIT_SCOPED_ROLES: Role[] = ['kepala_sekolah', 'kurikulum', 'bendahara', 'wali_kelas', 'guru', 'wali_santri']
+const UNIT_SCOPED_ROLES: Role[] = ['kepala_sekolah', 'lembaga_admin', 'kurikulum', 'bendahara', 'wali_kelas', 'guru', 'wali_santri']
 
 const ROLE_OPTIONS: { value: Role; label: string }[] = [
   { value: 'admin', label: ROLE_LABEL.admin },
   { value: 'kepala_sekolah', label: ROLE_LABEL.kepala_sekolah },
+  { value: 'lembaga_admin', label: ROLE_LABEL.lembaga_admin },
   { value: 'yayasan_admin', label: ROLE_LABEL.yayasan_admin },
   { value: 'kurikulum', label: ROLE_LABEL.kurikulum },
   { value: 'bendahara', label: ROLE_LABEL.bendahara },
@@ -43,6 +44,7 @@ const ROLE_OPTIONS: { value: Role; label: string }[] = [
 const ROLE_BADGE_TONE: Record<Role, 'neutral' | 'success' | 'info' | 'warning'> = {
   admin: 'success',
   kepala_sekolah: 'success',
+  lembaga_admin: 'info',
   yayasan_admin: 'info',
   kurikulum: 'warning',
   bendahara: 'warning',

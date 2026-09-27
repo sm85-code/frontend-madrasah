@@ -5,6 +5,7 @@
 export type Role =
   | 'admin'
   | 'kepala_sekolah'
+  | 'lembaga_admin'
   | 'kurikulum'
   | 'bendahara'
   | 'wali_kelas'
@@ -38,6 +39,7 @@ export interface Kegiatan {
   judul: string
   deskripsi: string
   urutan: number
+  madrasah_unit_id?: string | null
 }
 
 export interface Pendaftaran {
@@ -52,6 +54,7 @@ export interface Pendaftaran {
   catatan: string
   status: 'baru' | 'dihubungi' | 'diterima' | 'ditolak'
   dibuat_pada: string
+  madrasah_unit_id?: string | null
 }
 
 export interface Pengumuman {
@@ -60,6 +63,7 @@ export interface Pengumuman {
   isi: string
   tanggal: string
   dibuat_by: string | null
+  madrasah_unit_id?: string | null
 }
 
 export interface Tingkat {
@@ -217,6 +221,7 @@ export interface TahunAjaran {
   kode: string
   tanggal_mulai: string
   tanggal_selesai: string
+  madrasah_unit_id?: string | null
 }
 
 export interface Semester {

@@ -8,6 +8,8 @@ import { DataTable, type Column } from '../../components/ui/DataTable'
 import { ErrorNotice, Spinner } from '../../components/ui/Feedback'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Pendaftaran } from '../../types'
+import { PSB_WRITE_ROLES } from '../../config/roles'
+import { useCanWrite } from '../../hooks/useCanWrite'
 
 const STATUS_TONE: Record<Pendaftaran['status'], 'neutral' | 'info' | 'success' | 'danger'> = {
   baru: 'neutral',
@@ -25,6 +27,7 @@ const STATUS_LABEL: Record<Pendaftaran['status'], string> = {
 
 export function AdminPendaftaranPage() {
   const queryClient = useQueryClient()
+  const writable = useCanWrite(PSB_WRITE_ROLES)
   const pendaftaranQuery = useQuery({ queryKey: ['admin', 'pendaftaran'], queryFn: listPendaftaran })
 
   const statusMutation = useMutation({
@@ -41,7 +44,8 @@ export function AdminPendaftaranPage() {
     { header: 'Status', cell: (p) => <Badge tone={STATUS_TONE[p.status]}>{STATUS_LABEL[p.status]}</Badge> },
     {
       header: 'Aksi',
-      cell: (p) => (
+      cell: (p) =>
+        writable ? (
         <div className="flex flex-wrap gap-1">
           {p.status !== 'dihubungi' && (
             <Button size="sm" variant="secondary" onClick={() => statusMutation.mutate({ id: p.id, status: 'dihubungi' })}>
@@ -59,7 +63,9 @@ export function AdminPendaftaranPage() {
             </Button>
           )}
         </div>
-      ),
+        ) : (
+          <span className="text-xs text-muted-foreground">Lihat saja</span>
+        ),
     },
   ]
 

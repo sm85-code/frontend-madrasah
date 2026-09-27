@@ -10,11 +10,14 @@ import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedbac
 import { Input } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Honor } from '../../types'
+import { KEUANGAN_WRITE_ROLES } from '../../config/roles'
+import { useCanWrite } from '../../hooks/useCanWrite'
 
 const formatRupiah = (value: string) => `Rp ${Number(value).toLocaleString('id-ID')}`
 
 export function HonorPage() {
   const queryClient = useQueryClient()
+  const writable = useCanWrite(KEUANGAN_WRITE_ROLES)
   const [bulan, setBulan] = useState(new Date().toISOString().slice(0, 7))
 
   const honorQuery = useQuery({ queryKey: ['keuangan', 'honor', bulan], queryFn: () => listHonor(bulan || undefined) })
@@ -42,7 +45,7 @@ export function HonorPage() {
     {
       header: 'Aksi',
       cell: (h) =>
-        !h.status_bayar && (
+        !h.status_bayar && writable && (
           <Button size="sm" loading={payMutation.isPending} onClick={() => payMutation.mutate(h.id)}>
             Bayar
           </Button>
@@ -58,9 +61,11 @@ export function HonorPage() {
         actions={
           <>
             <Input type="month" value={bulan} onChange={(e) => setBulan(e.target.value)} className="w-auto" />
+            {writable && (
             <Button loading={generateMutation.isPending} onClick={() => generateMutation.mutate()}>
               Generate Bulan Ini
             </Button>
+            )}
           </>
         }
       />
