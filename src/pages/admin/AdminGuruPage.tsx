@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { KeyRound } from 'lucide-react'
+import { KeyRound, Pencil } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -32,6 +32,8 @@ import {
 import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedback'
 import { FieldError, Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { UNIT_ACCOUNT_ROLES } from '../../config/roles'
+import { useCanWrite } from '../../hooks/useCanWrite'
 import { useAuthStore } from '../../store/authStore'
 import type { User } from '../../types'
 
@@ -113,11 +115,91 @@ function ResetPasswordAction({ user, onSubmit }: { user: User; onSubmit: (passwo
   )
 }
 
+
+function EditPegawaiAction({
+  user,
+  roles,
+  onSubmit,
+}: {
+  user: User
+  roles: { value: string; label: string }[]
+  onSubmit: (payload: { nama: string; no_hp: string; role: string }) => Promise<unknown>
+}) {
+  const [open, setOpen] = useState(false)
+  const [nama, setNama] = useState(user.nama)
+  const [noHp, setNoHp] = useState(user.no_hp)
+  const [role, setRole] = useState<string>(user.role)
+  const mutation = useMutation({
+    mutationFn: () => onSubmit({ nama, no_hp: noHp, role }),
+    onSuccess: () => setOpen(false),
+  })
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next)
+        if (next) {
+          setNama(user.nama)
+          setNoHp(user.no_hp)
+          setRole(user.role)
+          mutation.reset()
+        }
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button size="sm" variant="ghost" aria-label="Ubah" title="Ubah">
+          <Pencil className="size-4" strokeWidth={2} />
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Ubah pegawai</DialogTitle>
+          <DialogDescription>Perbarui nama, username, atau peran {user.nama}.</DialogDescription>
+        </DialogHeader>
+        <form
+          className="space-y-3"
+          onSubmit={(e) => {
+            e.preventDefault()
+            mutation.mutate()
+          }}
+        >
+          <div>
+            <Label htmlFor={`edit-nama-${user.id}`}>Nama</Label>
+            <Input id={`edit-nama-${user.id}`} value={nama} onChange={(e) => setNama(e.target.value)} required />
+          </div>
+          <div>
+            <Label htmlFor={`edit-hp-${user.id}`}>Username</Label>
+            <Input id={`edit-hp-${user.id}`} value={noHp} onChange={(e) => setNoHp(e.target.value)} required />
+          </div>
+          <div>
+            <Label htmlFor={`edit-role-${user.id}`}>Role</Label>
+            <Select id={`edit-role-${user.id}`} value={role} onChange={(e) => setRole(e.target.value)}>
+              {roles.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </Select>
+          </div>
+          {mutation.isError && (
+            <ErrorNotice message={mutation.error instanceof ApiError ? mutation.error.message : 'Gagal mengubah pegawai.'} />
+          )}
+          <DialogFooter>
+            <Button type="submit" loading={mutation.isPending}>
+              Simpan
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 export function AdminGuruPage() {
   const queryClient = useQueryClient()
   const me = useAuthStore((s) => s.user)
   const isPengelolaUnit = me?.role === 'kepala_sekolah' || me?.role === 'lembaga_admin'
-  const writable = me?.role !== 'yayasan_admin'
+  const writable = useCanWrite(UNIT_ACCOUNT_ROLES)
   const roleOptions =
     me?.role === 'lembaga_admin'
       ? PEGAWAI_ROLES
@@ -191,8 +273,13 @@ export function AdminGuruPage() {
       cell: (u) =>
         isPengelolaUnit && !bolehKelola.has(u.role) ? null : !writable ? null : (
           <div className="flex justify-end gap-1">
+            <EditPegawaiAction
+              user={u}
+              roles={roleOptions}
+              onSubmit={(payload) => patchGuru(u.id, payload)}
+            />
             <ResetPasswordAction user={u} onSubmit={(password) => patchGuru(u.id, { password })} />
-            <DeleteRowButton onClick={() => deleteGuruMutation.mutate(u.id)} />
+            <DeleteRowButton onClick={() => deleteGuruMutation.mutate(u.id)} itemName={`akun ${u.nama}`} />
           </div>
         ),
     },
@@ -207,8 +294,13 @@ export function AdminGuruPage() {
       cell: (u) =>
         writable ? (
         <div className="flex justify-end gap-1">
+          <EditPegawaiAction
+            user={u}
+            roles={[{ value: 'wali_santri', label: 'Wali Santri' }]}
+            onSubmit={(payload) => patchWaliSantri(u.id, { nama: payload.nama, no_hp: payload.no_hp })}
+          />
           <ResetPasswordAction user={u} onSubmit={(password) => patchWaliSantri(u.id, { password })} />
-          <DeleteRowButton onClick={() => deleteWaliMutation.mutate(u.id)} />
+          <DeleteRowButton onClick={() => deleteWaliMutation.mutate(u.id)} itemName={`akun ${u.nama}`} />
         </div>
         ) : null,
     },
@@ -220,11 +312,27 @@ export function AdminGuruPage() {
         title="Guru & Wali Santri"
         description={
           isPengelolaUnit
-            ? 'Anda mengurus akun pegawai unit ini saja. Admin utama tetap melihat semua unit.'
+            ? 'Tambah, ubah, atau hapus pegawai dan wali santri di unit Anda.'
             : 'Kelola akun staf dan orang tua/wali santri.'
         }
       />
 
+      {isPengelolaUnit && !me?.madrasah_unit_id && (
+        <div className="mb-4">
+          <ErrorNotice message="Akun ini belum terikat unit. Minta Admin Utama memilih Kepala di halaman Unit, baru bisa menambah pegawai." />
+        </div>
+      )}
+
+      {createGuruMutation.isError && (
+        <div className="mb-4">
+          <ErrorNotice message={createGuruMutation.error instanceof ApiError ? createGuruMutation.error.message : 'Gagal menambah pegawai.'} />
+        </div>
+      )}
+      {createWaliMutation.isError && (
+        <div className="mb-4">
+          <ErrorNotice message={createWaliMutation.error instanceof ApiError ? createWaliMutation.error.message : 'Gagal menambah wali santri.'} />
+        </div>
+      )}
       {passwordSementara && (
         <div className="mb-4">
           <SuccessNotice
