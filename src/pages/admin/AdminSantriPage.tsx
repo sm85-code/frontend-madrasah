@@ -13,6 +13,7 @@ import { PageHeader } from '../../components/ui/PageHeader'
 import type { Santri } from '../../types'
 import { canWrite, SANTRI_WRITE_ROLES } from '../../config/roles'
 import { useAuthStore } from '../../store/authStore'
+import { useUnitStore } from '../../store/unitStore'
 
 const STATUS_TONE: Record<string, 'success' | 'neutral' | 'warning'> = {
   aktif: 'success',
@@ -31,12 +32,13 @@ export function AdminSantriPage() {
   const [filterStatus, setFilterStatus] = useState('semua')
   const [waliBaru, setWaliBaru] = useState<{ nama: string; username: string; password: string } | null>(null)
 
+  const selectedUnitId = useUnitStore((s) => s.selectedUnitId)
   const santriQuery = useQuery({
-    queryKey: ['admin', 'santri', filterStatus],
+    queryKey: ['admin', 'santri', filterStatus, selectedUnitId],
     queryFn: () => listSantriAdmin(filterStatus),
   })
-  const rombelQuery = useQuery({ queryKey: ['admin', 'rombel'], queryFn: listRombel })
-  const waliQuery = useQuery({ queryKey: ['admin', 'wali-santri'], queryFn: listWaliSantri })
+  const rombelQuery = useQuery({ queryKey: ['admin', 'rombel', selectedUnitId], queryFn: listRombel })
+  const waliQuery = useQuery({ queryKey: ['admin', 'wali-santri', selectedUnitId], queryFn: listWaliSantri })
 
   const createMutation = useMutation({
     mutationFn: () => createSantri({ nama, nama_wali: namaWali, rombel_id: rombelId || null }),
