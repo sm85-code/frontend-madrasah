@@ -11,8 +11,8 @@ import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedbac
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Santri } from '../../types'
-import { canWrite, SANTRI_WRITE_ROLES } from '../../config/roles'
-import { useAuthStore } from '../../store/authStore'
+import { SANTRI_WRITE_ROLES } from '../../config/roles'
+import { useCanWrite } from '../../hooks/useCanWrite'
 import { useUnitStore } from '../../store/unitStore'
 
 const STATUS_TONE: Record<string, 'success' | 'neutral' | 'warning'> = {
@@ -24,8 +24,7 @@ const STATUS_TONE: Record<string, 'success' | 'neutral' | 'warning'> = {
 
 export function AdminSantriPage() {
   const queryClient = useQueryClient()
-  const role = useAuthStore((s) => s.user?.role)
-  const writable = canWrite(role, SANTRI_WRITE_ROLES)
+  const writable = useCanWrite(SANTRI_WRITE_ROLES)
   const [nama, setNama] = useState('')
   const [namaWali, setNamaWali] = useState('')
   const [rombelId, setRombelId] = useState('')
