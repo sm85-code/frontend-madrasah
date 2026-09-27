@@ -6,10 +6,13 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import {
   createGuru,
+  createTugas,
   createWaliSantri,
   deleteGuru,
+  deleteTugas,
   deleteWaliSantri,
   listGuru,
+  listTugas,
   listWaliSantri,
   patchGuru,
   patchWaliSantri,
@@ -32,7 +35,7 @@ import {
 import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedback'
 import { FieldError, Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
-import { UNIT_ACCOUNT_ROLES } from '../../config/roles'
+import { hasAnyRole, UNIT_ACCOUNT_ROLES } from '../../config/roles'
 import { useCanWrite } from '../../hooks/useCanWrite'
 import { useAuthStore } from '../../store/authStore'
 import type { User } from '../../types'
@@ -198,7 +201,7 @@ function EditPegawaiAction({
 export function AdminGuruPage() {
   const queryClient = useQueryClient()
   const me = useAuthStore((s) => s.user)
-  const isPengelolaUnit = me?.role === 'kepala_sekolah' || me?.role === 'lembaga_admin'
+  const isPengelolaUnit = hasAnyRole(me, ['kepala_sekolah', 'lembaga_admin']) && !hasAnyRole(me, ['admin', 'yayasan_admin'])
   const writable = useCanWrite(UNIT_ACCOUNT_ROLES)
   const roleOptions =
     me?.role === 'lembaga_admin'
@@ -211,6 +214,42 @@ export function AdminGuruPage() {
   const unitQuery = useQuery({ queryKey: ['yayasan', 'unit'], queryFn: listUnit, enabled: !isPengelolaUnit })
   const units = unitQuery.data ?? []
   const waliSantriQuery = useQuery({ queryKey: ['admin', 'wali-santri'], queryFn: listWaliSantri })
+  const tugasQuery = useQuery({ queryKey: ['admin', 'tugas'], queryFn: () => listTugas() })
+  const [tugasUserId, setTugasUserId] = useState('')
+  const [tugasJenis, setTugasJenis] = useState('guru_mapel')
+  const [tugasUnitId, setTugasUnitId] = useState('')
+  const createTugasMutation = useMutation({
+    mutationFn: () =>
+      createTugas({
+        user_id: tugasUserId,
+        jenis: tugasJenis,
+        madrasah_unit_id: isPengelolaUnit ? undefined : tugasUnitId || undefined,
+      }),
+    onSuccess: () => {
+      setTugasUserId('')
+      queryClient.invalidateQueries({ queryKey: ['admin', 'tugas'] })
+    },
+  })
+  const deleteTugasMutation = useMutation({
+    mutationFn: deleteTugas,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'tugas'] }),
+  })
+  const jenisTugasOptions = hasAnyRole(me, ['admin', 'yayasan_admin'])
+    ? [
+        { value: 'guru_mapel', label: 'Guru Mapel' },
+        { value: 'wali_kelas', label: 'Wali Kelas' },
+        { value: 'kurikulum', label: 'Kurikulum' },
+        { value: 'bendahara', label: 'Bendahara' },
+        { value: 'lembaga_admin', label: 'Admin Lembaga' },
+        { value: 'kepala_sekolah', label: 'Kepala Madrasah' },
+      ]
+    : [
+        { value: 'guru_mapel', label: 'Guru Mapel' },
+        { value: 'wali_kelas', label: 'Wali Kelas' },
+        { value: 'kurikulum', label: 'Kurikulum' },
+        { value: 'bendahara', label: 'Bendahara' },
+        ...(hasAnyRole(me, ['kepala_sekolah']) ? [{ value: 'lembaga_admin', label: 'Admin Lembaga' }] : []),
+      ]
 
   const [namaGuru, setNamaGuru] = useState('')
   const [noHpGuru, setNoHpGuru] = useState('')
@@ -339,6 +378,99 @@ export function AdminGuruPage() {
             message={`Akun ${passwordSementara.nama} dibuat. Password sementara: ${passwordSementara.password} -- catat sekarang, tidak akan ditampilkan lagi.`}
           />
         </div>
+      )}
+
+      {writable && (
+        <Card className="mb-5">
+          <CardHeader>
+            <CardTitle>Tugas Pokok & Tambahan</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <form
+              className="mb-4 flex flex-wrap items-end gap-2"
+              onSubmit={(e) => {
+                e.preventDefault()
+                createTugasMutation.mutate()
+              }}
+            >
+              <div className="min-w-[160px] flex-1">
+                <Label htmlFor="tugas-user">Pegawai</Label>
+                <Select id="tugas-user" value={tugasUserId} onChange={(e) => setTugasUserId(e.target.value)} required>
+                  <option value="">Pilih pegawai</option>
+                  {me && !(guruQuery.data ?? []).some((u) => u.id === me.id) && (
+                    <option value={me.id}>{me.nama} (saya)</option>
+                  )}
+                  {(guruQuery.data ?? []).map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.id === me?.id ? `${u.nama} (saya)` : u.nama}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              <div className="min-w-[160px]">
+                <Label htmlFor="tugas-jenis">Tugas</Label>
+                <Select id="tugas-jenis" value={tugasJenis} onChange={(e) => setTugasJenis(e.target.value)}>
+                  {jenisTugasOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              {!isPengelolaUnit && (
+                <div className="min-w-[150px]">
+                  <Label htmlFor="tugas-unit">Unit</Label>
+                  <Select id="tugas-unit" value={tugasUnitId} onChange={(e) => setTugasUnitId(e.target.value)} required>
+                    <option value="">Pilih unit</option>
+                    {units.map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.nama}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+              )}
+              <Button type="submit" loading={createTugasMutation.isPending}>
+                Tugaskan
+              </Button>
+              {hasAnyRole(me, ['kepala_sekolah', 'lembaga_admin']) && me && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  loading={createTugasMutation.isPending}
+                  onClick={() =>
+                    createTugas({
+                      user_id: me.id,
+                      jenis: 'guru_mapel',
+                      madrasah_unit_id: isPengelolaUnit ? undefined : tugasUnitId || undefined,
+                    }).then(() => queryClient.invalidateQueries({ queryKey: ['admin', 'tugas'] }))
+                  }
+                >
+                  Tugaskan saya sebagai guru mapel
+                </Button>
+              )}
+            </form>
+            {createTugasMutation.isError && (
+              <ErrorNotice
+                message={createTugasMutation.error instanceof ApiError ? createTugasMutation.error.message : 'Gagal menugaskan.'}
+              />
+            )}
+            {tugasQuery.isLoading ? (
+              <Spinner />
+            ) : (
+              <ul className="divide-y divide-border text-sm">
+                {(tugasQuery.data ?? []).map((t) => (
+                  <li key={t.id} className="flex items-center justify-between gap-2 py-2">
+                    <span>
+                      {t.user ?? t.user_id} — {t.jenis}
+                    </span>
+                    <DeleteRowButton onClick={() => deleteTugasMutation.mutate(t.id)} itemName={`tugas ${t.jenis}`} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardBody>
+        </Card>
       )}
 
       <div className="grid gap-5 lg:grid-cols-2">

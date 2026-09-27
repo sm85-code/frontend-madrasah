@@ -22,7 +22,7 @@ import {
   SidebarTrigger,
 } from '../ui/sidebar'
 import { NAV_SECTIONS } from '../../config/nav'
-import { ROLE_LABEL } from '../../config/roles'
+import { ROLE_LABEL, userRoles as rolesOf } from '../../config/roles'
 import { useAuthStore } from '../../store/authStore'
 
 export function PortalLayout() {
@@ -39,10 +39,11 @@ export function PortalLayout() {
   })
 
   if (!user) return null
+  const userRoles = rolesOf(user)
 
   const sections = NAV_SECTIONS.map((section) => ({
     ...section,
-    items: section.items.filter((item) => item.roles.includes(user.role)),
+    items: section.items.filter((item) => item.roles.some((r) => userRoles.includes(r))),
   })).filter((section) => section.items.length > 0)
 
   // Top 4 items across this role's own sections, in the order config/nav.ts

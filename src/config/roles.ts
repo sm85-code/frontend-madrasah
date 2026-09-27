@@ -4,7 +4,7 @@ export const APP_ADMIN_ROLES: Role[] = ['admin']
 export const YAYASAN_ROLES: Role[] = ['yayasan_admin', 'admin']
 export const UNIT_ADMIN_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin']
 
-export const DASHBOARD_ROLES: Role[] = ['admin', 'yayasan_admin', 'kepala_sekolah', 'lembaga_admin']
+export const DASHBOARD_ROLES: Role[] = ['admin', 'yayasan_admin', 'kepala_sekolah', 'lembaga_admin', 'guru', 'wali_kelas', 'kurikulum', 'bendahara']
 export const SANTRI_READ_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin', 'yayasan_admin']
 export const SANTRI_WRITE_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin']
 export const ROMBEL_READ_ROLES: Role[] = ['admin', 'kepala_sekolah', 'lembaga_admin', 'kurikulum', 'yayasan_admin']
@@ -66,6 +66,15 @@ export const ROLE_LABEL: Record<Role, string> = {
   yayasan_admin: 'Admin Yayasan',
 }
 
+export function userRoles(user: { role: Role; roles?: Role[] } | null | undefined): Role[] {
+  if (!user) return []
+  return Array.from(new Set([user.role, ...(user.roles ?? [])]))
+}
+
 export function canWrite(role: Role | undefined, writeRoles: Role[]): boolean {
   return !!role && writeRoles.includes(role)
+}
+
+export function hasAnyRole(user: { role: Role; roles?: Role[] } | null | undefined, roles: Role[]): boolean {
+  return userRoles(user).some((r) => roles.includes(r))
 }

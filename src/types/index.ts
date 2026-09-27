@@ -18,10 +18,9 @@ export interface User {
   nama: string
   no_hp: string
   role: Role
+  roles?: Role[]
+  tugas?: { id: string; jenis: string; madrasah_unit_id: string }[]
   madrasah_unit_id?: string | null
-  // Hanya terisi sekali, tepat setelah akun dibuat tanpa password
-  // manual -- server generate password acak dan mengembalikannya di
-  // respons create (bukan field yang tersimpan/bisa dibaca ulang).
   password_sementara?: string
 }
 
@@ -252,6 +251,7 @@ export interface RekapUmum {
   per_rombel: { rombel: string; jumlah_santri: number }[]
   unit_id?: string | null
   unit_nama?: string | null
+  per_unit?: RekapUmum[]
 }
 
 export interface AuditLogEntry {

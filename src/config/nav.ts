@@ -137,9 +137,10 @@ export const NAV_SECTIONS: NavSection[] = [
   },
 ]
 
-export function firstAccessiblePath(role: Role): string {
+export function firstAccessiblePath(role: Role, extra: Role[] = []): string {
+  const roles = new Set([role, ...extra])
   for (const section of NAV_SECTIONS) {
-    const item = section.items.find((i) => i.roles.includes(role))
+    const item = section.items.find((i) => i.roles.some((r) => roles.has(r)))
     if (item) return item.path
   }
   return '/login'
