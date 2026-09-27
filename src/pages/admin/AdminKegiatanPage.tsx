@@ -81,6 +81,7 @@ export function AdminKegiatanPage() {
                 <li key={k.id} className="flex items-start justify-between gap-2 py-2.5 first:pt-0 last:pb-0">
                   <div className="min-w-0">
                     <p className="font-medium text-foreground">{k.judul}</p>
+                    {k.unit_nama && <p className="text-xs text-muted-foreground">{k.unit_nama}</p>}
                     {k.deskripsi && <p className="mt-0.5 text-muted-foreground">{k.deskripsi}</p>}
                   </div>
                   {writable && (

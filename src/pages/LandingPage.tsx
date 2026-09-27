@@ -63,7 +63,8 @@ export function LandingPage() {
     queryKey: ['unit-publik'],
     queryFn: listUnitPublik,
   })
-  const namaUnit = (id?: string | null) => unitPublik?.find((u) => u.id === id)?.nama
+  const namaUnit = (item: { madrasah_unit_id?: string | null; unit_nama?: string | null }) =>
+    item.unit_nama || unitPublik?.find((u) => u.id === item.madrasah_unit_id)?.nama
   // Defensive: only ever render these as lists. If VITE_API_BASE_URL is
   // misconfigured, a relative request can resolve against this same dev
   // server/host instead of the backend and come back non-JSON -- fail
@@ -173,8 +174,8 @@ export function LandingPage() {
                           <Sparkles className="size-5" strokeWidth={2.25} />
                         </span>
                         <h3 className="mt-3 text-base font-semibold text-foreground">{k.judul}</h3>
-                        {namaUnit(k.madrasah_unit_id) && (
-                          <p className="mt-1 text-xs text-muted-foreground">{namaUnit(k.madrasah_unit_id)}</p>
+                        {namaUnit(k) && (
+                          <p className="mt-1 text-xs text-muted-foreground">{namaUnit(k)}</p>
                         )}
                         {k.deskripsi && <p className="mt-1 text-sm text-muted-foreground">{k.deskripsi}</p>}
                       </CardBody>
@@ -246,8 +247,8 @@ export function LandingPage() {
                       <h3 className="text-base font-semibold text-foreground">{item.judul}</h3>
                       <span className="shrink-0 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">{item.tanggal}</span>
                     </div>
-                    {namaUnit(item.madrasah_unit_id) && (
-                      <p className="mt-1 text-xs text-muted-foreground">{namaUnit(item.madrasah_unit_id)}</p>
+                    {namaUnit(item) && (
+                      <p className="mt-1 text-xs text-muted-foreground">{namaUnit(item)}</p>
                     )}
                     <p className="mt-1.5 whitespace-pre-line text-sm text-muted-foreground">{item.isi}</p>
                   </CardBody>

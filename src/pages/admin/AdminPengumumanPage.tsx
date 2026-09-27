@@ -80,6 +80,7 @@ export function AdminPengumumanPage() {
                   <span className="shrink-0 text-xs text-muted-foreground">{p.tanggal}</span>
                 </div>
                 <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground">{p.isi}</p>
+                {p.unit_nama && <p className="mt-1 text-xs font-medium text-foreground">{p.unit_nama}</p>}
                 <p className="mt-2 text-xs text-muted-foreground">{p.publik === false ? 'Disembunyikan dari halaman publik' : 'Tampil di halaman publik'}</p>
                 {writable && (
                   <div className="mt-3 flex flex-wrap gap-2">
