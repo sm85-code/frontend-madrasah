@@ -1,8 +1,17 @@
 import { apiClient } from '../lib/apiClient'
-import type { Penugasan, ProgresEntry, Santri } from '../types'
+import type { Jadwal, Penugasan, ProgresEntry, Santri } from '../types'
 
 export async function getPenugasanSaya(): Promise<Penugasan[]> {
   const { data } = await apiClient.get<Penugasan[]>('/guru-mapel/penugasan-saya')
+  return data
+}
+
+
+/** Jadwal rombel yang ditugaskan ke guru (backend memfilter dari penugasan). */
+export async function getJadwalSaya(rombelId?: string): Promise<Jadwal[]> {
+  const { data } = await apiClient.get<Jadwal[]>('/guru-mapel/jadwal', {
+    params: { rombel_id: rombelId },
+  })
   return data
 }
 
