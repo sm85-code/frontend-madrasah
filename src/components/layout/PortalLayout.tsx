@@ -25,7 +25,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '../ui/sidebar'
-import { NAV_SECTIONS, bottomNavItems, titleForPath } from '../../config/nav'
+import { NAV_SECTIONS, bottomNavItems, isNavItemActive, titleForPath } from '../../config/nav'
 import { ROLE_LABEL, userRoles as rolesOf } from '../../config/roles'
 import { useActiveUnitLabel } from '../../hooks/useActiveUnitLabel'
 import { useAuthStore } from '../../store/authStore'
@@ -92,7 +92,7 @@ function SidebarNav() {
               <SidebarMenu className="gap-1">
                 {section.items.map((item) => {
                   const Icon = item.icon
-                  const active = location.pathname === item.path || location.pathname.startsWith(`${item.path}/`)
+                  const active = isNavItemActive(location.pathname, item.path)
                   return (
                     <SidebarMenuItem key={item.path}>
                       <NavLink
