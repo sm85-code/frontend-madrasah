@@ -154,17 +154,14 @@ export function firstAccessiblePath(role: Role, extra: Role[] = []): string {
   return '/login'
 }
 
-const BOTTOM_NAV_PATHS: Record<Role, string[]> = {
-  admin: ['/portal/dashboard', '/portal/santri', '/portal/pengumuman', '/portal/keuangan/buku-kas'],
-  yayasan_admin: ['/portal/dashboard', '/portal/yayasan', '/portal/santri', '/portal/keuangan/buku-kas'],
-  kepala_sekolah: ['/portal/dashboard', '/portal/santri', '/portal/pengumuman', '/portal/keuangan/buku-kas'],
-  lembaga_admin: ['/portal/dashboard', '/portal/santri', '/portal/pengumuman', '/portal/keuangan/buku-kas'],
-  kurikulum: ['/portal/dashboard', '/portal/kurikulum/mapel', '/portal/kurikulum/jadwal', '/portal/rombel'],
-  bendahara: ['/portal/dashboard', '/portal/keuangan/buku-kas', '/portal/keuangan/honor', '/portal/bendahara/spp'],
-  wali_kelas: ['/portal/dashboard', '/portal/wali-kelas/absensi', '/portal/wali-kelas/progres', '/portal/wali-kelas/pesan'],
-  guru: ['/portal/dashboard', '/portal/guru-mapel/absensi', '/portal/guru-mapel/rapor', '/portal/guru-mapel/penugasan'],
-  wali_santri: ['/portal/wali-santri', '/portal/profil'],
-}
+/** Fixed mobile bottom-nav slots (left→right). Role filtering hides
+ * tabs the current user cannot access; "Lainnya" is always appended in BottomNav. */
+const BOTTOM_NAV_FIXED_PATHS = [
+  '/portal/dashboard',
+  '/portal/kurikulum/mapel',
+  '/portal/guru',
+  '/portal/santri',
+] as const
 
 export function allNavItems(): NavItem[] {
   return NAV_SECTIONS.flatMap((section) => section.items)
@@ -182,15 +179,7 @@ export function titleForPath(pathname: string): string {
 export function bottomNavItems(role: Role, extra: Role[] = []): NavItem[] {
   const allowed = new Set([role, ...extra])
   const byPath = new Map(allNavItems().map((item) => [item.path, item]))
-  const profil: NavItem = {
-    label: 'Profil Saya',
-    shortLabel: 'Profil',
-    path: '/portal/profil',
-    roles: ALL_ROLES,
-    icon: UserCircle,
-  }
-  byPath.set(profil.path, profil)
-  return (BOTTOM_NAV_PATHS[role] ?? BOTTOM_NAV_PATHS.admin)
-    .map((path) => byPath.get(path))
-    .filter((item): item is NavItem => !!item && item.roles.some((r) => allowed.has(r)))
+  return BOTTOM_NAV_FIXED_PATHS.map((path) => byPath.get(path)).filter(
+    (item): item is NavItem => !!item && item.roles.some((r) => allowed.has(r)),
+  )
 }

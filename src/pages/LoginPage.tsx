@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, LogIn } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { login } from '../api/auth'
@@ -8,6 +8,7 @@ import { getPengaturan } from '../api/public'
 import { ApiError } from '../lib/apiClient'
 import { AppearancePopover } from '../components/AppearancePopover'
 import { BrandMark } from '../components/BrandMark'
+import { WallpaperLayer } from '../components/WallpaperLayer'
 import { Button } from '../components/ui/AppButton'
 import { ErrorNotice } from '../components/ui/Feedback'
 import { FieldError, Input, Label } from '../components/ui/AppInput'
@@ -42,39 +43,41 @@ export function LoginPage() {
 
   if (user) return <Navigate to="/portal" replace />
 
+  const brandName = pengaturan?.nama_sekolah ?? 'Sistem Informasi Madrasah'
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 px-4 py-8">
-      <div className="mb-4 flex w-full max-w-3xl items-center justify-between">
+    <div className="auth-bg relative flex min-h-screen flex-col items-center justify-center px-4 py-8">
+      <WallpaperLayer />
+      <div className="relative z-[1] mb-4 flex w-full max-w-md items-center justify-between">
         <Link
           to="/"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--legacy-border)] bg-[var(--surface)] px-3 py-2 text-sm font-medium text-muted-foreground shadow-soft transition-colors hover:text-foreground"
         >
           <ArrowLeft className="size-4" strokeWidth={2} />
-          Kembali ke Beranda
+          Kembali
         </Link>
-        <AppearancePopover />
+        <AppearancePopover align="end" />
       </div>
-      <div className="grid w-full max-w-3xl overflow-hidden rounded-3xl border border-border bg-card shadow-lg md:grid-cols-2">
-        <div className="hidden flex-col justify-between bg-gradient-to-br from-primary to-primary/70 p-8 text-primary-foreground md:flex">
-          <BrandMark logoUrl={pengaturan?.logo_url} name={pengaturan?.nama_sekolah} className="bg-white/15" />
-          <div>
-            <h1 className="text-xl font-semibold leading-tight lg:text-2xl">{pengaturan?.nama_sekolah ?? 'Sistem Informasi Madrasah'}</h1>
-            <p className="mt-2 text-sm text-primary-foreground/80">{pengaturan?.tagline ?? 'Masuk untuk melanjutkan'}</p>
-          </div>
-          <p className="text-xs text-primary-foreground/60">Satu portal untuk seluruh kebutuhan akademik dan administrasi madrasah.</p>
+
+      <div className="fade-in relative z-[1] w-full max-w-md">
+        <div className="mb-6 text-center">
+          <BrandMark logoUrl={pengaturan?.logo_url} name={brandName} size="lg" className="mx-auto mb-3" />
+          <h1 className="font-heading text-2xl font-semibold sm:text-3xl">{brandName}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{pengaturan?.tagline ?? 'Masuk untuk melanjutkan'}</p>
         </div>
 
-        <div className="p-8">
-          <div className="mb-6 text-center md:text-left">
-            <BrandMark logoUrl={pengaturan?.logo_url} name={pengaturan?.nama_sekolah} className="mb-3 md:hidden" />
-            <h2 className="text-lg font-semibold text-foreground">Selamat datang kembali</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Masukkan kredensial Anda untuk masuk ke portal.</p>
-          </div>
+        <div
+          className="rounded-2xl p-6 sm:p-8"
+          style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--legacy-border)',
+            boxShadow: 'var(--shadow-soft)',
+          }}
+        >
+          <h2 className="font-heading text-xl font-semibold">Masuk ke Akun</h2>
+          <p className="mb-5 mt-1 text-sm text-muted-foreground">Silakan gunakan username & password Anda.</p>
 
-          <form
-            className="space-y-4"
-            onSubmit={handleSubmit((values) => mutation.mutate(values))}
-          >
+          <form className="space-y-4" onSubmit={handleSubmit((values) => mutation.mutate(values))}>
             <div>
               <Label htmlFor="no_hp">Username</Label>
               <Input id="no_hp" placeholder="admin" autoComplete="username" {...register('no_hp')} />
@@ -92,11 +95,16 @@ export function LoginPage() {
               />
             )}
 
-            <Button type="submit" className="w-full" loading={mutation.isPending}>
+            <Button type="submit" className="w-full gap-2" loading={mutation.isPending}>
+              <LogIn className="size-4" strokeWidth={2} />
               Masuk
             </Button>
           </form>
         </div>
+
+        <p className="mt-5 text-center text-xs text-muted-foreground">
+          © {new Date().getFullYear()} {brandName}. Seluruh hak cipta dilindungi.
+        </p>
       </div>
     </div>
   )
