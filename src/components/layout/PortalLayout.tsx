@@ -29,7 +29,7 @@ import { NAV_SECTIONS, bottomNavItems, titleForPath } from '../../config/nav'
 import { ROLE_LABEL, userRoles as rolesOf } from '../../config/roles'
 import { useActiveUnitLabel } from '../../hooks/useActiveUnitLabel'
 import { useAuthStore } from '../../store/authStore'
-import { resolveLogoUrl } from '../../lib/branding'
+import { LOGO_GLOW_CLASS, resolveLogoUrl } from '../../lib/branding'
 import { cn } from '../../lib/utils'
 
 function SidebarNav() {
@@ -70,12 +70,12 @@ function SidebarNav() {
             <img
               src={logoSrc}
               alt=""
-              className="h-11 w-11 shrink-0 rounded-full object-contain"
+              className={`h-[52px] w-[52px] shrink-0 rounded-full object-contain ${LOGO_GLOW_CLASS}`}
               onError={() => setLogoBroken(true)}
             />
           ) : (
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-soft">
-              <GraduationCap className="h-5 w-5" strokeWidth={2.25} />
+            <span className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-soft">
+              <GraduationCap className="h-6 w-6" strokeWidth={2.25} />
             </span>
           )}
           <div className="min-w-0">
