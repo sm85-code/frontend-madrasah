@@ -7,7 +7,7 @@ import { Button } from '../../components/ui/AppButton'
 import { Card, CardBody } from '../../components/ui/AppCard'
 import { DataTable, type Column } from '../../components/ui/DataTable'
 import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedback'
-import { Input } from '../../components/ui/AppInput'
+import { Input, Label } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import type { Honor } from '../../types'
 import { KEUANGAN_WRITE_ROLES } from '../../config/roles'
@@ -19,11 +19,12 @@ export function HonorPage() {
   const queryClient = useQueryClient()
   const writable = useCanWrite(KEUANGAN_WRITE_ROLES)
   const [bulan, setBulan] = useState(new Date().toISOString().slice(0, 7))
+  const [tarifHonor, setTarifHonor] = useState('')
 
   const honorQuery = useQuery({ queryKey: ['keuangan', 'honor', bulan], queryFn: () => listHonor(bulan || undefined) })
 
   const generateMutation = useMutation({
-    mutationFn: () => generateHonor(bulan || undefined),
+    mutationFn: () => generateHonor(bulan || undefined, tarifHonor ? Number(tarifHonor) : undefined),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['keuangan', 'honor'] }),
   })
 
@@ -59,14 +60,29 @@ export function HonorPage() {
         title="Honor Mengajar"
         description='Dihitung dari "Absensi Mapel" yang dicatat guru (bukan absensi harian wali kelas) -- guru yang belum pernah mengisi absensi mapel di bulan ini tidak akan muncul.'
         actions={
-          <>
+          <div className="flex flex-wrap items-end gap-2">
             <Input type="month" value={bulan} onChange={(e) => setBulan(e.target.value)} className="w-auto" />
             {writable && (
-            <Button loading={generateMutation.isPending} onClick={() => generateMutation.mutate()}>
-              Generate Bulan Ini
-            </Button>
+              <>
+                <div>
+                  <Label htmlFor="tarif-honor">Tarif/Sesi (opsional)</Label>
+                  <Input
+                    id="tarif-honor"
+                    type="number"
+                    min={1}
+                    step={1000}
+                    placeholder="Default unit"
+                    value={tarifHonor}
+                    onChange={(e) => setTarifHonor(e.target.value)}
+                    className="w-40"
+                  />
+                </div>
+                <Button loading={generateMutation.isPending} onClick={() => generateMutation.mutate()}>
+                  Generate Bulan Ini
+                </Button>
+              </>
             )}
-          </>
+          </div>
         }
       />
       {generateMutation.isSuccess && (
