@@ -1,8 +1,8 @@
 import { apiClient } from '../lib/apiClient'
 import type { Tagihan } from '../types'
 
-export async function generateSpp(): Promise<Tagihan[]> {
-  const { data } = await apiClient.post<Tagihan[]>('/bendahara/spp/generate')
+export async function generateSpp(nominal?: number): Promise<Tagihan[]> {
+  const { data } = await apiClient.post<Tagihan[]>('/bendahara/spp/generate', nominal ? { nominal } : undefined)
   return data
 }
 
