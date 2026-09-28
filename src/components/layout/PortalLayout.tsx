@@ -5,6 +5,7 @@ import { logout as apiLogout } from '../../api/auth'
 import { getPengaturan } from '../../api/public'
 import { AppearancePopover } from '../AppearancePopover'
 import { UnitTabs } from './UnitSwitcher'
+import { hideUnitContext } from '../../lib/unitContext'
 import { Button } from '../ui/AppButton'
 import { BottomNav } from './BottomNav'
 import {
@@ -33,6 +34,7 @@ export function PortalLayout() {
   const navigate = useNavigate()
   const location = useLocation()
   const unitLabel = useActiveUnitLabel()
+  const tanpaKonteksUnit = hideUnitContext(location.pathname)
   const pengaturan = useQuery({ queryKey: ['pengaturan'], queryFn: getPengaturan })
 
   const logoutMutation = useMutation({
@@ -119,7 +121,9 @@ export function PortalLayout() {
           <SidebarTrigger className="hidden md:flex" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold leading-5 text-foreground">{pageTitle}</p>
-            <p className="truncate text-sm leading-5 text-muted-foreground">{unitLabel ?? ROLE_LABEL[user.role]}</p>
+            <p className="truncate text-sm leading-5 text-muted-foreground">
+              {tanpaKonteksUnit ? ROLE_LABEL[user.role] : unitLabel ?? ROLE_LABEL[user.role]}
+            </p>
           </div>
           <AppearancePopover />
         </header>
