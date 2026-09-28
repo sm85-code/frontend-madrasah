@@ -41,8 +41,8 @@ export async function listHonor(bulan?: string): Promise<Honor[]> {
   return data
 }
 
-export async function generateHonor(bulan?: string): Promise<Honor[]> {
-  const { data } = await apiClient.post<Honor[]>('/keuangan/honor/generate', null, { params: { bulan } })
+export async function generateHonor(bulan?: string, tarif?: number): Promise<Honor[]> {
+  const { data } = await apiClient.post<Honor[]>('/keuangan/honor/generate', null, { params: { bulan, tarif } })
   return data
 }
 
