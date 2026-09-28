@@ -5,6 +5,7 @@ import { listUnit } from '../../api/yayasan'
 import { useAuthStore } from '../../store/authStore'
 import { useUnitStore } from '../../store/unitStore'
 import { cn } from '../../lib/utils'
+import { hideUnitContext } from '../../lib/unitContext'
 
 const CROSS_UNIT_ROLES = new Set(['admin', 'yayasan_admin'])
 
@@ -12,9 +13,7 @@ const TAB_YAYASAN = '__yayasan__'
 
 export function UnitTabs() {
   const location = useLocation()
-  const diMenuYayasan = location.pathname.startsWith('/portal/yayasan')
-  const diAuditLog = location.pathname.startsWith('/portal/audit-log')
-  const diProfilSaya = location.pathname.startsWith('/portal/profil')
+  const tanpaKonteksUnit = hideUnitContext(location.pathname)
   const diKelolaAkun = location.pathname.startsWith('/portal/kelola-akun')
   const role = useAuthStore((s) => s.user?.role)
   const selected = useUnitStore((s) => s.selectedUnitId)
@@ -33,7 +32,7 @@ export function UnitTabs() {
     }
   }, [enabled, list, selected, setSelected, queryClient, diKelolaAkun])
 
-  if (!enabled || diMenuYayasan || diAuditLog || diProfilSaya || list.length === 0) return null
+  if (!enabled || tanpaKonteksUnit || list.length === 0) return null
 
   return (
     <div className="border-b border-border bg-card px-4 py-2 sm:px-5">
