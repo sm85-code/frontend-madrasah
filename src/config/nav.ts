@@ -167,6 +167,18 @@ export function allNavItems(): NavItem[] {
   return NAV_SECTIONS.flatMap((section) => section.items)
 }
 
+
+/** True when `pathname` matches this nav path, preferring the longest matching path
+ * so `/portal/yayasan/profil` does not also activate `/portal/yayasan`. */
+export function isNavItemActive(pathname: string, itemPath: string): boolean {
+  const matches = allNavItems()
+    .map((item) => item.path)
+    .filter((path) => pathname === path || pathname.startsWith(`${path}/`))
+  if (matches.length === 0) return false
+  const best = matches.reduce((a, b) => (a.length >= b.length ? a : b))
+  return best === itemPath
+}
+
 export function titleForPath(pathname: string): string {
   const items = allNavItems()
     .filter((item) => pathname === item.path || pathname.startsWith(`${item.path}/`))
