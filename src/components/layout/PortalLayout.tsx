@@ -1,7 +1,8 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { GraduationCap, LogOut } from 'lucide-react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { logout as apiLogout } from '../../api/auth'
+import { getPengaturan } from '../../api/public'
 import { AppearancePopover } from '../AppearancePopover'
 import { UnitTabs } from './UnitSwitcher'
 import { Button } from '../ui/AppButton'
@@ -21,14 +22,18 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '../ui/sidebar'
-import { NAV_SECTIONS } from '../../config/nav'
+import { NAV_SECTIONS, bottomNavItems, titleForPath } from '../../config/nav'
 import { ROLE_LABEL, userRoles as rolesOf } from '../../config/roles'
+import { useActiveUnitLabel } from '../../hooks/useActiveUnitLabel'
 import { useAuthStore } from '../../store/authStore'
 
 export function PortalLayout() {
   const user = useAuthStore((s) => s.user)
   const logoutStore = useAuthStore((s) => s.logout)
   const navigate = useNavigate()
+  const location = useLocation()
+  const unitLabel = useActiveUnitLabel()
+  const pengaturan = useQuery({ queryKey: ['pengaturan'], queryFn: getPengaturan })
 
   const logoutMutation = useMutation({
     mutationFn: apiLogout,
@@ -48,22 +53,24 @@ export function PortalLayout() {
     }))
     .filter((section) => section.items.length > 0)
 
-  // Top 4 items across this role's own sections, in the order config/nav.ts
-  // already ranks them (Dashboard etc. first) -- shown in the bottom tab
-  // bar so they're a thumb's reach away instead of top-left.
-  const primaryItems = sections.flatMap((s) => s.items).slice(0, 4)
+  const primaryItems = bottomNavItems(user.role, user.roles)
+  const pageTitle = titleForPath(location.pathname)
+  const brandName = pengaturan.data?.nama_sekolah || 'Sistem Informasi Madrasah'
+  const logoUrl = pengaturan.data?.logo_url
 
   return (
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2 px-2 py-1">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-soft">
-              <GraduationCap className="h-4.5 w-4.5" strokeWidth={2.25} />
-            </span>
-            <p className="text-sm font-semibold leading-tight text-sidebar-foreground">
-              Sistem Informasi Madrasah
-            </p>
+            {logoUrl ? (
+              <img src={logoUrl} alt="" className="h-8 w-8 shrink-0 rounded-lg object-cover" />
+            ) : (
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-soft">
+                <GraduationCap className="h-4.5 w-4.5" strokeWidth={2.25} />
+              </span>
+            )}
+            <p className="text-sm font-semibold leading-tight text-sidebar-foreground">{brandName}</p>
           </div>
         </SidebarHeader>
         <SidebarContent>
@@ -101,12 +108,7 @@ export function PortalLayout() {
               <p className="truncate text-sm font-semibold leading-5 text-sidebar-foreground">{user.nama}</p>
               <p className="truncate text-sm leading-5 text-muted-foreground">{ROLE_LABEL[user.role]}</p>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => logoutMutation.mutate()}
-              aria-label="Keluar"
-            >
+            <Button variant="ghost" size="sm" onClick={() => logoutMutation.mutate()} aria-label="Keluar">
               <LogOut className="h-4 w-4" strokeWidth={2} />
             </Button>
           </div>
@@ -114,12 +116,10 @@ export function PortalLayout() {
       </Sidebar>
       <SidebarInset>
         <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-border bg-card/95 px-4 py-3 shadow-soft backdrop-blur sm:px-5">
-          {/* Hidden on mobile: BottomNav's "Lainnya" button opens the same
-           * sidebar sheet, closer to the thumb than top-left. */}
           <SidebarTrigger className="hidden md:flex" />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold leading-5 text-foreground">{user.nama}</p>
-            <p className="truncate text-sm leading-5 text-muted-foreground">{ROLE_LABEL[user.role]}</p>
+            <p className="truncate text-sm font-semibold leading-5 text-foreground">{pageTitle}</p>
+            <p className="truncate text-sm leading-5 text-muted-foreground">{unitLabel ?? ROLE_LABEL[user.role]}</p>
           </div>
           <AppearancePopover />
         </header>

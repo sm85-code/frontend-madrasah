@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 import {
   CalendarCheck,
   ClipboardCheck,
-  GraduationCap,
   Megaphone,
   MessageCircle,
   Phone,
@@ -13,6 +12,8 @@ import {
 import { Link } from 'react-router-dom'
 import { getKegiatan, getPengaturan, getPengumuman, listUnitPublik } from '../api/public'
 import { AppearancePopover } from '../components/AppearancePopover'
+import { BrandMark } from '../components/BrandMark'
+import { Badge } from '../components/ui/AppBadge'
 import { Card, CardBody } from '../components/ui/AppCard'
 import { Button } from '../components/ui/AppButton'
 import { Spinner } from '../components/ui/Feedback'
@@ -78,10 +79,8 @@ export function LandingPage() {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-10 border-b border-border bg-card/95 shadow-soft backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-5 py-4">
-          <div className="flex items-center gap-3">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <GraduationCap className="size-4.5" strokeWidth={2.25} />
-            </span>
+          <div className="flex min-w-0 items-center gap-3">
+            <BrandMark logoUrl={pengaturan?.logo_url} name={pengaturan?.nama_sekolah} />
             <div className="min-w-0">
               <p className="truncate font-semibold text-foreground">{loadingPengaturan ? 'Memuat…' : pengaturan?.nama_sekolah}</p>
               <p className="truncate text-xs text-muted-foreground">{pengaturan?.tagline}</p>
@@ -109,9 +108,7 @@ export function LandingPage() {
             }}
           />
           <div className="mx-auto max-w-3xl px-5 py-16 text-center sm:py-24">
-            <span className="mx-auto mb-6 flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-soft">
-              <GraduationCap className="size-7" strokeWidth={2.25} />
-            </span>
+            <BrandMark logoUrl={pengaturan?.logo_url} name={pengaturan?.nama_sekolah} size="lg" className="mx-auto mb-6 bg-primary shadow-soft" />
             <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
               {loadingPengaturan ? 'Memuat…' : pengaturan?.nama_sekolah ?? 'Sistem Informasi Madrasah'}
             </h1>
@@ -154,8 +151,7 @@ export function LandingPage() {
         </section>
 
         {/* Kegiatan */}
-        {(loadingKegiatan || kegiatan.length > 0) && (
-          <section className="border-t border-border bg-muted/30">
+        <section className="border-t border-border bg-muted/30">
             <div className="mx-auto max-w-5xl px-5 py-14 sm:py-16">
               <div className="mx-auto max-w-xl text-center">
                 <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Kegiatan & Program</h2>
@@ -165,6 +161,8 @@ export function LandingPage() {
                 <div className="mt-8">
                   <Spinner />
                 </div>
+              ) : kegiatan.length === 0 ? (
+                <p className="mt-8 text-center text-sm text-muted-foreground">Belum ada kegiatan yang ditampilkan.</p>
               ) : (
                 <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {kegiatan.map((k) => (
@@ -175,7 +173,9 @@ export function LandingPage() {
                         </span>
                         <h3 className="mt-3 text-base font-semibold text-foreground">{k.judul}</h3>
                         {namaUnit(k) && (
-                          <p className="mt-1 text-xs text-muted-foreground">{namaUnit(k)}</p>
+                          <Badge tone="info" className="mt-1.5">
+                            {namaUnit(k)}
+                          </Badge>
                         )}
                         {k.deskripsi && <p className="mt-1 text-sm text-muted-foreground">{k.deskripsi}</p>}
                       </CardBody>
@@ -185,7 +185,6 @@ export function LandingPage() {
               )}
             </div>
           </section>
-        )}
 
         {/* PSB */}
         {infoPsb && (
@@ -248,7 +247,9 @@ export function LandingPage() {
                       <span className="shrink-0 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">{item.tanggal}</span>
                     </div>
                     {namaUnit(item) && (
-                      <p className="mt-1 text-xs text-muted-foreground">{namaUnit(item)}</p>
+                      <Badge tone="info" className="mt-1.5">
+                        {namaUnit(item)}
+                      </Badge>
                     )}
                     <p className="mt-1.5 whitespace-pre-line text-sm text-muted-foreground">{item.isi}</p>
                   </CardBody>

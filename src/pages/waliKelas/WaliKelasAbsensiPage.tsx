@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { listRombelScoped } from '../../api/shared'
 import { apiClient } from '../../lib/apiClient'
 import { Card, CardBody } from '../../components/ui/AppCard'
+import { DataTable, type Column } from '../../components/ui/DataTable'
 import { Spinner } from '../../components/ui/Feedback'
 import { Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
@@ -23,6 +24,15 @@ async function getRekapAbsensiRombel(rombelId: string): Promise<RekapAbsensi[]> 
   })
   return data
 }
+
+const columns: Column<RekapAbsensi>[] = [
+  { header: 'Santri', cell: (row) => row.nama },
+  { header: 'Sesi', cell: (row) => row.sesi },
+  { header: 'Hadir', cell: (row) => row.hadir },
+  { header: 'Sakit', cell: (row) => row.sakit },
+  { header: 'Izin', cell: (row) => row.izin },
+  { header: 'Alpa', cell: (row) => row.alpa },
+]
 
 export function WaliKelasAbsensiPage() {
   const rombelQuery = useQuery({ queryKey: ['scoped', 'rombel'], queryFn: listRombelScoped })
@@ -58,35 +68,13 @@ export function WaliKelasAbsensiPage() {
           <CardBody>
             {rekapQuery.isLoading ? (
               <Spinner />
-            ) : !rekapQuery.data?.length ? (
-              <p className="text-sm text-muted-foreground">Belum ada absensi mapel untuk rombel ini.</p>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border text-left text-muted-foreground">
-                      <th className="py-2 font-medium">Santri</th>
-                      <th className="py-2 font-medium">Sesi</th>
-                      <th className="py-2 font-medium">Hadir</th>
-                      <th className="py-2 font-medium">Sakit</th>
-                      <th className="py-2 font-medium">Izin</th>
-                      <th className="py-2 font-medium">Alpa</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {rekapQuery.data.map((row) => (
-                      <tr key={row.santri_id} className="border-b border-border last:border-0">
-                        <td className="py-2 text-foreground">{row.nama}</td>
-                        <td className="py-2">{row.sesi}</td>
-                        <td className="py-2">{row.hadir}</td>
-                        <td className="py-2">{row.sakit}</td>
-                        <td className="py-2">{row.izin}</td>
-                        <td className="py-2">{row.alpa}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <DataTable
+                columns={columns}
+                rows={rekapQuery.data ?? []}
+                rowKey={(row) => row.santri_id}
+                emptyMessage="Belum ada absensi mapel untuk rombel ini."
+              />
             )}
           </CardBody>
         </Card>

@@ -32,9 +32,8 @@ import { AdminKelolaAkunPage } from './pages/admin/AdminKelolaAkunPage'
 import { AdminKenaikanKelasPage } from './pages/admin/AdminKenaikanKelasPage'
 import { AdminPendaftaranPage } from './pages/admin/AdminPendaftaranPage'
 import { AdminKegiatanPage } from './pages/admin/AdminKegiatanPage'
-import { AdminPengaturanPage } from './pages/admin/AdminPengaturanPage'
-import { AdminProfilLembagaPage } from './pages/admin/AdminProfilLembagaPage'
 import { AdminPengumumanPage } from './pages/admin/AdminPengumumanPage'
+import { AdminProfilLembagaPage } from './pages/admin/AdminProfilLembagaPage'
 import { AdminRombelPage } from './pages/admin/AdminRombelPage'
 import { AdminSantriPage } from './pages/admin/AdminSantriPage'
 import { AdminTahunAjaranPage } from './pages/admin/AdminTahunAjaranPage'
@@ -91,7 +90,6 @@ function App() {
                 <Route path="tahun-ajaran" element={<AdminTahunAjaranPage />} />
                 <Route path="pengumuman" element={<AdminPengumumanPage />} />
                 <Route path="kegiatan" element={<AdminKegiatanPage />} />
-                <Route path="pengaturan" element={<AdminPengaturanPage />} />
               </Route>
               <Route element={<RoleGuard roles={PSB_READ_ROLES} />}>
                 <Route path="pendaftaran" element={<AdminPendaftaranPage />} />
