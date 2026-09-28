@@ -1,10 +1,14 @@
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
+  BookOpen,
+  Building2,
   CalendarCheck,
   ClipboardCheck,
   Megaphone,
   MessageCircle,
   Phone,
+  School,
   Sparkles,
   TrendingUp,
   Wallet,
@@ -43,6 +47,8 @@ const LAYANAN = [
   },
 ] as const
 
+const UNIT_ICONS = [Building2, School, BookOpen] as const
+
 const brandTitleShadow =
   '[text-shadow:0_1px_2px_rgba(15,23,42,0.2),0_0_20px_rgba(255,255,255,0.55)]'
 const brandHeaderShadow =
@@ -79,6 +85,53 @@ function SectionHeading({
   )
 }
 
+type UnitFilter = 'semua' | string
+
+function UnitFilterChips({
+  units,
+  value,
+  onChange,
+  align = 'center',
+}: {
+  units: { id: string; nama: string }[]
+  value: UnitFilter
+  onChange: (next: UnitFilter) => void
+  align?: 'center' | 'left'
+}) {
+  if (units.length <= 1) return null
+  return (
+    <div className={cn('mt-6 flex flex-wrap items-center gap-2', align === 'center' ? 'justify-center' : 'justify-start')}>
+      <button
+        type="button"
+        onClick={() => onChange('semua')}
+        className={cn(
+          'rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors',
+          value === 'semua'
+            ? 'bg-primary text-primary-foreground shadow-soft'
+            : 'bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground',
+        )}
+      >
+        Semua
+      </button>
+      {units.map((u) => (
+        <button
+          key={u.id}
+          type="button"
+          onClick={() => onChange(u.id)}
+          className={cn(
+            'rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors',
+            value === u.id
+              ? 'bg-primary text-primary-foreground shadow-soft'
+              : 'bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground',
+          )}
+        >
+          {u.nama}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export function LandingPage() {
   const { data: pengaturan, isLoading: loadingPengaturan } = useQuery({
     queryKey: ['pengaturan'],
@@ -92,17 +145,57 @@ export function LandingPage() {
     queryKey: ['kegiatan-publik'],
     queryFn: getKegiatan,
   })
-  const { data: unitPublik } = useQuery({
+  const { data: unitPublik, isLoading: loadingUnits } = useQuery({
     queryKey: ['unit-publik'],
     queryFn: listUnitPublik,
   })
+  const [filterKegiatan, setFilterKegiatan] = useState<UnitFilter>('semua')
+  const [filterPengumuman, setFilterPengumuman] = useState<UnitFilter>('semua')
+
   const namaUnit = (item: { madrasah_unit_id?: string | null; unit_nama?: string | null }) =>
     item.unit_nama || unitPublik?.find((u) => u.id === item.madrasah_unit_id)?.nama
   const pengumuman = Array.isArray(pengumumanRaw) ? pengumumanRaw : []
   const kegiatan = Array.isArray(kegiatanRaw) ? kegiatanRaw : []
+  const units = Array.isArray(unitPublik) ? unitPublik : []
   const infoPsb = pengaturan?.info_psb?.trim()
   const kontakPsb = pengaturan?.kontak_psb?.trim()
   const brandName = pengaturan?.nama_sekolah ?? 'Sistem Informasi Madrasah'
+  const alamat = pengaturan?.alamat?.trim()
+
+  const collectFilterUnits = (
+    items: { madrasah_unit_id?: string | null; unit_nama?: string | null }[],
+  ) => {
+    const fromItems = new Map<string, string>()
+    for (const item of items) {
+      const id = item.madrasah_unit_id
+      const nama = namaUnit(item)
+      if (id && nama) fromItems.set(id, nama)
+    }
+    if (fromItems.size > 0) {
+      return Array.from(fromItems.entries()).map(([id, nama]) => ({ id, nama }))
+    }
+    return units
+  }
+  const kegiatanFilterUnits = collectFilterUnits(kegiatan)
+  const pengumumanFilterUnits = collectFilterUnits(pengumuman)
+
+  const filteredKegiatan =
+    filterKegiatan === 'semua'
+      ? kegiatan
+      : kegiatan.filter(
+          (k) =>
+            k.madrasah_unit_id === filterKegiatan ||
+            namaUnit(k) === kegiatanFilterUnits.find((u) => u.id === filterKegiatan)?.nama,
+        )
+
+  const filteredPengumuman =
+    filterPengumuman === 'semua'
+      ? pengumuman
+      : pengumuman.filter(
+          (p) =>
+            p.madrasah_unit_id === filterPengumuman ||
+            namaUnit(p) === pengumumanFilterUnits.find((u) => u.id === filterPengumuman)?.nama,
+        )
 
   return (
     <div className="auth-bg relative min-h-screen">
@@ -159,6 +252,11 @@ export function LandingPage() {
           >
             {pengaturan?.tagline ?? 'Satu portal untuk absensi, progres akademik, SPP, dan komunikasi wali santri.'}
           </p>
+          {alamat ? (
+            <p className="mx-auto mt-2.5 max-w-md text-xs leading-relaxed text-muted-foreground sm:text-sm">
+              {alamat}
+            </p>
+          ) : null}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5 sm:mt-9 sm:gap-3">
             <Link to="/pendaftaran">
               <Button className="min-w-[10.5rem]">Daftar Jadi Santri Baru</Button>
@@ -170,6 +268,51 @@ export function LandingPage() {
             </Link>
           </div>
         </section>
+
+        {(loadingUnits || units.length > 0) && (
+          <section className="mx-auto max-w-5xl px-5 py-12 sm:py-16">
+            <SectionHeading
+              title="Unit & Jenjang"
+              subtitle="Beberapa jalur pendidikan di bawah yayasan. Pilih unit sesuai usia dan jenjang."
+            />
+            {loadingUnits ? (
+              <div className="mt-10">
+                <Spinner />
+              </div>
+            ) : (
+              <div className="mt-10 grid gap-3.5 sm:mt-12 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+                {units.map((unit, index) => {
+                  const Icon = UNIT_ICONS[index % UNIT_ICONS.length]
+                  return (
+                    <Card
+                      key={unit.id}
+                      className="h-full border-[var(--legacy-border)] bg-[color-mix(in_oklch,var(--surface)_92%,transparent)] shadow-soft transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                    >
+                      <CardBody className="flex h-full flex-col p-5 sm:p-6">
+                        <span
+                          className="flex size-11 items-center justify-center rounded-2xl"
+                          style={{ background: 'var(--primary-light)', color: 'var(--primary-dark)' }}
+                        >
+                          <Icon className="size-5" strokeWidth={2.25} />
+                        </span>
+                        <h3 className="mt-4 font-heading text-[0.975rem] font-semibold leading-snug tracking-tight text-foreground">
+                          {unit.nama}
+                        </h3>
+                        <div className="mt-auto pt-4">
+                          <Link to={`/pendaftaran?unit=${encodeURIComponent(unit.id)}`}>
+                            <Button size="sm" variant="secondary">
+                              Daftar ke unit ini
+                            </Button>
+                          </Link>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  )
+                })}
+              </div>
+            )}
+          </section>
+        )}
 
         <section className="mx-auto max-w-5xl px-5 py-12 sm:py-16">
           <SectionHeading
@@ -197,60 +340,6 @@ export function LandingPage() {
                 </CardBody>
               </Card>
             ))}
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-5xl px-5 pb-12 sm:pb-16">
-          <div
-            className="rounded-[1.35rem] px-5 py-10 sm:px-9 sm:py-12"
-            style={{
-              background: 'color-mix(in oklch, var(--surface) 90%, transparent)',
-              border: '1px solid var(--legacy-border)',
-              boxShadow: 'var(--shadow-soft)',
-            }}
-          >
-            <SectionHeading
-              title="Kegiatan & Program"
-              subtitle="Kegiatan unggulan yang diikuti santri di madrasah ini."
-            />
-            {loadingKegiatan ? (
-              <div className="mt-10">
-                <Spinner />
-              </div>
-            ) : kegiatan.length === 0 ? (
-              <p className="mt-10 text-center text-sm leading-relaxed text-muted-foreground">
-                Belum ada kegiatan yang ditampilkan.
-              </p>
-            ) : (
-              <div className="mt-10 grid gap-3.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
-                {kegiatan.map((k) => (
-                  <Card
-                    key={k.id}
-                    className="h-full border-[var(--legacy-border)] bg-[color-mix(in_oklch,var(--surface)_96%,transparent)] shadow-soft transition-shadow hover:shadow-md"
-                  >
-                    <CardBody className="flex h-full flex-col p-5">
-                      <span
-                        className="flex size-11 items-center justify-center rounded-2xl"
-                        style={{ background: 'var(--primary-light)', color: 'var(--primary-dark)' }}
-                      >
-                        <Sparkles className="size-5" strokeWidth={2.25} />
-                      </span>
-                      <h3 className="mt-4 font-heading text-[0.975rem] font-semibold leading-snug tracking-tight text-foreground">
-                        {k.judul}
-                      </h3>
-                      {namaUnit(k) && (
-                        <Badge tone="info" className="mt-2 w-fit">
-                          {namaUnit(k)}
-                        </Badge>
-                      )}
-                      {k.deskripsi && (
-                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{k.deskripsi}</p>
-                      )}
-                    </CardBody>
-                  </Card>
-                ))}
-              </div>
-            )}
           </div>
         </section>
 
@@ -283,23 +372,98 @@ export function LandingPage() {
                     Hubungi Panitia PSB: {kontakPsb}
                   </a>
                 )}
-                <div className="pt-1">
+                <div className="flex flex-wrap items-center gap-2.5 pt-1">
                   <Link to="/pendaftaran">
                     <Button size="sm">Buka Formulir Pendaftaran</Button>
                   </Link>
+                  {units.length > 0 &&
+                    units.map((u) => (
+                      <Link key={u.id} to={`/pendaftaran?unit=${encodeURIComponent(u.id)}`}>
+                        <Button size="sm" variant="secondary">
+                          Daftar {u.nama}
+                        </Button>
+                      </Link>
+                    ))}
                 </div>
               </CardBody>
             </Card>
           </section>
         )}
 
+        <section className="mx-auto max-w-5xl px-5 pb-12 sm:pb-16">
+          <div
+            className="rounded-[1.35rem] px-5 py-10 sm:px-9 sm:py-12"
+            style={{
+              background: 'color-mix(in oklch, var(--surface) 90%, transparent)',
+              border: '1px solid var(--legacy-border)',
+              boxShadow: 'var(--shadow-soft)',
+            }}
+          >
+            <SectionHeading
+              title="Kegiatan & Program"
+              subtitle="Kegiatan unggulan yang diikuti santri di madrasah ini."
+            />
+            <UnitFilterChips units={kegiatanFilterUnits} value={filterKegiatan} onChange={setFilterKegiatan} />
+            {loadingKegiatan ? (
+              <div className="mt-10">
+                <Spinner />
+              </div>
+            ) : kegiatan.length === 0 ? (
+              <p className="mt-10 text-center text-sm leading-relaxed text-muted-foreground">
+                Belum ada kegiatan yang ditampilkan.
+              </p>
+            ) : filteredKegiatan.length === 0 ? (
+              <p className="mt-10 text-center text-sm leading-relaxed text-muted-foreground">
+                Tidak ada kegiatan untuk unit ini.
+              </p>
+            ) : (
+              <div className="mt-10 grid gap-3.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+                {filteredKegiatan.map((k) => (
+                  <Card
+                    key={k.id}
+                    className="h-full border-[var(--legacy-border)] bg-[color-mix(in_oklch,var(--surface)_96%,transparent)] shadow-soft transition-shadow hover:shadow-md"
+                  >
+                    <CardBody className="flex h-full flex-col p-5">
+                      <span
+                        className="flex size-11 items-center justify-center rounded-2xl"
+                        style={{ background: 'var(--primary-light)', color: 'var(--primary-dark)' }}
+                      >
+                        <Sparkles className="size-5" strokeWidth={2.25} />
+                      </span>
+                      <h3 className="mt-4 font-heading text-[0.975rem] font-semibold leading-snug tracking-tight text-foreground">
+                        {k.judul}
+                      </h3>
+                      {namaUnit(k) && (
+                        <Badge tone="info" className="mt-2 w-fit">
+                          {namaUnit(k)}
+                        </Badge>
+                      )}
+                      {k.deskripsi && (
+                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{k.deskripsi}</p>
+                      )}
+                    </CardBody>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
         <section id="pengumuman" className="mx-auto max-w-3xl px-5 pb-16 sm:pb-20">
           <SectionHeading
             align="left"
             title="Pengumuman"
             subtitle="Informasi terbaru dari madrasah."
-            className="mb-8 sm:mb-9"
+            className="mb-4 sm:mb-5"
           />
+          <div className="mb-8 sm:mb-9">
+            <UnitFilterChips
+              units={pengumumanFilterUnits}
+              value={filterPengumuman}
+              onChange={setFilterPengumuman}
+              align="left"
+            />
+          </div>
 
           <div className="space-y-3.5">
             {loadingPengumuman && <Spinner />}
@@ -311,7 +475,10 @@ export function LandingPage() {
                 </CardBody>
               </Card>
             )}
-            {pengumuman.map((item) => (
+            {!loadingPengumuman && pengumuman.length > 0 && filteredPengumuman.length === 0 && (
+              <p className="text-sm text-muted-foreground">Tidak ada pengumuman untuk unit ini.</p>
+            )}
+            {filteredPengumuman.map((item) => (
               <Card
                 key={item.id}
                 className="border-[var(--legacy-border)] bg-[color-mix(in_oklch,var(--surface)_94%,transparent)] shadow-soft transition-shadow hover:shadow-md"
@@ -346,6 +513,17 @@ export function LandingPage() {
           {pengaturan?.alamat && (
             <p className="mx-auto mt-1.5 max-w-lg text-sm leading-relaxed text-muted-foreground">{pengaturan.alamat}</p>
           )}
+          <nav className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-sm">
+            <Link to="/pendaftaran" className="text-muted-foreground transition-colors hover:text-foreground">
+              Pendaftaran
+            </Link>
+            <Link to="/login" className="text-muted-foreground transition-colors hover:text-foreground">
+              Masuk
+            </Link>
+            <a href="#pengumuman" className="text-muted-foreground transition-colors hover:text-foreground">
+              Pengumuman
+            </a>
+          </nav>
           <p className="mt-5 text-xs tracking-wide text-muted-foreground">
             © {new Date().getFullYear()} {brandName}. Seluruh hak cipta dilindungi.
           </p>
