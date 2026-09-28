@@ -25,7 +25,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '../ui/sidebar'
-import { NAV_SECTIONS, bottomNavItems, isNavItemActive, titleForPath } from '../../config/nav'
+import { NAV_SECTIONS, bottomNavItems, isNavItemActive, navItemNeedsEnd, titleForPath } from '../../config/nav'
 import { ROLE_LABEL, userRoles as rolesOf } from '../../config/roles'
 import { useActiveUnitLabel } from '../../hooks/useActiveUnitLabel'
 import { useAuthStore } from '../../store/authStore'
@@ -97,10 +97,11 @@ function SidebarNav() {
                     <SidebarMenuItem key={item.path}>
                       <NavLink
                         to={item.path}
+                        end={navItemNeedsEnd(item.path)}
                         onClick={() => {
                           if (isMobile) setOpenMobile(false)
                         }}
-                        className={cn('side-link', active && 'active')}
+                        className={() => cn('side-link', active && 'active')}
                       >
                         <span className="nav-ico">
                           <Icon className="size-[18px]" strokeWidth={active ? 2.25 : 2} />

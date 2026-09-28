@@ -170,6 +170,13 @@ export function allNavItems(): NavItem[] {
 
 /** True when `pathname` matches this nav path, preferring the longest matching path
  * so `/portal/yayasan/profil` does not also activate `/portal/yayasan`. */
+
+/** When another nav item lives under this path, NavLink must use `end`
+ * so React Router does not mark the parent active on the child route. */
+export function navItemNeedsEnd(itemPath: string): boolean {
+  return allNavItems().some((other) => other.path !== itemPath && other.path.startsWith(`${itemPath}/`))
+}
+
 export function isNavItemActive(pathname: string, itemPath: string): boolean {
   const matches = allNavItems()
     .map((item) => item.path)
