@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { GraduationCap, LogOut } from 'lucide-react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
@@ -28,6 +29,7 @@ import { NAV_SECTIONS, bottomNavItems, titleForPath } from '../../config/nav'
 import { ROLE_LABEL, userRoles as rolesOf } from '../../config/roles'
 import { useActiveUnitLabel } from '../../hooks/useActiveUnitLabel'
 import { useAuthStore } from '../../store/authStore'
+import { resolveLogoUrl } from '../../lib/branding'
 import { cn } from '../../lib/utils'
 
 function SidebarNav() {
@@ -57,14 +59,20 @@ function SidebarNav() {
     .filter((section) => section.items.length > 0)
 
   const brandName = pengaturan.data?.nama_sekolah || 'Sistem Informasi Madrasah'
-  const logoUrl = pengaturan.data?.logo_url
+  const logoSrc = resolveLogoUrl(pengaturan.data?.logo_url)
+  const [logoBroken, setLogoBroken] = useState(false)
 
   return (
     <>
       <SidebarHeader>
         <div className="flex items-center gap-3 px-3 py-2">
-          {logoUrl ? (
-            <img src={logoUrl} alt="" className="h-11 w-11 shrink-0 rounded-full object-cover" />
+          {!logoBroken ? (
+            <img
+              src={logoSrc}
+              alt=""
+              className="h-11 w-11 shrink-0 rounded-full object-contain"
+              onError={() => setLogoBroken(true)}
+            />
           ) : (
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-soft">
               <GraduationCap className="h-5 w-5" strokeWidth={2.25} />
