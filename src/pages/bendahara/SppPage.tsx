@@ -21,6 +21,7 @@ export function SppPage() {
   const queryClient = useQueryClient()
   const writable = useCanWrite(KEUANGAN_WRITE_ROLES)
   const [bulanFilter, setBulanFilter] = useState(bulanIni())
+  const [nominalSpp, setNominalSpp] = useState('')
   const menungguQuery = useQuery({ queryKey: ['bendahara', 'menunggu'], queryFn: listSppMenunggu })
   const semuaQuery = useQuery({ queryKey: ['bendahara', 'spp', bulanFilter], queryFn: () => listSppSemua(bulanFilter) })
 
@@ -88,9 +89,27 @@ export function SppPage() {
         description="Generate tagihan bulanan dan verifikasi pembayaran yang diajukan wali kelas."
         actions={
           writable ? (
-            <Button loading={generateMutation.isPending} onClick={() => generateMutation.mutate()}>
-              Generate SPP Bulan Ini
-            </Button>
+            <div className="flex flex-wrap items-end gap-2">
+              <div>
+                <Label htmlFor="nominal-spp">Nominal SPP (opsional)</Label>
+                <Input
+                  id="nominal-spp"
+                  type="number"
+                  min={1}
+                  step={1000}
+                  placeholder="Default unit"
+                  value={nominalSpp}
+                  onChange={(e) => setNominalSpp(e.target.value)}
+                  className="w-40"
+                />
+              </div>
+              <Button
+                loading={generateMutation.isPending}
+                onClick={() => generateMutation.mutate(nominalSpp ? Number(nominalSpp) : undefined)}
+              >
+                Generate SPP Bulan Ini
+              </Button>
+            </div>
           ) : undefined
         }
       />
