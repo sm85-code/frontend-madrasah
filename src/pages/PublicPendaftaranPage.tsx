@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Phone, Send } from 'lucide-react'
 import { useState, type ChangeEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { getPengaturan, listUnitPublik, submitPendaftaran } from '../api/public'
 import { ApiError } from '../lib/apiClient'
 import { AppearancePopover } from '../components/AppearancePopover'
@@ -17,37 +17,42 @@ function waLink(kontak: string) {
   return `https://wa.me/${normalized}`
 }
 
+const emptyForm = {
+  nama_calon: '',
+  tempat_lahir: '',
+  tanggal_lahir: '',
+  nama_orang_tua: '',
+  no_hp: '',
+  alamat: '',
+  asal_sekolah: '',
+  catatan: '',
+  madrasah_unit_id: '',
+}
+
 export function PublicPendaftaranPage() {
+  const [searchParams] = useSearchParams()
+  const unitParam = searchParams.get('unit')?.trim() || ''
   const { data: pengaturan } = useQuery({ queryKey: ['pengaturan'], queryFn: getPengaturan })
   const unitQuery = useQuery({ queryKey: ['unit-publik'], queryFn: listUnitPublik })
   const infoPsb = pengaturan?.info_psb?.trim()
   const kontakPsb = pengaturan?.kontak_psb?.trim()
-  const [form, setForm] = useState({
-    nama_calon: '',
-    tempat_lahir: '',
-    tanggal_lahir: '',
-    nama_orang_tua: '',
-    no_hp: '',
-    alamat: '',
-    asal_sekolah: '',
-    catatan: '',
-    madrasah_unit_id: '',
-  })
+  const [form, setForm] = useState(emptyForm)
+
+  const matchedUnitId =
+    unitParam && unitQuery.data?.some((u) => u.id === unitParam) ? unitParam : ''
+
+  // Prefer explicit form choice; fall back to ?unit= so preselect works without an effect.
+  const selectedUnitId = form.madrasah_unit_id || matchedUnitId
 
   const mutation = useMutation({
-    mutationFn: () => submitPendaftaran(form),
+    mutationFn: () =>
+      submitPendaftaran({
+        ...form,
+        madrasah_unit_id: selectedUnitId || form.madrasah_unit_id,
+      }),
     onSuccess: () => {
-      setForm({
-        nama_calon: '',
-        tempat_lahir: '',
-        tanggal_lahir: '',
-        nama_orang_tua: '',
-        no_hp: '',
-        alamat: '',
-        asal_sekolah: '',
-        catatan: '',
-        madrasah_unit_id: '',
-      })
+      // Re-apply URL unit after reset if still present.
+      setForm({ ...emptyForm, madrasah_unit_id: matchedUnitId })
     },
   })
 
@@ -148,7 +153,7 @@ export function PublicPendaftaranPage() {
                       <Label htmlFor="madrasah_unit_id">Unit / lembaga</Label>
                       <Select
                         id="madrasah_unit_id"
-                        value={form.madrasah_unit_id}
+                        value={selectedUnitId}
                         onChange={(e) => setForm((prev) => ({ ...prev, madrasah_unit_id: e.target.value }))}
                         required
                       >
