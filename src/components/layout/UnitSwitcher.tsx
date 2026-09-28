@@ -14,6 +14,7 @@ export function UnitTabs() {
   const location = useLocation()
   const diMenuYayasan = location.pathname.startsWith('/portal/yayasan')
   const diAuditLog = location.pathname.startsWith('/portal/audit-log')
+  const diProfilSaya = location.pathname.startsWith('/portal/profil')
   const diKelolaAkun = location.pathname.startsWith('/portal/kelola-akun')
   const role = useAuthStore((s) => s.user?.role)
   const selected = useUnitStore((s) => s.selectedUnitId)
@@ -32,7 +33,7 @@ export function UnitTabs() {
     }
   }, [enabled, list, selected, setSelected, queryClient, diKelolaAkun])
 
-  if (!enabled || diMenuYayasan || diAuditLog || list.length === 0) return null
+  if (!enabled || diMenuYayasan || diAuditLog || diProfilSaya || list.length === 0) return null
 
   return (
     <div className="border-b border-border bg-card px-4 py-2 sm:px-5">
