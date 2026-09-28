@@ -16,8 +16,9 @@ export function BrandMark({
 }) {
   const [broken, setBroken] = useState(false)
   // Was sm 32 / md 36 / lg 56 → +8px: 40 / 44 / 64
-  const box = size === 'lg' ? 'size-16 rounded-2xl' : size === 'sm' ? 'size-10 rounded-lg' : 'size-11 rounded-xl'
-  const icon = size === 'lg' ? 'size-8' : size === 'sm' ? 'size-5' : 'size-5'
+  // Was sm 40 / md 44 / lg 64 → +8px: 48 / 52 / 72
+  const box = size === 'lg' ? 'size-[72px] rounded-2xl' : size === 'sm' ? 'size-12 rounded-lg' : 'size-[52px] rounded-xl'
+  const icon = size === 'lg' ? 'size-9' : size === 'sm' ? 'size-6' : 'size-6'
   const src = resolveLogoUrl(logoUrl)
 
   if (!broken) {
