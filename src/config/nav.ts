@@ -104,14 +104,6 @@ export const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
-    title: 'Pengguna',
-    items: [
-      { label: 'Guru & Wali Santri', path: '/portal/guru', roles: UNIT_ACCOUNT_READ_ROLES, icon: UserCog },
-      { label: 'Kelola Akun', path: '/portal/kelola-akun', roles: APP_ADMIN_ROLES, icon: ShieldCheck },
-      { label: 'Audit Log', path: '/portal/audit-log', roles: APP_ADMIN_ROLES, icon: ScrollText },
-    ],
-  },
-  {
     title: 'Wali Kelas',
     hideFor: ['yayasan_admin'],
     items: [
@@ -133,6 +125,14 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     title: 'Wali Santri',
     items: [{ label: 'Anak Saya', path: '/portal/wali-santri', roles: ANAK_SAYA_ROLES, icon: Heart }],
+  },
+  {
+    title: 'Pengguna',
+    items: [
+      { label: 'Guru & Wali Santri', path: '/portal/guru', roles: UNIT_ACCOUNT_READ_ROLES, icon: UserCog },
+      { label: 'Kelola Akun', path: '/portal/kelola-akun', roles: APP_ADMIN_ROLES, icon: ShieldCheck },
+      { label: 'Audit Log', path: '/portal/audit-log', roles: APP_ADMIN_ROLES, icon: ScrollText },
+    ],
   },
   {
     title: 'Akun',
