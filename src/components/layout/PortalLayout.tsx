@@ -47,6 +47,7 @@ function SidebarNav() {
       navigate('/login', { replace: true })
     },
   })
+  const [logoBroken, setLogoBroken] = useState(false)
 
   if (!user) return null
   const userRoles = rolesOf(user)
@@ -60,7 +61,6 @@ function SidebarNav() {
 
   const brandName = pengaturan.data?.nama_sekolah || 'Sistem Informasi Madrasah'
   const logoSrc = resolveLogoUrl(pengaturan.data?.logo_url)
-  const [logoBroken, setLogoBroken] = useState(false)
 
   return (
     <>
