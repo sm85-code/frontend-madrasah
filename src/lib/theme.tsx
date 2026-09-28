@@ -96,7 +96,7 @@ const ThemeContext = createContext<ThemeContextValue>({
   setColorTheme: () => {},
   baseColor: 'zinc',
   setBaseColor: () => {},
-  wallpaper: 'none',
+  wallpaper: 'glow',
   setWallpaper: () => {},
   mode: 'light',
   setMode: () => {},
@@ -106,7 +106,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [font, setFont] = useState<FontId>(() => readStored(FONT_KEY, VALID_FONTS, 'jakarta'))
   const [colorTheme, setColorTheme] = useState<ColorTheme>(() => readStored(THEME_KEY, VALID_THEMES, 'teal'))
   const [baseColor, setBaseColor] = useState<BaseColor>(() => readStored(BASE_KEY, VALID_BASE_COLORS, 'zinc'))
-  const [wallpaper, setWallpaper] = useState<WallpaperId>(() => readStored(WALLPAPER_KEY, VALID_WALLPAPERS, 'none'))
+  const [wallpaper, setWallpaper] = useState<WallpaperId>(() => readStored(WALLPAPER_KEY, VALID_WALLPAPERS, 'glow'))
   const [mode, setMode] = useState<Mode>(() => readStored(MODE_KEY, VALID_MODES, 'light'))
 
   useEffect(() => {
