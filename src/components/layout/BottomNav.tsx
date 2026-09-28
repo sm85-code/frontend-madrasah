@@ -34,7 +34,7 @@ export function BottomNav({ items }: { items: NavItem[] }) {
             }
           >
             <Icon className="size-5" strokeWidth={2} />
-            <span className="truncate px-1">{item.label}</span>
+            <span className="truncate px-1">{item.shortLabel ?? item.label}</span>
           </NavLink>
         )
       })}

@@ -1,5 +1,5 @@
 import { apiClient } from '../lib/apiClient'
-import type { Akun, BukuKasEntry, Honor, JurnalEntry, LabaRugi, LaporanKeuangan } from '../types'
+import type { Akun, BukuKasEntry, Honor, JurnalEntry, LaporanKeuangan } from '../types'
 
 export async function listBukuKas(bulan?: string): Promise<BukuKasEntry[]> {
   const { data } = await apiClient.get<BukuKasEntry[]>('/keuangan/buku-kas', { params: { bulan } })
@@ -33,11 +33,6 @@ export async function listAkun(): Promise<Akun[]> {
 
 export async function listJurnal(bulan?: string): Promise<JurnalEntry[]> {
   const { data } = await apiClient.get<JurnalEntry[]>('/keuangan/jurnal', { params: { bulan } })
-  return data
-}
-
-export async function getLabaRugi(bulan?: string): Promise<LabaRugi> {
-  const { data } = await apiClient.get<LabaRugi>('/keuangan/laba-rugi', { params: { bulan } })
   return data
 }
 

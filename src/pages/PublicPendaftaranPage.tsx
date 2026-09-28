@@ -1,10 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { GraduationCap, Phone, Send } from 'lucide-react'
+import { Phone, Send } from 'lucide-react'
 import { useState, type ChangeEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { getPengaturan, listUnitPublik, submitPendaftaran } from '../api/public'
 import { ApiError } from '../lib/apiClient'
 import { AppearancePopover } from '../components/AppearancePopover'
+import { BrandMark } from '../components/BrandMark'
 import { Card, CardBody } from '../components/ui/AppCard'
 import { Button } from '../components/ui/AppButton'
 import { ErrorNotice, Spinner, SuccessNotice } from '../components/ui/Feedback'
@@ -58,9 +59,7 @@ export function PublicPendaftaranPage() {
       <header className="sticky top-0 z-10 border-b border-border bg-card/95 shadow-soft backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-5 py-4">
           <Link to="/" className="flex min-w-0 items-center gap-3">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <GraduationCap className="size-4.5" strokeWidth={2.25} />
-            </span>
+            <BrandMark logoUrl={pengaturan?.logo_url} name={pengaturan?.nama_sekolah} />
             <p className="truncate font-semibold text-foreground">{pengaturan?.nama_sekolah ?? 'Madrasah'}</p>
           </Link>
           <div className="flex shrink-0 items-center gap-1">

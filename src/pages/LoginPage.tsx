@@ -1,12 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { ArrowLeft, GraduationCap } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { login } from '../api/auth'
 import { getPengaturan } from '../api/public'
 import { ApiError } from '../lib/apiClient'
 import { AppearancePopover } from '../components/AppearancePopover'
+import { BrandMark } from '../components/BrandMark'
 import { Button } from '../components/ui/AppButton'
 import { ErrorNotice } from '../components/ui/Feedback'
 import { FieldError, Input, Label } from '../components/ui/AppInput'
@@ -55,9 +56,7 @@ export function LoginPage() {
       </div>
       <div className="grid w-full max-w-3xl overflow-hidden rounded-3xl border border-border bg-card shadow-lg md:grid-cols-2">
         <div className="hidden flex-col justify-between bg-gradient-to-br from-primary to-primary/70 p-8 text-primary-foreground md:flex">
-          <span className="flex size-11 items-center justify-center rounded-2xl bg-white/15">
-            <GraduationCap className="size-6" strokeWidth={2.25} />
-          </span>
+          <BrandMark logoUrl={pengaturan?.logo_url} name={pengaturan?.nama_sekolah} className="bg-white/15" />
           <div>
             <h1 className="text-xl font-semibold leading-tight lg:text-2xl">{pengaturan?.nama_sekolah ?? 'Sistem Informasi Madrasah'}</h1>
             <p className="mt-2 text-sm text-primary-foreground/80">{pengaturan?.tagline ?? 'Masuk untuk melanjutkan'}</p>
@@ -67,9 +66,7 @@ export function LoginPage() {
 
         <div className="p-8">
           <div className="mb-6 text-center md:text-left">
-            <span className="mb-3 flex size-11 items-center justify-center rounded-2xl bg-accent text-primary md:hidden">
-              <GraduationCap className="size-6" strokeWidth={2.25} />
-            </span>
+            <BrandMark logoUrl={pengaturan?.logo_url} name={pengaturan?.nama_sekolah} className="mb-3 md:hidden" />
             <h2 className="text-lg font-semibold text-foreground">Selamat datang kembali</h2>
             <p className="mt-1 text-sm text-muted-foreground">Masukkan kredensial Anda untuk masuk ke portal.</p>
           </div>
