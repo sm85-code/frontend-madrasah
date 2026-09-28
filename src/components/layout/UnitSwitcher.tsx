@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { listUnit } from '../../api/yayasan'
+import { sortUnitsByJenjang } from '../../lib/units'
 import { useAuthStore } from '../../store/authStore'
 import { useUnitStore } from '../../store/unitStore'
 import { cn } from '../../lib/utils'
@@ -21,7 +22,7 @@ export function UnitTabs() {
   const queryClient = useQueryClient()
   const enabled = !!role && CROSS_UNIT_ROLES.has(role)
   const units = useQuery({ queryKey: ['yayasan', 'unit'], queryFn: listUnit, enabled })
-  const list = units.data ?? []
+  const list = sortUnitsByJenjang(units.data ?? [])
 
   useEffect(() => {
     if (!enabled || list.length === 0) return

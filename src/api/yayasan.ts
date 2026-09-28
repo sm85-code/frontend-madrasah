@@ -1,4 +1,5 @@
 import { apiClient } from '../lib/apiClient'
+import { sortUnitsByJenjang } from '../lib/units'
 import type { MadrasahUnit, RekapUnit, Yayasan } from '../types'
 
 export async function getYayasan(): Promise<Yayasan> {
@@ -13,7 +14,7 @@ export async function updateYayasan(payload: Partial<{ nama: string; alamat: str
 
 export async function listUnit(): Promise<MadrasahUnit[]> {
   const { data } = await apiClient.get<MadrasahUnit[]>('/admin/unit')
-  return data
+  return sortUnitsByJenjang(Array.isArray(data) ? data : [])
 }
 
 export async function createUnit(payload: { nama: string; alamat?: string; kepala_unit?: string; kepala_user_id?: string }) {
@@ -35,5 +36,5 @@ export async function deleteUnit(id: string) {
 
 export async function getRekapYayasan(): Promise<RekapUnit[]> {
   const { data } = await apiClient.get<RekapUnit[]>('/admin/yayasan/rekap')
-  return data
+  return sortUnitsByJenjang(Array.isArray(data) ? data : [])
 }

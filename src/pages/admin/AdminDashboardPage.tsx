@@ -11,6 +11,7 @@ import { hasAnyRole } from '../../config/roles'
 import { useAuthStore } from '../../store/authStore'
 import { useUnitStore } from '../../store/unitStore'
 import type { RekapUmum, RekapUnit } from '../../types'
+import { sortUnitsByJenjang } from '../../lib/units'
 
 function UnitStats({
   title,
@@ -82,7 +83,7 @@ export function AdminDashboardPage() {
   const isError = lintasUnit ? yayasanQuery.isError : unitQuery.isError
   const error = lintasUnit ? yayasanQuery.error : unitQuery.error
   const unitData: RekapUmum | undefined = unitQuery.data
-  const unitList: RekapUnit[] = yayasanQuery.data ?? []
+  const unitList: RekapUnit[] = sortUnitsByJenjang(yayasanQuery.data ?? [])
 
   return (
     <div>
@@ -125,7 +126,7 @@ export function AdminDashboardPage() {
         </div>
       ) : unitData?.per_unit && unitData.per_unit.length > 0 ? (
         <div className="space-y-8">
-          {unitData.per_unit.map((u) => (
+          {sortUnitsByJenjang(unitData.per_unit).map((u) => (
             <UnitStats
               key={u.unit_id ?? u.unit_nama ?? 'unit'}
               title={u.unit_nama ?? 'Unit'}
