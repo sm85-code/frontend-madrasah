@@ -104,8 +104,8 @@ export const NAV_SECTIONS: NavSection[] = [
     title: 'Keuangan',
     items: [
       { label: 'Buku Kas', shortLabel: 'Kas', path: '/portal/keuangan/buku-kas', roles: KEUANGAN_READ_ROLES, icon: Banknote },
-      { label: 'Honor Mengajar', shortLabel: 'Honor', path: '/portal/keuangan/honor', roles: KEUANGAN_READ_ROLES, icon: Wallet },
-      { label: 'SPP Syahriyah', shortLabel: 'SPP', path: '/portal/bendahara/spp', roles: KEUANGAN_READ_ROLES, icon: Receipt },
+      { label: 'Bisyaroh', shortLabel: 'Bisyaroh', path: '/portal/keuangan/honor', roles: KEUANGAN_READ_ROLES, icon: Wallet },
+      { label: 'SPP/Syahriyah', shortLabel: 'SPP', path: '/portal/bendahara/spp', roles: KEUANGAN_READ_ROLES, icon: Receipt },
     ],
   },
   {
