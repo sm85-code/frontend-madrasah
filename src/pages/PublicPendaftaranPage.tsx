@@ -10,6 +10,7 @@ import { Card, CardBody } from '../components/ui/AppCard'
 import { Button } from '../components/ui/AppButton'
 import { ErrorNotice, Spinner, SuccessNotice } from '../components/ui/Feedback'
 import { Input, Label, Select, Textarea } from '../components/ui/AppInput'
+import { sortUnitsByJenjang } from '../lib/units'
 
 function waLink(kontak: string) {
   const digits = kontak.replace(/[^0-9]/g, '')
@@ -158,7 +159,7 @@ export function PublicPendaftaranPage() {
                         required
                       >
                         <option value="">Pilih unit</option>
-                        {unitQuery.data?.map((u) => (
+                        {sortUnitsByJenjang(unitQuery.data ?? []).map((u) => (
                           <option key={u.id} value={u.id}>
                             {u.nama}
                           </option>
