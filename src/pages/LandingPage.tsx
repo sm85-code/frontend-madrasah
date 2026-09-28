@@ -22,6 +22,7 @@ import { Badge } from '../components/ui/AppBadge'
 import { Card, CardBody } from '../components/ui/AppCard'
 import { Button } from '../components/ui/AppButton'
 import { Spinner } from '../components/ui/Feedback'
+import { sortUnitsByJenjang } from '../lib/units'
 import { cn } from '../lib/utils'
 
 const LAYANAN = [
@@ -47,7 +48,7 @@ const LAYANAN = [
   },
 ] as const
 
-const UNIT_ICONS = [Building2, School, BookOpen] as const
+const UNIT_ICONS = [BookOpen, School, Building2] as const
 
 const brandTitleShadow =
   '[text-shadow:0_1px_2px_rgba(15,23,42,0.2),0_0_20px_rgba(255,255,255,0.55)]'
@@ -156,7 +157,7 @@ export function LandingPage() {
     item.unit_nama || unitPublik?.find((u) => u.id === item.madrasah_unit_id)?.nama
   const pengumuman = Array.isArray(pengumumanRaw) ? pengumumanRaw : []
   const kegiatan = Array.isArray(kegiatanRaw) ? kegiatanRaw : []
-  const units = Array.isArray(unitPublik) ? unitPublik : []
+  const units = sortUnitsByJenjang(Array.isArray(unitPublik) ? unitPublik : [])
   const infoPsb = pengaturan?.info_psb?.trim()
   const kontakPsb = pengaturan?.kontak_psb?.trim()
   const brandName = pengaturan?.nama_sekolah ?? 'Sistem Informasi Madrasah'
@@ -172,7 +173,7 @@ export function LandingPage() {
       if (id && nama) fromItems.set(id, nama)
     }
     if (fromItems.size > 0) {
-      return Array.from(fromItems.entries()).map(([id, nama]) => ({ id, nama }))
+      return sortUnitsByJenjang(Array.from(fromItems.entries()).map(([id, nama]) => ({ id, nama })))
     }
     return units
   }
