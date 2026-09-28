@@ -37,7 +37,7 @@ export function HonorPage() {
     { header: 'Guru', cell: (h) => h.guru ?? '-' },
     { header: 'Mapel', cell: (h) => h.mapel ?? '-' },
     { header: 'Jumlah Sesi', cell: (h) => h.jumlah_sesi },
-    { header: 'Tarif/Sesi', cell: (h) => formatRupiah(h.tarif_per_sesi) },
+    { header: 'Nilai Bisyaroh/Pertemuan', cell: (h) => formatRupiah(h.tarif_per_sesi) },
     { header: 'Total', cell: (h) => formatRupiah(h.total) },
     {
       header: 'Status',
@@ -57,7 +57,7 @@ export function HonorPage() {
   return (
     <div>
       <PageHeader
-        title="Honor Mengajar"
+        title="Bisyaroh"
         description='Dihitung dari "Absensi Mapel" yang dicatat guru (bukan absensi harian wali kelas) -- guru yang belum pernah mengisi absensi mapel di bulan ini tidak akan muncul.'
         actions={
           <div className="flex flex-wrap items-end gap-2">
@@ -65,7 +65,7 @@ export function HonorPage() {
             {writable && (
               <>
                 <div>
-                  <Label htmlFor="tarif-honor">Tarif/Sesi (opsional)</Label>
+                  <Label htmlFor="tarif-honor">Nilai Bisyaroh/Pertemuan (opsional)</Label>
                   <Input
                     id="tarif-honor"
                     type="number"

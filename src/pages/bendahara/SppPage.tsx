@@ -85,7 +85,7 @@ export function SppPage() {
   return (
     <div>
       <PageHeader
-        title="SPP / Syahriyah"
+        title="SPP/Syahriyah"
         description="Generate tagihan bulanan dan verifikasi pembayaran yang diajukan wali kelas."
         actions={
           writable ? (
