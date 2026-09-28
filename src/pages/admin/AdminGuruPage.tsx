@@ -387,13 +387,13 @@ export function AdminGuruPage() {
           </CardHeader>
           <CardBody>
             <form
-              className="mb-4 flex flex-wrap items-end gap-2"
+              className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 sm:items-end"
               onSubmit={(e) => {
                 e.preventDefault()
                 createTugasMutation.mutate()
               }}
             >
-              <div className="min-w-[160px] flex-1">
+              <div className="min-w-0">
                 <Label htmlFor="tugas-user">Pegawai</Label>
                 <Select id="tugas-user" value={tugasUserId} onChange={(e) => setTugasUserId(e.target.value)} required>
                   <option value="">Pilih pegawai</option>
@@ -407,7 +407,7 @@ export function AdminGuruPage() {
                   ))}
                 </Select>
               </div>
-              <div className="min-w-[160px]">
+              <div className="min-w-0">
                 <Label htmlFor="tugas-jenis">Tugas</Label>
                 <Select id="tugas-jenis" value={tugasJenis} onChange={(e) => setTugasJenis(e.target.value)}>
                   {jenisTugasOptions.map((opt) => (
@@ -418,7 +418,7 @@ export function AdminGuruPage() {
                 </Select>
               </div>
               {!isPengelolaUnit && (
-                <div className="min-w-[150px]">
+                <div className="min-w-0">
                   <Label htmlFor="tugas-unit">Unit</Label>
                   <Select id="tugas-unit" value={tugasUnitId} onChange={(e) => setTugasUnitId(e.target.value)} required>
                     <option value="">Pilih unit</option>
@@ -430,13 +430,14 @@ export function AdminGuruPage() {
                   </Select>
                 </div>
               )}
-              <Button type="submit" loading={createTugasMutation.isPending}>
+              <Button type="submit" loading={createTugasMutation.isPending} className="w-full sm:w-auto">
                 Tugaskan
               </Button>
               {hasAnyRole(me, ['kepala_sekolah', 'lembaga_admin']) && me && (
                 <Button
                   type="button"
                   variant="secondary"
+                  className="w-full sm:col-span-2 sm:w-auto lg:col-span-4"
                   loading={createTugasMutation.isPending}
                   onClick={() =>
                     createTugas({
@@ -460,8 +461,8 @@ export function AdminGuruPage() {
             ) : (
               <ul className="divide-y divide-border text-sm">
                 {(tugasQuery.data ?? []).map((t) => (
-                  <li key={t.id} className="flex items-center justify-between gap-2 py-2">
-                    <span>
+                  <li key={t.id} className="flex min-w-0 items-center justify-between gap-2 py-2">
+                    <span className="min-w-0 truncate">
                       {t.user ?? t.user_id} — {t.jenis}
                     </span>
                     <DeleteRowButton onClick={() => deleteTugasMutation.mutate(t.id)} itemName={`tugas ${t.jenis}`} />
@@ -481,21 +482,21 @@ export function AdminGuruPage() {
           <CardBody>
             {writable && (
             <form
-              className="mb-4 flex flex-wrap items-end gap-2"
+              className="mb-4 grid gap-3 sm:grid-cols-2 sm:items-end"
               onSubmit={(e) => {
                 e.preventDefault()
                 createGuruMutation.mutate()
               }}
             >
-              <div className="min-w-[140px] flex-1">
+              <div className="min-w-0">
                 <Label htmlFor="nama-guru">Nama</Label>
                 <Input id="nama-guru" value={namaGuru} onChange={(e) => setNamaGuru(e.target.value)} required />
               </div>
-              <div className="min-w-[130px]">
+              <div className="min-w-0">
                 <Label htmlFor="hp-guru">Username</Label>
                 <Input id="hp-guru" placeholder="username" value={noHpGuru} onChange={(e) => setNoHpGuru(e.target.value)} required />
               </div>
-              <div className="min-w-[130px]">
+              <div className="min-w-0">
                 <Label htmlFor="password-guru">Password</Label>
                 <Input
                   id="password-guru"
@@ -506,7 +507,7 @@ export function AdminGuruPage() {
                   onChange={(e) => setPasswordGuru(e.target.value)}
                 />
               </div>
-              <div className="min-w-[150px]">
+              <div className="min-w-0">
                 <Label htmlFor="role-guru">Role</Label>
                 <Select id="role-guru" value={roleGuru} onChange={(e) => setRoleGuru(e.target.value)}>
                   {roleOptions.map((opt) => (
@@ -517,7 +518,7 @@ export function AdminGuruPage() {
                 </Select>
               </div>
               {!isPengelolaUnit && (
-              <div className="min-w-[150px]">
+              <div className="min-w-0">
                 <Label htmlFor="unit-guru">Unit</Label>
                 <Select id="unit-guru" value={unitGuru} onChange={(e) => setUnitGuru(e.target.value)} required>
                   <option value="">Pilih unit</option>
@@ -529,7 +530,7 @@ export function AdminGuruPage() {
                 </Select>
               </div>
               )}
-              <Button type="submit" loading={createGuruMutation.isPending}>
+              <Button type="submit" loading={createGuruMutation.isPending} className="w-full sm:w-auto">
                 Tambah
               </Button>
             </form>
@@ -545,21 +546,21 @@ export function AdminGuruPage() {
           <CardBody>
             {writable && (
             <form
-              className="mb-4 flex flex-wrap items-end gap-2"
+              className="mb-4 grid gap-3 sm:grid-cols-2 sm:items-end"
               onSubmit={(e) => {
                 e.preventDefault()
                 createWaliMutation.mutate()
               }}
             >
-              <div className="min-w-[140px] flex-1">
+              <div className="min-w-0">
                 <Label htmlFor="nama-wali">Nama</Label>
                 <Input id="nama-wali" value={namaWali} onChange={(e) => setNamaWali(e.target.value)} required />
               </div>
-              <div className="min-w-[130px]">
+              <div className="min-w-0">
                 <Label htmlFor="hp-wali">Username</Label>
                 <Input id="hp-wali" placeholder="username" value={noHpWali} onChange={(e) => setNoHpWali(e.target.value)} required />
               </div>
-              <div className="min-w-[130px]">
+              <div className="min-w-0">
                 <Label htmlFor="password-wali">Password</Label>
                 <Input
                   id="password-wali"
@@ -570,7 +571,7 @@ export function AdminGuruPage() {
                   onChange={(e) => setPasswordWali(e.target.value)}
                 />
               </div>
-              <Button type="submit" loading={createWaliMutation.isPending}>
+              <Button type="submit" loading={createWaliMutation.isPending} className="w-full sm:w-auto">
                 Tambah
               </Button>
             </form>

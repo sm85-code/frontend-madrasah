@@ -158,21 +158,21 @@ export function AdminSantriPage() {
       <Card className="mb-5">
         <CardBody>
           <form
-            className="flex flex-wrap items-end gap-3"
+            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 sm:items-end"
             onSubmit={(e) => {
               e.preventDefault()
               createMutation.mutate()
             }}
           >
-            <div className="min-w-[180px] flex-1">
+            <div className="min-w-0">
               <Label htmlFor="nama-santri">Nama santri</Label>
               <Input id="nama-santri" value={nama} onChange={(e) => setNama(e.target.value)} required />
             </div>
-            <div className="min-w-[180px] flex-1">
+            <div className="min-w-0">
               <Label htmlFor="nama-wali">Nama wali santri</Label>
               <Input id="nama-wali" value={namaWali} onChange={(e) => setNamaWali(e.target.value)} required />
             </div>
-            <div className="min-w-[180px]">
+            <div className="min-w-0">
               <Label htmlFor="rombel-santri">Rombel</Label>
               <Select id="rombel-santri" value={rombelId} onChange={(e) => setRombelId(e.target.value)}>
                 <option value="">Belum ditempatkan</option>
@@ -183,7 +183,7 @@ export function AdminSantriPage() {
                 ))}
               </Select>
             </div>
-            <Button type="submit" loading={createMutation.isPending}>
+            <Button type="submit" loading={createMutation.isPending} className="w-full sm:w-auto">
               Tambah Santri
             </Button>
           </form>
@@ -191,11 +191,11 @@ export function AdminSantriPage() {
       </Card>
       )}
 
-      <div className="mb-3 flex items-center gap-2">
-        <Label htmlFor="filter-status" className="mb-0">
+      <div className="mb-3 flex min-w-0 flex-wrap items-center gap-2">
+        <Label htmlFor="filter-status" className="mb-0 shrink-0">
           Filter status
         </Label>
-        <Select id="filter-status" className="w-auto" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+        <Select id="filter-status" className="w-full min-w-0 sm:w-auto" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
           <option value="semua">Semua</option>
           <option value="aktif">Aktif</option>
           <option value="lulus">Lulus</option>

@@ -47,7 +47,7 @@ export function AbsensiMapelPage() {
 
       <Card className="mb-5">
         <CardBody>
-          <div className="max-w-sm">
+          <div className="w-full max-w-sm">
             <Label htmlFor="penugasan-absen">Mapel & Rombel</Label>
             <Select id="penugasan-absen" value={penugasanId} onChange={(e) => setPenugasanId(e.target.value)}>
               <option value="">Pilih penugasan</option>
@@ -81,9 +81,9 @@ export function AbsensiMapelPage() {
               <>
                 <div className="space-y-2">
                   {santriQuery.data?.map((s) => (
-                    <div key={s.id} className="flex items-center justify-between border-b border-border py-2 last:border-0">
-                      <span className="text-sm text-foreground">{s.nama}</span>
-                      <div className="flex gap-1">
+                    <div key={s.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-2 last:border-0">
+                      <span className="min-w-0 flex-1 truncate text-sm text-foreground">{s.nama}</span>
+                      <div className="flex shrink-0 flex-wrap gap-1">
                         {STATUS_OPTIONS.map((opt) => (
                           <button
                             key={opt.value}

@@ -56,21 +56,21 @@ export function MapelPage() {
       <Card className="mb-5">
         <CardBody>
           <form
-            className="flex flex-wrap items-end gap-3"
+            className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end"
             onSubmit={(e) => {
               e.preventDefault()
               createMapelMutation.mutate()
             }}
           >
-            <div className="w-32">
+            <div className="w-full sm:w-32">
               <Label htmlFor="kode-mapel">Kode</Label>
               <Input id="kode-mapel" value={kode} onChange={(e) => setKode(e.target.value)} required />
             </div>
-            <div className="flex-1">
+            <div className="min-w-0 w-full flex-1">
               <Label htmlFor="nama-mapel">Nama mapel</Label>
               <Input id="nama-mapel" value={nama} onChange={(e) => setNama(e.target.value)} required />
             </div>
-            <Button type="submit" loading={createMapelMutation.isPending}>
+            <Button type="submit" loading={createMapelMutation.isPending} className="w-full sm:w-auto">
               Tambah Mapel
             </Button>
             {createMapelMutation.isError && (
@@ -91,8 +91,8 @@ export function MapelPage() {
         <div className="grid gap-4 lg:grid-cols-2">
           {mapelQuery.data?.map((mapel) => (
             <Card key={mapel.id}>
-              <CardHeader className="flex items-center justify-between">
-                <CardTitle>
+              <CardHeader className="flex min-w-0 items-center justify-between gap-2">
+                <CardTitle className="min-w-0 truncate">
                   {mapel.nama} <Badge className="ml-1">{mapel.kode}</Badge>
                 </CardTitle>
                 {writable && <DeleteRowButton onClick={() => deleteMapelMutation.mutate(mapel.id)} label={`Hapus ${mapel.nama}`} />}
@@ -100,8 +100,8 @@ export function MapelPage() {
               <CardBody>
                 <ul className="mb-3 divide-y divide-border text-sm">
                   {mapel.materi.map((m) => (
-                    <li key={m.id} className="flex items-center justify-between gap-2 py-1.5">
-                      <span className="text-foreground">{m.judul}</span>
+                    <li key={m.id} className="flex min-w-0 items-center justify-between gap-2 py-1.5">
+                      <span className="min-w-0 truncate text-foreground">{m.judul}</span>
                       {writable && <DeleteRowButton onClick={() => deleteMateriMutation.mutate(m.id)} label={`Hapus ${m.judul}`} />}
                     </li>
                   ))}
@@ -109,18 +109,19 @@ export function MapelPage() {
                 </ul>
                 {writable && (
                 <form
-                  className="flex gap-2"
+                  className="flex min-w-0 gap-2"
                   onSubmit={(e) => {
                     e.preventDefault()
                     createMateriMutation.mutate(mapel.id)
                   }}
                 >
                   <Input
+                    className="min-w-0 flex-1"
                     placeholder="Judul materi baru"
                     value={materiInput[mapel.id] ?? ''}
                     onChange={(e) => setMateriInput((prev) => ({ ...prev, [mapel.id]: e.target.value }))}
                   />
-                  <Button type="submit" size="sm" variant="secondary">
+                  <Button type="submit" size="sm" variant="secondary" className="shrink-0">
                     Tambah
                   </Button>
                 </form>

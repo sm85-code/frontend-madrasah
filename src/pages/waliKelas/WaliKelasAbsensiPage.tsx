@@ -49,7 +49,7 @@ export function WaliKelasAbsensiPage() {
 
       <Card className="mb-5">
         <CardBody>
-          <div className="w-56">
+          <div className="w-full max-w-xs">
             <Label htmlFor="rombel-rekap">Rombel</Label>
             <Select id="rombel-rekap" value={rombelId} onChange={(e) => setRombelId(e.target.value)}>
               <option value="">Pilih rombel</option>

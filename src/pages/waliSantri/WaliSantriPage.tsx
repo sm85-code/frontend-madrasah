@@ -143,7 +143,7 @@ export function WaliSantriPage() {
                 </div>
               )}
               <form
-                className="flex gap-2"
+                className="flex min-w-0 gap-2"
                 onSubmit={(e) => {
                   e.preventDefault()
                   kirimMutation.mutate()

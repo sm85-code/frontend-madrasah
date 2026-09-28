@@ -75,7 +75,7 @@ export function BukuKasPage() {
         title="Buku Kas"
         description="Catat pemasukan dan pengeluaran unit ini. Admin Yayasan hanya melihat."
         actions={
-          <Input type="month" value={bulan} onChange={(e) => setBulan(e.target.value)} className="w-auto" />
+          <Input type="month" value={bulan} onChange={(e) => setBulan(e.target.value)} className="w-full sm:w-auto" />
         }
       />
 
