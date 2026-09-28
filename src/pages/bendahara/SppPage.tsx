@@ -89,8 +89,8 @@ export function SppPage() {
         description="Generate tagihan bulanan dan verifikasi pembayaran yang diajukan wali kelas."
         actions={
           writable ? (
-            <div className="flex flex-wrap items-end gap-2">
-              <div>
+            <div className="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-end">
+              <div className="min-w-0 w-full sm:w-auto">
                 <Label htmlFor="nominal-spp">Nominal SPP (opsional)</Label>
                 <Input
                   id="nominal-spp"
@@ -100,10 +100,11 @@ export function SppPage() {
                   placeholder="Default unit"
                   value={nominalSpp}
                   onChange={(e) => setNominalSpp(e.target.value)}
-                  className="w-40"
+                  className="w-full sm:w-40"
                 />
               </div>
               <Button
+                className="w-full sm:w-auto"
                 loading={generateMutation.isPending}
                 onClick={() => generateMutation.mutate(nominalSpp ? Number(nominalSpp) : undefined)}
               >
@@ -151,7 +152,7 @@ export function SppPage() {
             </div>
             <div>
               <Label htmlFor="bulan-spp">Periode</Label>
-              <Input id="bulan-spp" type="month" value={bulanFilter} onChange={(e) => setBulanFilter(e.target.value)} className="w-auto" />
+              <Input id="bulan-spp" type="month" value={bulanFilter} onChange={(e) => setBulanFilter(e.target.value)} className="w-full sm:w-auto" />
             </div>
           </div>
           {deleteMutation.isError && (

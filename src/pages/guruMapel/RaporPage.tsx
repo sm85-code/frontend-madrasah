@@ -39,8 +39,8 @@ export function RaporPage() {
               />
             </div>
           )}
-          <div className="flex flex-wrap gap-4">
-            <div className="w-56">
+          <div className="flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+            <div className="w-full min-w-0 sm:w-56">
               <Label htmlFor="penugasan-rapor">Mapel & Rombel</Label>
               <Select id="penugasan-rapor" value={penugasanId} onChange={(e) => { setPenugasanId(e.target.value); setSantriId('') }}>
                 <option value="">Pilih penugasan</option>
@@ -51,7 +51,7 @@ export function RaporPage() {
                 ))}
               </Select>
             </div>
-            <div className="w-56">
+            <div className="w-full min-w-0 sm:w-56">
               <Label htmlFor="santri-rapor">Santri</Label>
               <Select id="santri-rapor" value={santriId} onChange={(e) => setSantriId(e.target.value)} disabled={!penugasan}>
                 <option value="">Pilih santri</option>

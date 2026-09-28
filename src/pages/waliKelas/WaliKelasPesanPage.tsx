@@ -42,8 +42,8 @@ export function WaliKelasPesanPage() {
 
       <Card className="mb-5">
         <CardBody>
-          <div className="flex flex-wrap gap-4">
-            <div className="w-56">
+          <div className="flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+            <div className="w-full min-w-0 sm:w-56">
               <Label htmlFor="rombel-pesan">Rombel</Label>
               <Select id="rombel-pesan" value={rombelId} onChange={(e) => { setRombelId(e.target.value); setSantriId('') }}>
                 <option value="">Pilih rombel</option>
@@ -54,7 +54,7 @@ export function WaliKelasPesanPage() {
                 ))}
               </Select>
             </div>
-            <div className="w-56">
+            <div className="w-full min-w-0 sm:w-56">
               <Label htmlFor="santri-pesan">Santri</Label>
               <Select id="santri-pesan" value={santriId} onChange={(e) => setSantriId(e.target.value)} disabled={!rombelId}>
                 <option value="">Pilih santri</option>
@@ -88,7 +88,7 @@ export function WaliKelasPesanPage() {
               </div>
             )}
             <form
-              className="flex gap-2"
+              className="flex min-w-0 gap-2"
               onSubmit={(e) => {
                 e.preventDefault()
                 kirimMutation.mutate()

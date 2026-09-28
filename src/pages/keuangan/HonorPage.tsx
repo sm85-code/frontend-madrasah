@@ -60,11 +60,11 @@ export function HonorPage() {
         title="Bisyaroh"
         description='Dihitung dari "Absensi Mapel" yang dicatat guru (bukan absensi harian wali kelas) -- guru yang belum pernah mengisi absensi mapel di bulan ini tidak akan muncul.'
         actions={
-          <div className="flex flex-wrap items-end gap-2">
-            <Input type="month" value={bulan} onChange={(e) => setBulan(e.target.value)} className="w-auto" />
+          <div className="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-end">
+            <Input type="month" value={bulan} onChange={(e) => setBulan(e.target.value)} className="w-full sm:w-auto" />
             {writable && (
               <>
-                <div>
+                <div className="min-w-0 w-full sm:w-auto">
                   <Label htmlFor="tarif-honor">Nilai Bisyaroh/Pertemuan (opsional)</Label>
                   <Input
                     id="tarif-honor"
@@ -74,10 +74,14 @@ export function HonorPage() {
                     placeholder="Default unit"
                     value={tarifHonor}
                     onChange={(e) => setTarifHonor(e.target.value)}
-                    className="w-40"
+                    className="w-full sm:w-40"
                   />
                 </div>
-                <Button loading={generateMutation.isPending} onClick={() => generateMutation.mutate()}>
+                <Button
+                  className="w-full sm:w-auto"
+                  loading={generateMutation.isPending}
+                  onClick={() => generateMutation.mutate()}
+                >
                   Generate Bulan Ini
                 </Button>
               </>

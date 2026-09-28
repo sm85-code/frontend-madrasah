@@ -47,7 +47,7 @@ export function AdminKenaikanKelasPage() {
       <Card className="mb-5">
         <CardBody>
           <Label htmlFor="rombel-asal">Rombel asal</Label>
-          <Select id="rombel-asal" className="max-w-xs" value={rombelAsalId} onChange={(e) => setRombelAsalId(e.target.value)}>
+          <Select id="rombel-asal" className="w-full max-w-xs" value={rombelAsalId} onChange={(e) => setRombelAsalId(e.target.value)}>
             <option value="">Pilih rombel</option>
             {rombelQuery.data?.map((r) => (
               <option key={r.id} value={r.id}>
@@ -82,10 +82,10 @@ export function AdminKenaikanKelasPage() {
               <>
                 <div className="space-y-2">
                   {santriDiRombel.map((s) => (
-                    <div key={s.id} className="flex items-center justify-between gap-3 border-b border-border py-2 last:border-0">
-                      <span className="text-sm text-foreground">{s.nama}</span>
+                    <div key={s.id} className="flex flex-col gap-2 border-b border-border py-2 last:border-0 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+                      <span className="min-w-0 text-sm text-foreground">{s.nama}</span>
                       <Select
-                        className="w-56"
+                        className="w-full sm:w-56"
                         value={pilihan[s.id] ?? ''}
                         onChange={(e) => setPilihan((prev) => ({ ...prev, [s.id]: e.target.value }))}
                       >
