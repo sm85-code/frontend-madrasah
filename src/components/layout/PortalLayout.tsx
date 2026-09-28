@@ -70,12 +70,12 @@ function SidebarNav() {
             <img
               src={logoSrc}
               alt=""
-              className={`h-[52px] w-[52px] shrink-0 rounded-full object-contain ${LOGO_GLOW_CLASS}`}
+              className={`h-[60px] w-[60px] shrink-0 rounded-full object-contain ${LOGO_GLOW_CLASS}`}
               onError={() => setLogoBroken(true)}
             />
           ) : (
-            <span className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-soft">
-              <GraduationCap className="h-6 w-6" strokeWidth={2.25} />
+            <span className="flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-soft">
+              <GraduationCap className="h-7 w-7" strokeWidth={2.25} />
             </span>
           )}
           <div className="min-w-0">
