@@ -61,8 +61,8 @@ export function LoginPage() {
 
       <div className="fade-in relative z-[1] w-full max-w-md">
         <div className="mb-6 text-center">
-          <BrandMark logoUrl={pengaturan?.logo_url} name={brandName} size="lg" className="mx-auto mb-3" />
-          <h1 className="font-heading text-2xl font-semibold sm:text-3xl">{brandName}</h1>
+          <BrandMark logoUrl={pengaturan?.logo_url} name={brandName} size="lg" className="mx-auto mb-2.5" />
+          <h1 className="mx-auto max-w-xs font-heading text-lg font-semibold leading-snug sm:text-xl [text-shadow:0_1px_2px_rgba(15,23,42,0.18),0_0_18px_rgba(255,255,255,0.55)]">{brandName}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{pengaturan?.tagline ?? 'Masuk untuk melanjutkan'}</p>
         </div>
 

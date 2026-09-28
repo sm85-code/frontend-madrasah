@@ -81,7 +81,7 @@ export function LandingPage() {
         <div className="flex min-w-0 items-center gap-3">
           <BrandMark logoUrl={pengaturan?.logo_url} name={pengaturan?.nama_sekolah} />
           <div className="min-w-0 leading-tight">
-            <p className="truncate font-heading text-[1.05rem] font-semibold">
+            <p className="truncate font-heading text-sm font-semibold [text-shadow:0_1px_2px_rgba(15,23,42,0.18),0_0_12px_rgba(255,255,255,0.5)]">
               {loadingPengaturan ? 'Memuat…' : brandName}
             </p>
             <p className="truncate text-xs text-muted-foreground">{pengaturan?.tagline}</p>
@@ -108,8 +108,8 @@ export function LandingPage() {
           >
             Portal Madrasah · Informasi Publik
           </p>
-          <BrandMark logoUrl={pengaturan?.logo_url} name={brandName} size="lg" className="mx-auto mb-5" />
-          <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-5xl">
+          <BrandMark logoUrl={pengaturan?.logo_url} name={brandName} size="lg" className="mx-auto mb-3" />
+          <h1 className="mx-auto max-w-md font-heading text-xl font-semibold leading-snug tracking-tight sm:text-2xl [text-shadow:0_1px_2px_rgba(15,23,42,0.2),0_0_20px_rgba(255,255,255,0.55)]">
             {loadingPengaturan ? 'Memuat…' : brandName}
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-sm sm:text-base" style={{ color: 'var(--text-secondary)' }}>
