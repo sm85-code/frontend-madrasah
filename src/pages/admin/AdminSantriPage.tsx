@@ -10,6 +10,7 @@ import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedback'
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
+import { EditSantriDialog } from '../../components/admin/EditSantriDialog'
 import { KkOcrDialog } from '../../components/admin/KkOcrDialog'
 import type { KkAnggotaKeluarga, KkOcrResult, Santri } from '../../types'
 import { SANTRI_WRITE_ROLES } from '../../config/roles'
@@ -92,8 +93,10 @@ export function AdminSantriPage() {
   const [rombelId, setRombelId] = useState('')
   const [filterStatus, setFilterStatus] = useState('semua')
   const [waliBaru, setWaliBaru] = useState<{ nama: string; username: string; password: string } | null>(null)
+  const [santriBaru, setSantriBaru] = useState<string | null>(null)
   const [kependudukan, setKependudukan] = useState<KependudukanState>(KEPENDUDUKAN_KOSONG)
   const [showKependudukan, setShowKependudukan] = useState(false)
+  const [editingSantri, setEditingSantri] = useState<Santri | null>(null)
 
   function isiDariKk(anggota: KkAnggotaKeluarga, kk: KkOcrResult) {
     if (anggota.nama) setNama(anggota.nama)
@@ -135,6 +138,7 @@ export function AdminSantriPage() {
         ...kependudukanPayload(kependudukan),
       }),
     onSuccess: (created) => {
+      setSantriBaru(created.nama)
       setNama('')
       setNamaWali('')
       setRombelId('')
@@ -228,7 +232,10 @@ export function AdminSantriPage() {
       header: 'Aksi',
       cell: (s) =>
         writable ? (
-        <div className="flex gap-1">
+        <div className="flex flex-wrap gap-1">
+          <Button size="sm" variant="secondary" onClick={() => setEditingSantri(s)}>
+            Edit
+          </Button>
           {s.status !== 'aktif' && (
             <Button size="sm" variant="secondary" onClick={() => statusMutation.mutate({ id: s.id, status: 'aktif' })}>
               Aktifkan
@@ -263,10 +270,15 @@ export function AdminSantriPage() {
         description="Isi nama santri. Nama wali opsional -- bisa diisi sekarang atau nanti lewat kolom Wali Santri di tabel (mis. pilih nama ayah/ibu hasil OCR KK). Wali yang namanya sama di unit ini dipakai ulang."
       />
 
+      {santriBaru && !waliBaru && (
+        <div className="mb-4">
+          <SuccessNotice message={`Santri ${santriBaru} berhasil ditambahkan.`} />
+        </div>
+      )}
       {waliBaru && (
         <div className="mb-4">
           <SuccessNotice
-            message={`Akun wali ${waliBaru.nama} dibuat. Username: ${waliBaru.username}. Password sementara: ${waliBaru.password}`}
+            message={`Santri ${santriBaru ?? ''} berhasil ditambahkan. Akun wali ${waliBaru.nama} dibuat. Username: ${waliBaru.username}. Password: ${waliBaru.password} (tanggal lahir santri, format ddmmyy -- bisa dilihat lagi kapan saja di data santri kalau lupa)`}
           />
         </div>
       )}
@@ -503,6 +515,8 @@ export function AdminSantriPage() {
           )}
         </CardBody>
       </Card>
+
+      {editingSantri && <EditSantriDialog santri={editingSantri} onClose={() => setEditingSantri(null)} />}
     </div>
   )
 }
