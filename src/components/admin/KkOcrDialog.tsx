@@ -65,9 +65,9 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
         </DialogHeader>
 
         <div className="space-y-3">
-          <div>
-            <Label htmlFor="kk-file-camera">Ambil foto Kartu Keluarga</Label>
-            <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="min-w-0">
+              <Label htmlFor="kk-file-camera">Ambil foto dengan kamera</Label>
               <Input
                 id="kk-file-camera"
                 type="file"
@@ -78,20 +78,19 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
                   ocrMutation.reset()
                 }}
               />
+            </div>
+            <div className="min-w-0">
+              <Label htmlFor="kk-file-gallery">Ambil foto dari galeri/penyimpanan</Label>
               <Input
                 id="kk-file-gallery"
                 type="file"
                 accept="image/*"
-                aria-label="Pilih foto dari galeri/file"
                 onChange={(e) => {
                   setFile(e.target.files?.[0] ?? null)
                   ocrMutation.reset()
                 }}
               />
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Kolom kiri langsung buka kamera (di HP). Kolom kanan untuk pilih foto yang sudah ada.
-            </p>
           </div>
 
           {ocrMutation.isError && (
