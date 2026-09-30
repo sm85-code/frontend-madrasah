@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { ocrKartuKeluarga } from '../../api/admin'
 import { ApiError } from '../../lib/apiClient'
+import { compressImageForOcr } from '../../lib/compressImage'
 import { Button } from '../ui/AppButton'
 import {
   Dialog,
@@ -25,7 +26,9 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
   const [open, setOpen] = useState(false)
   const [file, setFile] = useState<File | null>(null)
 
-  const ocrMutation = useMutation({ mutationFn: (f: File) => ocrKartuKeluarga(f) })
+  const ocrMutation = useMutation({
+    mutationFn: async (f: File) => ocrKartuKeluarga(await compressImageForOcr(f)),
+  })
 
   const reset = () => {
     setFile(null)
@@ -57,16 +60,32 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
 
         <div className="space-y-3">
           <div>
-            <Label htmlFor="kk-file">Foto Kartu Keluarga</Label>
-            <Input
-              id="kk-file"
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                setFile(e.target.files?.[0] ?? null)
-                ocrMutation.reset()
-              }}
-            />
+            <Label htmlFor="kk-file-camera">Ambil foto Kartu Keluarga</Label>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Input
+                id="kk-file-camera"
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={(e) => {
+                  setFile(e.target.files?.[0] ?? null)
+                  ocrMutation.reset()
+                }}
+              />
+              <Input
+                id="kk-file-gallery"
+                type="file"
+                accept="image/*"
+                aria-label="Pilih foto dari galeri/file"
+                onChange={(e) => {
+                  setFile(e.target.files?.[0] ?? null)
+                  ocrMutation.reset()
+                }}
+              />
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Kolom kiri langsung buka kamera (di HP). Kolom kanan untuk pilih foto yang sudah ada.
+            </p>
           </div>
 
           {ocrMutation.isError && (
