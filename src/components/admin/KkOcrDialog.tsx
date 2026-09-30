@@ -16,7 +16,7 @@ import { ErrorNotice } from '../ui/Feedback'
 import { Input, Label } from '../ui/AppInput'
 import type { KkAnggotaKeluarga } from '../../types'
 
-/** Upload foto Kartu Keluarga -> OCR (Google Vision, lihat
+/** Upload foto Kartu Keluarga -> OCR (OCR.space, lihat
  * POST /admin/santri/kk-ocr) -> admin memilih baris anggota keluarga mana
  * yang sedang didaftarkan sebagai santri. Backend TIDAK menyimpan apa pun
  * dari langkah ini -- onPilih hanya mengisi form pendaftaran, yang masih
