@@ -48,7 +48,7 @@ export function LoginPage() {
   return (
     <div className="auth-bg relative flex min-h-screen flex-col items-center justify-center px-4 py-8">
       <WallpaperLayer />
-      <div className="relative z-[1] mb-4 flex w-full max-w-md items-center justify-between">
+      <div className="absolute inset-x-0 top-0 z-[2] flex items-center justify-between px-4 pt-4 sm:px-6 sm:pt-6">
         <Link
           to="/"
           className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--legacy-border)] bg-[var(--surface)] px-3 py-2 text-sm font-medium text-muted-foreground shadow-soft transition-colors hover:text-foreground"
