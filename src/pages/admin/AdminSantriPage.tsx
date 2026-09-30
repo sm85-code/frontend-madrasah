@@ -278,7 +278,7 @@ export function AdminSantriPage() {
       {waliBaru && (
         <div className="mb-4">
           <SuccessNotice
-            message={`Santri ${santriBaru ?? ''} berhasil ditambahkan. Akun wali ${waliBaru.nama} dibuat. Username: ${waliBaru.username}. Password sementara: ${waliBaru.password}`}
+            message={`Santri ${santriBaru ?? ''} berhasil ditambahkan. Akun wali ${waliBaru.nama} dibuat. Username: ${waliBaru.username}. Password: ${waliBaru.password} (tanggal lahir santri, format ddmmyy -- bisa dilihat lagi kapan saja di data santri kalau lupa)`}
           />
         </div>
       )}
