@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from '../ui/dialog'
 import { ErrorNotice } from '../ui/Feedback'
-import { Input, Label } from '../ui/AppInput'
+import { Label } from '../ui/AppInput'
 import type { KkAnggotaKeluarga, KkOcrResult } from '../../types'
 
 /** Upload foto Kartu Keluarga -> OCR (OCR.space, lihat
@@ -68,11 +68,18 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="min-w-0">
               <Label htmlFor="kk-file-camera">Ambil foto dengan kamera</Label>
-              <Input
+              <label
+                htmlFor="kk-file-camera"
+                className="flex h-9 w-full cursor-pointer items-center justify-center rounded-lg border border-input bg-transparent px-3 text-sm font-medium transition-colors hover:bg-accent"
+              >
+                Buka Kamera
+              </label>
+              <input
                 id="kk-file-camera"
                 type="file"
                 accept="image/*"
                 capture="environment"
+                className="sr-only"
                 onChange={(e) => {
                   setFile(e.target.files?.[0] ?? null)
                   ocrMutation.reset()
@@ -81,10 +88,17 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
             </div>
             <div className="min-w-0">
               <Label htmlFor="kk-file-gallery">Ambil foto dari galeri/penyimpanan</Label>
-              <Input
+              <label
+                htmlFor="kk-file-gallery"
+                className="flex h-9 w-full cursor-pointer items-center justify-center rounded-lg border border-input bg-transparent px-3 text-sm font-medium transition-colors hover:bg-accent"
+              >
+                Pilih dari Galeri
+              </label>
+              <input
                 id="kk-file-gallery"
                 type="file"
                 accept="image/*"
+                className="sr-only"
                 onChange={(e) => {
                   setFile(e.target.files?.[0] ?? null)
                   ocrMutation.reset()
@@ -92,6 +106,10 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
               />
             </div>
           </div>
+
+          {file && (
+            <p className="truncate text-xs text-muted-foreground">Foto dipilih: {file.name}</p>
+          )}
 
           {ocrMutation.isError && (
             <ErrorNotice

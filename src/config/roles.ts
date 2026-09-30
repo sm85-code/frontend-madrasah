@@ -33,6 +33,8 @@ export const WALI_KELAS_READ_ROLES: Role[] = ['wali_kelas', 'kepala_sekolah', 'l
 export const WALI_KELAS_WRITE_ROLES: Role[] = ['wali_kelas', 'kepala_sekolah', 'lembaga_admin', 'admin']
 export const PESAN_ROLES: Role[] = ['wali_kelas', 'kepala_sekolah', 'lembaga_admin', 'admin']
 export const PENUGASAN_SAYA_ROLES: Role[] = ['guru', 'wali_kelas', 'kepala_sekolah', 'lembaga_admin', 'admin']
+/** Guru mapel: lihat & edit materi mapel yang ditugaskan ke mereka. */
+export const MAPEL_SAYA_ROLES: Role[] = ['guru', 'wali_kelas', 'kepala_sekolah', 'lembaga_admin', 'admin']
 /** Guru mapel: lihat jadwal rombel yang ditugaskan (read-only). */
 export const JADWAL_SAYA_ROLES: Role[] = ['guru', 'wali_kelas', 'kepala_sekolah', 'lembaga_admin', 'admin']
 export const RAPOR_READ_ROLES: Role[] = ['guru', 'wali_kelas', 'kepala_sekolah', 'lembaga_admin', 'admin', 'yayasan_admin']

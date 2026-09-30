@@ -1,8 +1,21 @@
 import { apiClient } from '../lib/apiClient'
-import type { Jadwal, Penugasan, ProgresEntry, Santri } from '../types'
+import type { Jadwal, Mapel, MateriTarget, Penugasan, ProgresEntry, Santri } from '../types'
 
 export async function getPenugasanSaya(): Promise<Penugasan[]> {
   const { data } = await apiClient.get<Penugasan[]>('/guru-mapel/penugasan-saya')
+  return data
+}
+
+/** Mapel yang ditugaskan ke guru ini saja (lihat GuruMapelRombel di
+ * backend) -- beda dari kurikulum.listMapel yang menampilkan semua mapel
+ * madrasah dan hanya boleh diakses staf kurikulum. */
+export async function getMapelSaya(): Promise<Mapel[]> {
+  const { data } = await apiClient.get<Mapel[]>('/guru-mapel/mapel-saya')
+  return data
+}
+
+export async function patchMateriSaya(id: string, payload: { judul?: string; urutan?: number; aktif?: boolean }) {
+  const { data } = await apiClient.patch<MateriTarget>(`/guru-mapel/materi/${id}`, payload)
   return data
 }
 

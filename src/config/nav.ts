@@ -50,6 +50,7 @@ import {
   WALI_KELAS_READ_ROLES,
   PESAN_ROLES,
   PENUGASAN_SAYA_ROLES,
+  MAPEL_SAYA_ROLES,
   JADWAL_SAYA_ROLES,
   RAPOR_READ_ROLES,
 } from './roles'
@@ -124,6 +125,7 @@ export const NAV_SECTIONS: NavSection[] = [
     hideFor: ['yayasan_admin'],
     items: [
       { label: 'Penugasan Saya', shortLabel: 'Tugas', path: '/portal/guru-mapel/penugasan', roles: PENUGASAN_SAYA_ROLES, icon: UserCheck },
+      { label: 'Mapel Saya', path: '/portal/guru-mapel/mapel', roles: MAPEL_SAYA_ROLES, icon: BookOpen },
       { label: 'Jadwal', path: '/portal/guru-mapel/jadwal', roles: JADWAL_SAYA_ROLES, icon: CalendarDays },
       { label: 'Absensi Mapel', shortLabel: 'Absen', path: '/portal/guru-mapel/absensi', roles: ABSENSI_MAPEL_READ_ROLES, icon: CalendarCheck },
       { label: 'Rapor Santri', shortLabel: 'Rapor', path: '/portal/guru-mapel/rapor', roles: RAPOR_READ_ROLES, icon: FileText },
