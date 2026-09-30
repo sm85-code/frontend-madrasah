@@ -22,6 +22,7 @@ import {
   WALI_KELAS_READ_ROLES,
   PESAN_ROLES,
   PENUGASAN_SAYA_ROLES,
+  MAPEL_SAYA_ROLES,
   JADWAL_SAYA_ROLES,
   RAPOR_READ_ROLES,
 } from './config/roles'
@@ -41,6 +42,7 @@ import { AdminTahunAjaranPage } from './pages/admin/AdminTahunAjaranPage'
 import { SppPage } from './pages/bendahara/SppPage'
 import { AbsensiMapelPage } from './pages/guruMapel/AbsensiMapelPage'
 import { JadwalMapelPage } from './pages/guruMapel/JadwalMapelPage'
+import { MapelSayaPage } from './pages/guruMapel/MapelSayaPage'
 import { PenugasanSayaPage } from './pages/guruMapel/PenugasanSayaPage'
 import { RaporPage } from './pages/guruMapel/RaporPage'
 import { BukuKasPage } from './pages/keuangan/BukuKasPage'
@@ -141,6 +143,9 @@ function App() {
 
               <Route element={<RoleGuard roles={PENUGASAN_SAYA_ROLES} />}>
                 <Route path="guru-mapel/penugasan" element={<PenugasanSayaPage />} />
+              </Route>
+              <Route element={<RoleGuard roles={MAPEL_SAYA_ROLES} />}>
+                <Route path="guru-mapel/mapel" element={<MapelSayaPage />} />
               </Route>
               <Route element={<RoleGuard roles={JADWAL_SAYA_ROLES} />}>
                 <Route path="guru-mapel/jadwal" element={<JadwalMapelPage />} />

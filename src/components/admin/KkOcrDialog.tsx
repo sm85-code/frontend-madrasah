@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from '../ui/dialog'
 import { ErrorNotice } from '../ui/Feedback'
-import { Input, Label } from '../ui/AppInput'
+import { Label } from '../ui/AppInput'
 import type { KkAnggotaKeluarga, KkOcrResult } from '../../types'
 
 /** Upload foto Kartu Keluarga -> OCR (OCR.space, lihat
@@ -26,6 +26,8 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
   const [open, setOpen] = useState(false)
   const [file, setFile] = useState<File | null>(null)
   const [uploadPercent, setUploadPercent] = useState<number | null>(null)
+  const [showRawText, setShowRawText] = useState(false)
+  const [rawTextCopied, setRawTextCopied] = useState(false)
 
   const ocrMutation = useMutation({
     mutationFn: async (f: File) => {
@@ -38,6 +40,8 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
   const reset = () => {
     setFile(null)
     setUploadPercent(null)
+    setShowRawText(false)
+    setRawTextCopied(false)
     ocrMutation.reset()
   }
 
@@ -68,11 +72,18 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="min-w-0">
               <Label htmlFor="kk-file-camera">Ambil foto dengan kamera</Label>
-              <Input
+              <label
+                htmlFor="kk-file-camera"
+                className="flex h-9 w-full cursor-pointer items-center justify-center rounded-lg border border-input bg-transparent px-3 text-sm font-medium transition-colors hover:bg-accent"
+              >
+                Buka Kamera
+              </label>
+              <input
                 id="kk-file-camera"
                 type="file"
                 accept="image/*"
                 capture="environment"
+                className="sr-only"
                 onChange={(e) => {
                   setFile(e.target.files?.[0] ?? null)
                   ocrMutation.reset()
@@ -81,10 +92,17 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
             </div>
             <div className="min-w-0">
               <Label htmlFor="kk-file-gallery">Ambil foto dari galeri/penyimpanan</Label>
-              <Input
+              <label
+                htmlFor="kk-file-gallery"
+                className="flex h-9 w-full cursor-pointer items-center justify-center rounded-lg border border-input bg-transparent px-3 text-sm font-medium transition-colors hover:bg-accent"
+              >
+                Pilih dari Galeri
+              </label>
+              <input
                 id="kk-file-gallery"
                 type="file"
                 accept="image/*"
+                className="sr-only"
                 onChange={(e) => {
                   setFile(e.target.files?.[0] ?? null)
                   ocrMutation.reset()
@@ -92,6 +110,10 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
               />
             </div>
           </div>
+
+          {file && (
+            <p className="truncate text-xs text-muted-foreground">Foto dipilih: {file.name}</p>
+          )}
 
           {ocrMutation.isError && (
             <ErrorNotice
@@ -155,6 +177,41 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
                   </div>
                 </>
               )}
+
+              <div className="rounded-md border border-border p-2">
+                <button
+                  type="button"
+                  className="text-xs font-medium text-primary underline-offset-2 hover:underline"
+                  onClick={() => setShowRawText((v) => !v)}
+                >
+                  {showRawText ? 'Sembunyikan teks OCR mentah' : 'Lihat teks OCR mentah (untuk laporan ke developer)'}
+                </button>
+                {showRawText && (
+                  <div className="mt-2 space-y-2">
+                    <textarea
+                      readOnly
+                      value={ocrMutation.data.raw_text}
+                      className="h-40 w-full resize-none rounded-md border border-input bg-transparent p-2 font-mono text-xs"
+                      onFocus={(e) => e.currentTarget.select()}
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="secondary"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(ocrMutation.data!.raw_text)
+                          setRawTextCopied(true)
+                        } catch {
+                          setRawTextCopied(false)
+                        }
+                      }}
+                    >
+                      {rawTextCopied ? 'Tersalin!' : 'Salin teks'}
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
