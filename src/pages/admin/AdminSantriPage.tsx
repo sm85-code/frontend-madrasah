@@ -11,7 +11,7 @@ import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedbac
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
 import { KkOcrDialog } from '../../components/admin/KkOcrDialog'
-import type { KkAnggotaKeluarga, Santri } from '../../types'
+import type { KkAnggotaKeluarga, KkOcrResult, Santri } from '../../types'
 import { SANTRI_WRITE_ROLES } from '../../config/roles'
 import { useCanWrite } from '../../hooks/useCanWrite'
 import { useUnitStore } from '../../store/unitStore'
@@ -29,6 +29,12 @@ interface KependudukanState {
   nomorKk: string
   namaAyah: string
   namaIbu: string
+  rtRw: string
+  kodePos: string
+  desaKelurahan: string
+  kecamatan: string
+  kabupatenKota: string
+  provinsi: string
 }
 
 const KEPENDUDUKAN_KOSONG: KependudukanState = {
@@ -42,6 +48,12 @@ const KEPENDUDUKAN_KOSONG: KependudukanState = {
   nomorKk: '',
   namaAyah: '',
   namaIbu: '',
+  rtRw: '',
+  kodePos: '',
+  desaKelurahan: '',
+  kecamatan: '',
+  kabupatenKota: '',
+  provinsi: '',
 }
 
 function kependudukanPayload(k: KependudukanState) {
@@ -56,6 +68,12 @@ function kependudukanPayload(k: KependudukanState) {
     nomor_kk: k.nomorKk || null,
     nama_ayah: k.namaAyah || null,
     nama_ibu: k.namaIbu || null,
+    rt_rw: k.rtRw || null,
+    kode_pos: k.kodePos || null,
+    desa_kelurahan: k.desaKelurahan || null,
+    kecamatan: k.kecamatan || null,
+    kabupaten_kota: k.kabupatenKota || null,
+    provinsi: k.provinsi || null,
   }
 }
 
@@ -77,7 +95,7 @@ export function AdminSantriPage() {
   const [kependudukan, setKependudukan] = useState<KependudukanState>(KEPENDUDUKAN_KOSONG)
   const [showKependudukan, setShowKependudukan] = useState(false)
 
-  function isiDariKk(anggota: KkAnggotaKeluarga, nomorKk: string | null, alamat: string | null) {
+  function isiDariKk(anggota: KkAnggotaKeluarga, kk: KkOcrResult) {
     if (anggota.nama) setNama(anggota.nama)
     setKependudukan({
       nik: anggota.nik ?? '',
@@ -86,10 +104,16 @@ export function AdminSantriPage() {
       jenisKelamin: anggota.jenis_kelamin ?? '',
       agama: anggota.agama ?? '',
       statusDalamKeluarga: anggota.status_dalam_keluarga ?? '',
-      alamatLengkap: alamat ?? '',
-      nomorKk: nomorKk ?? '',
+      alamatLengkap: kk.alamat_lengkap ?? '',
+      nomorKk: kk.nomor_kk ?? '',
       namaAyah: anggota.nama_ayah ?? '',
       namaIbu: anggota.nama_ibu ?? '',
+      rtRw: kk.rt_rw ?? '',
+      kodePos: kk.kode_pos ?? '',
+      desaKelurahan: kk.desa_kelurahan ?? '',
+      kecamatan: kk.kecamatan ?? '',
+      kabupatenKota: kk.kabupaten_kota ?? '',
+      provinsi: kk.provinsi ?? '',
     })
     setShowKependudukan(true)
   }
@@ -362,6 +386,54 @@ export function AdminSantriPage() {
                     id="kd-alamat"
                     value={kependudukan.alamatLengkap}
                     onChange={(e) => setKependudukan((k) => ({ ...k, alamatLengkap: e.target.value }))}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <Label htmlFor="kd-rt-rw">RT/RW</Label>
+                  <Input
+                    id="kd-rt-rw"
+                    value={kependudukan.rtRw}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, rtRw: e.target.value }))}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <Label htmlFor="kd-kode-pos">Kode pos</Label>
+                  <Input
+                    id="kd-kode-pos"
+                    value={kependudukan.kodePos}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, kodePos: e.target.value }))}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <Label htmlFor="kd-desa">Desa/Kelurahan</Label>
+                  <Input
+                    id="kd-desa"
+                    value={kependudukan.desaKelurahan}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, desaKelurahan: e.target.value }))}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <Label htmlFor="kd-kecamatan">Kecamatan</Label>
+                  <Input
+                    id="kd-kecamatan"
+                    value={kependudukan.kecamatan}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, kecamatan: e.target.value }))}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <Label htmlFor="kd-kabupaten">Kabupaten/Kota</Label>
+                  <Input
+                    id="kd-kabupaten"
+                    value={kependudukan.kabupatenKota}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, kabupatenKota: e.target.value }))}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <Label htmlFor="kd-provinsi">Provinsi</Label>
+                  <Input
+                    id="kd-provinsi"
+                    value={kependudukan.provinsi}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, provinsi: e.target.value }))}
                   />
                 </div>
               </div>

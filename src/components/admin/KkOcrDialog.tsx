@@ -15,14 +15,14 @@ import {
 } from '../ui/dialog'
 import { ErrorNotice } from '../ui/Feedback'
 import { Input, Label } from '../ui/AppInput'
-import type { KkAnggotaKeluarga } from '../../types'
+import type { KkAnggotaKeluarga, KkOcrResult } from '../../types'
 
 /** Upload foto Kartu Keluarga -> OCR (OCR.space, lihat
  * POST /admin/santri/kk-ocr) -> admin memilih baris anggota keluarga mana
  * yang sedang didaftarkan sebagai santri. Backend TIDAK menyimpan apa pun
  * dari langkah ini -- onPilih hanya mengisi form pendaftaran, yang masih
  * harus direview/diedit dan disubmit manual oleh admin. */
-export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga, nomorKk: string | null, alamat: string | null) => void }) {
+export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga, kk: KkOcrResult) => void }) {
   const [open, setOpen] = useState(false)
   const [file, setFile] = useState<File | null>(null)
   const [uploadPercent, setUploadPercent] = useState<number | null>(null)
@@ -140,7 +140,7 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
                         type="button"
                         className="w-full rounded-md border border-border p-2 text-left text-sm hover:bg-accent"
                         onClick={() => {
-                          onPilih(a, ocrMutation.data!.nomor_kk, ocrMutation.data!.alamat_lengkap)
+                          onPilih(a, ocrMutation.data!)
                           setOpen(false)
                           reset()
                         }}
