@@ -10,10 +10,54 @@ import { DeleteRowButton } from '../../components/ui/DeleteRowButton'
 import { ErrorNotice, Spinner, SuccessNotice } from '../../components/ui/Feedback'
 import { Input, Label, Select } from '../../components/ui/AppInput'
 import { PageHeader } from '../../components/ui/PageHeader'
-import type { Santri } from '../../types'
+import { KkOcrDialog } from '../../components/admin/KkOcrDialog'
+import type { KkAnggotaKeluarga, Santri } from '../../types'
 import { SANTRI_WRITE_ROLES } from '../../config/roles'
 import { useCanWrite } from '../../hooks/useCanWrite'
 import { useUnitStore } from '../../store/unitStore'
+
+const AGAMA_OPTIONS = ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Khonghucu', 'Kepercayaan']
+
+interface KependudukanState {
+  nik: string
+  tempatLahir: string
+  tanggalLahir: string
+  jenisKelamin: '' | 'L' | 'P'
+  agama: string
+  statusDalamKeluarga: string
+  alamatLengkap: string
+  nomorKk: string
+  namaAyah: string
+  namaIbu: string
+}
+
+const KEPENDUDUKAN_KOSONG: KependudukanState = {
+  nik: '',
+  tempatLahir: '',
+  tanggalLahir: '',
+  jenisKelamin: '',
+  agama: '',
+  statusDalamKeluarga: '',
+  alamatLengkap: '',
+  nomorKk: '',
+  namaAyah: '',
+  namaIbu: '',
+}
+
+function kependudukanPayload(k: KependudukanState) {
+  return {
+    nik: k.nik || null,
+    tempat_lahir: k.tempatLahir || null,
+    tanggal_lahir: k.tanggalLahir || null,
+    jenis_kelamin: k.jenisKelamin || null,
+    agama: k.agama || null,
+    status_dalam_keluarga: k.statusDalamKeluarga || null,
+    alamat_lengkap: k.alamatLengkap || null,
+    nomor_kk: k.nomorKk || null,
+    nama_ayah: k.namaAyah || null,
+    nama_ibu: k.namaIbu || null,
+  }
+}
 
 const STATUS_TONE: Record<string, 'success' | 'neutral' | 'warning'> = {
   aktif: 'success',
@@ -30,6 +74,25 @@ export function AdminSantriPage() {
   const [rombelId, setRombelId] = useState('')
   const [filterStatus, setFilterStatus] = useState('semua')
   const [waliBaru, setWaliBaru] = useState<{ nama: string; username: string; password: string } | null>(null)
+  const [kependudukan, setKependudukan] = useState<KependudukanState>(KEPENDUDUKAN_KOSONG)
+  const [showKependudukan, setShowKependudukan] = useState(false)
+
+  function isiDariKk(anggota: KkAnggotaKeluarga, nomorKk: string | null, alamat: string | null) {
+    if (anggota.nama) setNama(anggota.nama)
+    setKependudukan({
+      nik: anggota.nik ?? '',
+      tempatLahir: anggota.tempat_lahir ?? '',
+      tanggalLahir: anggota.tanggal_lahir ?? '',
+      jenisKelamin: anggota.jenis_kelamin ?? '',
+      agama: anggota.agama ?? '',
+      statusDalamKeluarga: anggota.status_dalam_keluarga ?? '',
+      alamatLengkap: alamat ?? '',
+      nomorKk: nomorKk ?? '',
+      namaAyah: anggota.nama_ayah ?? '',
+      namaIbu: anggota.nama_ibu ?? '',
+    })
+    setShowKependudukan(true)
+  }
 
   const selectedUnitId = useUnitStore((s) => s.selectedUnitId)
   const santriQuery = useQuery({
@@ -40,11 +103,19 @@ export function AdminSantriPage() {
   const waliQuery = useQuery({ queryKey: ['admin', 'wali-santri', selectedUnitId], queryFn: listWaliSantri })
 
   const createMutation = useMutation({
-    mutationFn: () => createSantri({ nama, nama_wali: namaWali, rombel_id: rombelId || null }),
+    mutationFn: () =>
+      createSantri({
+        nama,
+        nama_wali: namaWali,
+        rombel_id: rombelId || null,
+        ...kependudukanPayload(kependudukan),
+      }),
     onSuccess: (created) => {
       setNama('')
       setNamaWali('')
       setRombelId('')
+      setKependudukan(KEPENDUDUKAN_KOSONG)
+      setShowKependudukan(false)
       if (created.wali_password_sementara && created.wali_username) {
         setWaliBaru({ nama: namaWali || created.nama, username: created.wali_username, password: created.wali_password_sementara })
       } else {
@@ -158,31 +229,144 @@ export function AdminSantriPage() {
       <Card className="mb-5">
         <CardBody>
           <form
-            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 sm:items-end"
+            className="space-y-4"
             onSubmit={(e) => {
               e.preventDefault()
               createMutation.mutate()
             }}
           >
-            <div className="min-w-0">
-              <Label htmlFor="nama-santri">Nama santri</Label>
-              <Input id="nama-santri" value={nama} onChange={(e) => setNama(e.target.value)} required />
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 sm:items-end">
+              <div className="min-w-0">
+                <Label htmlFor="nama-santri">Nama santri</Label>
+                <Input id="nama-santri" value={nama} onChange={(e) => setNama(e.target.value)} required />
+              </div>
+              <div className="min-w-0">
+                <Label htmlFor="nama-wali">Nama wali santri</Label>
+                <Input id="nama-wali" value={namaWali} onChange={(e) => setNamaWali(e.target.value)} required />
+              </div>
+              <div className="min-w-0">
+                <Label htmlFor="rombel-santri">Rombel</Label>
+                <Select id="rombel-santri" value={rombelId} onChange={(e) => setRombelId(e.target.value)}>
+                  <option value="">Belum ditempatkan</option>
+                  {rombelQuery.data?.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.nama}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              <KkOcrDialog onPilih={isiDariKk} />
             </div>
-            <div className="min-w-0">
-              <Label htmlFor="nama-wali">Nama wali santri</Label>
-              <Input id="nama-wali" value={namaWali} onChange={(e) => setNamaWali(e.target.value)} required />
+
+            <div>
+              <button
+                type="button"
+                className="text-sm font-medium text-primary underline-offset-2 hover:underline"
+                onClick={() => setShowKependudukan((v) => !v)}
+              >
+                {showKependudukan ? 'Sembunyikan data kependudukan' : 'Tampilkan data kependudukan (opsional)'}
+              </button>
             </div>
-            <div className="min-w-0">
-              <Label htmlFor="rombel-santri">Rombel</Label>
-              <Select id="rombel-santri" value={rombelId} onChange={(e) => setRombelId(e.target.value)}>
-                <option value="">Belum ditempatkan</option>
-                {rombelQuery.data?.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    {r.nama}
-                  </option>
-                ))}
-              </Select>
-            </div>
+
+            {showKependudukan && (
+              <div className="grid gap-3 rounded-md border border-border p-3 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="min-w-0">
+                  <Label htmlFor="kd-nik">NIK</Label>
+                  <Input
+                    id="kd-nik"
+                    value={kependudukan.nik}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, nik: e.target.value }))}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <Label htmlFor="kd-tempat-lahir">Tempat lahir</Label>
+                  <Input
+                    id="kd-tempat-lahir"
+                    value={kependudukan.tempatLahir}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, tempatLahir: e.target.value }))}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <Label htmlFor="kd-tanggal-lahir">Tanggal lahir</Label>
+                  <Input
+                    id="kd-tanggal-lahir"
+                    type="date"
+                    value={kependudukan.tanggalLahir}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, tanggalLahir: e.target.value }))}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <Label htmlFor="kd-jenis-kelamin">Jenis kelamin</Label>
+                  <Select
+                    id="kd-jenis-kelamin"
+                    value={kependudukan.jenisKelamin}
+                    onChange={(e) =>
+                      setKependudukan((k) => ({ ...k, jenisKelamin: e.target.value as KependudukanState['jenisKelamin'] }))
+                    }
+                  >
+                    <option value="">-</option>
+                    <option value="L">Laki-laki</option>
+                    <option value="P">Perempuan</option>
+                  </Select>
+                </div>
+                <div className="min-w-0">
+                  <Label htmlFor="kd-agama">Agama</Label>
+                  <Select
+                    id="kd-agama"
+                    value={kependudukan.agama}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, agama: e.target.value }))}
+                  >
+                    <option value="">-</option>
+                    {AGAMA_OPTIONS.map((a) => (
+                      <option key={a} value={a}>
+                        {a}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+                <div className="min-w-0">
+                  <Label htmlFor="kd-status-keluarga">Status dalam keluarga</Label>
+                  <Input
+                    id="kd-status-keluarga"
+                    value={kependudukan.statusDalamKeluarga}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, statusDalamKeluarga: e.target.value }))}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <Label htmlFor="kd-nomor-kk">Nomor KK</Label>
+                  <Input
+                    id="kd-nomor-kk"
+                    value={kependudukan.nomorKk}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, nomorKk: e.target.value }))}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <Label htmlFor="kd-nama-ayah">Nama ayah</Label>
+                  <Input
+                    id="kd-nama-ayah"
+                    value={kependudukan.namaAyah}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, namaAyah: e.target.value }))}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <Label htmlFor="kd-nama-ibu">Nama ibu</Label>
+                  <Input
+                    id="kd-nama-ibu"
+                    value={kependudukan.namaIbu}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, namaIbu: e.target.value }))}
+                  />
+                </div>
+                <div className="min-w-0 sm:col-span-2 lg:col-span-3">
+                  <Label htmlFor="kd-alamat">Alamat lengkap</Label>
+                  <Input
+                    id="kd-alamat"
+                    value={kependudukan.alamatLengkap}
+                    onChange={(e) => setKependudukan((k) => ({ ...k, alamatLengkap: e.target.value }))}
+                  />
+                </div>
+              </div>
+            )}
+
             <Button type="submit" loading={createMutation.isPending} className="w-full sm:w-auto">
               Tambah Santri
             </Button>
