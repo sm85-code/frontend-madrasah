@@ -26,6 +26,8 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
   const [open, setOpen] = useState(false)
   const [file, setFile] = useState<File | null>(null)
   const [uploadPercent, setUploadPercent] = useState<number | null>(null)
+  const [showRawText, setShowRawText] = useState(false)
+  const [rawTextCopied, setRawTextCopied] = useState(false)
 
   const ocrMutation = useMutation({
     mutationFn: async (f: File) => {
@@ -38,6 +40,8 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
   const reset = () => {
     setFile(null)
     setUploadPercent(null)
+    setShowRawText(false)
+    setRawTextCopied(false)
     ocrMutation.reset()
   }
 
@@ -173,6 +177,41 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
                   </div>
                 </>
               )}
+
+              <div className="rounded-md border border-border p-2">
+                <button
+                  type="button"
+                  className="text-xs font-medium text-primary underline-offset-2 hover:underline"
+                  onClick={() => setShowRawText((v) => !v)}
+                >
+                  {showRawText ? 'Sembunyikan teks OCR mentah' : 'Lihat teks OCR mentah (untuk laporan ke developer)'}
+                </button>
+                {showRawText && (
+                  <div className="mt-2 space-y-2">
+                    <textarea
+                      readOnly
+                      value={ocrMutation.data.raw_text}
+                      className="h-40 w-full resize-none rounded-md border border-input bg-transparent p-2 font-mono text-xs"
+                      onFocus={(e) => e.currentTarget.select()}
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="secondary"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(ocrMutation.data!.raw_text)
+                          setRawTextCopied(true)
+                        } catch {
+                          setRawTextCopied(false)
+                        }
+                      }}
+                    >
+                      {rawTextCopied ? 'Tersalin!' : 'Salin teks'}
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
