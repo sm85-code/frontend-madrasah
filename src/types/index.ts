@@ -109,6 +109,12 @@ export interface Santri {
   nomor_kk?: string | null
   nama_ayah?: string | null
   nama_ibu?: string | null
+  rt_rw?: string | null
+  kode_pos?: string | null
+  desa_kelurahan?: string | null
+  kecamatan?: string | null
+  kabupaten_kota?: string | null
+  provinsi?: string | null
 }
 
 /** Satu baris anggota keluarga hasil parsing OCR Kartu Keluarga -- belum
@@ -130,6 +136,12 @@ export interface KkAnggotaKeluarga {
 export interface KkOcrResult {
   nomor_kk: string | null
   alamat_lengkap: string | null
+  rt_rw: string | null
+  kode_pos: string | null
+  desa_kelurahan: string | null
+  kecamatan: string | null
+  kabupaten_kota: string | null
+  provinsi: string | null
   anggota: KkAnggotaKeluarga[]
   raw_text: string
 }

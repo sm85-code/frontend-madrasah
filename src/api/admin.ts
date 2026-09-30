@@ -27,6 +27,12 @@ export interface SantriKependudukan {
   nomor_kk?: string | null
   nama_ayah?: string | null
   nama_ibu?: string | null
+  rt_rw?: string | null
+  kode_pos?: string | null
+  desa_kelurahan?: string | null
+  kecamatan?: string | null
+  kabupaten_kota?: string | null
+  provinsi?: string | null
 }
 
 export async function listTugas(userId?: string) {
