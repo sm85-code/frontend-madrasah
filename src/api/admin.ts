@@ -187,12 +187,18 @@ export async function patchSantri(
 
 /** Upload foto Kartu Keluarga ke POST /admin/santri/kk-ocr. Backend hanya
  * mengembalikan hasil parsing (belum menyimpan apa pun) -- lihat
- * KkOcrDialog untuk alur pilih baris + verifikasi sebelum createSantri. */
-export async function ocrKartuKeluarga(file: File): Promise<KkOcrResult> {
+ * KkOcrDialog untuk alur pilih baris + verifikasi sebelum createSantri.
+ * onUploadProgress (0-100) membantu membedakan "upload macet di jaringan"
+ * dari "backend/OCR lambat merespon" saat diagnosa error timeout. */
+export async function ocrKartuKeluarga(file: File, onUploadProgress?: (percent: number) => void): Promise<KkOcrResult> {
   const form = new FormData()
   form.append('file', file)
   const { data } = await apiClient.post<KkOcrResult>('/admin/santri/kk-ocr', form, {
     headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 45000,
+    onUploadProgress: (e) => {
+      if (onUploadProgress && e.total) onUploadProgress(Math.round((e.loaded / e.total) * 100))
+    },
   })
   return data
 }

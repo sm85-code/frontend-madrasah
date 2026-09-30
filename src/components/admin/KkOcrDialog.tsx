@@ -25,13 +25,19 @@ import type { KkAnggotaKeluarga } from '../../types'
 export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga, nomorKk: string | null, alamat: string | null) => void }) {
   const [open, setOpen] = useState(false)
   const [file, setFile] = useState<File | null>(null)
+  const [uploadPercent, setUploadPercent] = useState<number | null>(null)
 
   const ocrMutation = useMutation({
-    mutationFn: async (f: File) => ocrKartuKeluarga(await compressImageForOcr(f)),
+    mutationFn: async (f: File) => {
+      setUploadPercent(0)
+      const compressed = await compressImageForOcr(f)
+      return ocrKartuKeluarga(compressed, setUploadPercent)
+    },
   })
 
   const reset = () => {
     setFile(null)
+    setUploadPercent(null)
     ocrMutation.reset()
   }
 
@@ -90,20 +96,31 @@ export function KkOcrDialog({ onPilih }: { onPilih: (anggota: KkAnggotaKeluarga,
 
           {ocrMutation.isError && (
             <ErrorNotice
-              message={ocrMutation.error instanceof ApiError ? ocrMutation.error.message : 'Gagal membaca foto KK.'}
+              message={
+                ocrMutation.error instanceof ApiError
+                  ? ocrMutation.error.message
+                  : 'Gagal membaca foto KK -- kemungkinan koneksi internet terputus/lambat saat upload. Coba lagi, atau periksa sinyal internet.'
+              }
             />
           )}
 
           {!ocrMutation.data && (
-            <Button
-              type="button"
-              className="w-full"
-              loading={ocrMutation.isPending}
-              disabled={!file}
-              onClick={() => file && ocrMutation.mutate(file)}
-            >
-              Baca Foto
-            </Button>
+            <>
+              {ocrMutation.isPending && uploadPercent !== null && (
+                <p className="text-xs text-muted-foreground">
+                  {uploadPercent < 100 ? `Mengupload foto... ${uploadPercent}%` : 'Membaca foto (OCR)...'}
+                </p>
+              )}
+              <Button
+                type="button"
+                className="w-full"
+                loading={ocrMutation.isPending}
+                disabled={!file}
+                onClick={() => file && ocrMutation.mutate(file)}
+              >
+                Baca Foto
+              </Button>
+            </>
           )}
 
           {ocrMutation.data && (
