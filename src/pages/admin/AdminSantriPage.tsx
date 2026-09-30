@@ -166,6 +166,21 @@ export function AdminSantriPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'santri'] }),
   })
 
+  // Mengikat wali dari nama ayah/ibu (hasil OCR KK) setelah santri sudah
+  // tersimpan tanpa wali -- backend cari-atau-buat akun dari nama itu saja
+  // (lihat services._cari_atau_buat_wali), sama seperti field "Nama wali
+  // santri" saat pendaftaran.
+  const bindWaliMutation = useMutation({
+    mutationFn: ({ id, nama_wali }: { id: string; nama_wali: string }) => patchSantri(id, { nama_wali }),
+    onSuccess: (updated, { nama_wali }) => {
+      if (updated.wali_password_sementara && updated.wali_username) {
+        setWaliBaru({ nama: nama_wali, username: updated.wali_username, password: updated.wali_password_sementara })
+      }
+      queryClient.invalidateQueries({ queryKey: ['admin', 'santri'] })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'wali-santri'] })
+    },
+  })
+
   const rombelName = (id: string | null) => rombelQuery.data?.find((r) => r.id === id)?.nama ?? '-'
 
   const waliName = (id: string | null) =>
@@ -181,11 +196,20 @@ export function AdminSantriPage() {
           <Select
             className="w-auto min-w-[140px]"
             value={s.orang_tua_id ?? ''}
-            onChange={(e) =>
-              patchMutation.mutate({ id: s.id, orang_tua_id: e.target.value || null })
-            }
+            onChange={(e) => {
+              const value = e.target.value
+              if (value === '__ayah__' && s.nama_ayah) {
+                bindWaliMutation.mutate({ id: s.id, nama_wali: s.nama_ayah })
+              } else if (value === '__ibu__' && s.nama_ibu) {
+                bindWaliMutation.mutate({ id: s.id, nama_wali: s.nama_ibu })
+              } else {
+                patchMutation.mutate({ id: s.id, orang_tua_id: value || null })
+              }
+            }}
           >
             <option value="">Belum diikat</option>
+            {s.nama_ayah && <option value="__ayah__">Ayah: {s.nama_ayah}</option>}
+            {s.nama_ibu && <option value="__ibu__">Ibu: {s.nama_ibu}</option>}
             {waliQuery.data?.map((w) => (
               <option key={w.id} value={w.id}>
                 {w.nama}
@@ -234,7 +258,10 @@ export function AdminSantriPage() {
 
   return (
     <div>
-      <PageHeader title="Santri" description="Isi nama santri dan nama wali. Wali yang namanya sama di unit ini dipakai ulang." />
+      <PageHeader
+        title="Santri"
+        description="Isi nama santri. Nama wali opsional -- bisa diisi sekarang atau nanti lewat kolom Wali Santri di tabel (mis. pilih nama ayah/ibu hasil OCR KK). Wali yang namanya sama di unit ini dipakai ulang."
+      />
 
       {waliBaru && (
         <div className="mb-4">
@@ -265,8 +292,8 @@ export function AdminSantriPage() {
                 <Input id="nama-santri" value={nama} onChange={(e) => setNama(e.target.value)} required />
               </div>
               <div className="min-w-0">
-                <Label htmlFor="nama-wali">Nama wali santri</Label>
-                <Input id="nama-wali" value={namaWali} onChange={(e) => setNamaWali(e.target.value)} required />
+                <Label htmlFor="nama-wali">Nama wali santri (opsional)</Label>
+                <Input id="nama-wali" value={namaWali} onChange={(e) => setNamaWali(e.target.value)} />
               </div>
               <div className="min-w-0">
                 <Label htmlFor="rombel-santri">Rombel</Label>
