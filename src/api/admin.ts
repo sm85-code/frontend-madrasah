@@ -2,6 +2,7 @@ import { apiClient } from '../lib/apiClient'
 import type {
   AuditLogEntry,
   Kegiatan,
+  KkOcrResult,
   Pendaftaran,
   Pengaturan,
   Pengumuman,
@@ -11,6 +12,22 @@ import type {
   Tingkat,
   User,
 } from '../types'
+
+/** Data kependudukan opsional yang sama di createSantri/patchSantri --
+ * diisi manual atau diprefill dari kkOcr() setelah admin memilih baris &
+ * memverifikasi/mengedit. */
+export interface SantriKependudukan {
+  nik?: string | null
+  tempat_lahir?: string | null
+  tanggal_lahir?: string | null
+  jenis_kelamin?: 'L' | 'P' | null
+  agama?: string | null
+  status_dalam_keluarga?: string | null
+  alamat_lengkap?: string | null
+  nomor_kk?: string | null
+  nama_ayah?: string | null
+  nama_ibu?: string | null
+}
 
 export async function listTugas(userId?: string) {
   const { data } = await apiClient.get<{ id: string; user_id: string; user: string | null; jenis: string; madrasah_unit_id: string }[]>(
@@ -144,13 +161,15 @@ export async function listSantriAdmin(status = 'semua'): Promise<Santri[]> {
   return data
 }
 
-export async function createSantri(payload: {
-  nama: string
-  nama_wali?: string
-  rombel_id?: string | null
-  orang_tua_id?: string | null
-  madrasah_unit_id?: string
-}) {
+export async function createSantri(
+  payload: {
+    nama: string
+    nama_wali?: string
+    rombel_id?: string | null
+    orang_tua_id?: string | null
+    madrasah_unit_id?: string
+  } & SantriKependudukan,
+) {
   const { data } = await apiClient.post<Santri & { wali_username?: string; wali_password_sementara?: string }>(
     '/admin/santri',
     payload,
@@ -158,8 +177,23 @@ export async function createSantri(payload: {
   return data
 }
 
-export async function patchSantri(id: string, payload: Partial<{ nama: string; rombel_id: string | null; orang_tua_id: string | null }>) {
+export async function patchSantri(
+  id: string,
+  payload: Partial<{ nama: string; rombel_id: string | null; orang_tua_id: string | null } & SantriKependudukan>,
+) {
   const { data } = await apiClient.patch<Santri>(`/admin/santri/${id}`, payload)
+  return data
+}
+
+/** Upload foto Kartu Keluarga ke POST /admin/santri/kk-ocr. Backend hanya
+ * mengembalikan hasil parsing (belum menyimpan apa pun) -- lihat
+ * KkOcrDialog untuk alur pilih baris + verifikasi sebelum createSantri. */
+export async function ocrKartuKeluarga(file: File): Promise<KkOcrResult> {
+  const form = new FormData()
+  form.append('file', file)
+  const { data } = await apiClient.post<KkOcrResult>('/admin/santri/kk-ocr', form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
   return data
 }
 
