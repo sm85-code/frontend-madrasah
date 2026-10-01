@@ -191,10 +191,12 @@ export function AdminSantriPage() {
     waliQuery.data?.find((w) => w.id === id)?.nama ?? (id ? 'Wali terhapus' : '-')
 
   const columns: Column<Santri>[] = [
-    { header: 'Nama', cell: (s) => s.nama },
-    { header: 'Rombel', cell: (s) => rombelName(s.rombel_id) },
+    { header: 'No.', cell: (_s, i) => i + 1, className: 'w-12' },
+    { header: 'Nama', cell: (s) => s.nama, sortValue: (s) => s.nama },
+    { header: 'Rombel', cell: (s) => rombelName(s.rombel_id), sortValue: (s) => rombelName(s.rombel_id) },
     {
       header: 'Wali Santri',
+      sortValue: (s) => s.orang_tua || waliName(s.orang_tua_id),
       cell: (s) =>
         writable ? (
           <Select
@@ -226,6 +228,7 @@ export function AdminSantriPage() {
     },
     {
       header: 'Status',
+      sortValue: (s) => s.status ?? 'aktif',
       cell: (s) => <Badge tone={STATUS_TONE[s.status ?? 'aktif']}>{s.status ?? 'aktif'}</Badge>,
     },
     {
