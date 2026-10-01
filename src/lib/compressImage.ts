@@ -1,17 +1,23 @@
-/** Resizes + re-encodes an image client-side before it's uploaded for OCR.
- * A phone camera photo is often 3-10MB at very high resolution -- far more
- * than OCR needs to read printed text, and slow enough to upload (especially
- * on a slow mobile connection) that it never finishes within the platform's
- * gateway timeout (502/504), sometimes before the request even reaches the
- * backend's own logs. Downscaling and re-encoding as JPEG, retrying at a
- * lower quality/size until under TARGET_BYTES, keeps text legible while
- * keeping the upload small regardless of the original photo/connection. */
-const TARGET_BYTES = 600 * 1024
+/** Re-encodes an image client-side before it's uploaded for OCR. A phone
+ * photo or scan is often 3-10MB -- over OCR.space's 1MB free-plan limit, and
+ * slow enough to upload on a mobile connection to hit the platform's gateway
+ * timeout (502/504). Keeps the original resolution and the highest JPEG
+ * quality that still fits under TARGET_BYTES, so small table text stays
+ * legible. */
+// OCR.space's free plan rejects files over 1 MB, so this is a hard ceiling,
+// not a quality target: stay just under it.
+const TARGET_BYTES = 950 * 1024
+// Start at the original resolution and high quality (sharp small print in a
+// scanned KK table matters more than upload size), and only step down until
+// the file fits under TARGET_BYTES. maxDimension: Infinity = never downscale.
 const ATTEMPTS: { maxDimension: number; quality: number }[] = [
-  { maxDimension: 1600, quality: 0.8 },
-  { maxDimension: 1400, quality: 0.7 },
-  { maxDimension: 1100, quality: 0.6 },
-  { maxDimension: 900, quality: 0.5 },
+  { maxDimension: Infinity, quality: 0.92 },
+  { maxDimension: Infinity, quality: 0.85 },
+  { maxDimension: 3000, quality: 0.8 },
+  { maxDimension: 2400, quality: 0.75 },
+  { maxDimension: 1800, quality: 0.7 },
+  { maxDimension: 1400, quality: 0.6 },
+  { maxDimension: 1100, quality: 0.5 },
 ]
 
 function drawToBlob(bitmap: ImageBitmap, maxDimension: number, quality: number): Promise<Blob | null> {
